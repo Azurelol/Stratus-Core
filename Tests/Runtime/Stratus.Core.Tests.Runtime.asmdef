@@ -3,8 +3,7 @@
     "references": [
         "Stratus.Core",
         "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner",
-        "Stratus.OdinSerializer"
+        "UnityEditor.TestRunner"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -17,5 +16,6 @@
     "defineConstraints": [
         "UNITY_INCLUDE_TESTS"
     ],
-    "versionDefines": []
+    "versionDefines": [],
+    "noEngineReferences": false
 }

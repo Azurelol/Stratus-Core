@@ -2,8 +2,8 @@
     "name": "com.stratus.core",
     "version": "1.0.0-preview",
     "displayName": "Stratus Core",
-    "description": "The core package for the Stratus framework",
-    "unity": "2019.1",
+    "description": "The core package for the Stratus Framework",
+    "unity": "2019.4",
     "unityRelease": "0b5",
     "dependencies": {
       "com.unity.inputsystem": "1.0.0"

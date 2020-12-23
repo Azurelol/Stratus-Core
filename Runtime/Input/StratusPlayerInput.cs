@@ -6,26 +6,6 @@ using System;
 
 namespace Stratus
 {
-	public enum StratusPlayerInputActionMap
-	{
-		Player,
-		UI
-	}
-
-	public enum StratusInputScheme
-	{
-		Unknown,
-		KeyboardMouse,
-		DualShock,
-		Xbox
-	}
-
-	public interface IStratusPlayerInput
-	{
-		event Action<StratusInputScheme> onInputSchemeChanged;
-		StratusInputActionDecorator GetActionDecorator(string action);
-	}
-
 	/// <summary>
 	/// Base class for inputs that work with Unity's newer InputSystem
 	/// </summary>
@@ -327,6 +307,26 @@ namespace Stratus
 			}
 			return result;
 		}
+	}
+
+	public enum StratusPlayerInputActionMap
+	{
+		Player,
+		UI
+	}
+
+	public enum StratusInputScheme
+	{
+		Unknown,
+		KeyboardMouse,
+		DualShock,
+		Xbox
+	}
+
+	public interface IStratusPlayerInput
+	{
+		event Action<StratusInputScheme> onInputSchemeChanged;
+		StratusInputActionDecorator GetActionDecorator(string action);
 	}
 
 }
