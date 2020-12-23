@@ -1,0 +1,17 @@
+{
+    "name": "com.stratus.core",
+    "version": "1.0.0",
+    "displayName": "Stratus Core",
+    "description": "The core package for the Stratus framework",
+    "unity": "2019.1",
+    "unityRelease": "0b5",
+    "dependencies": {
+    },
+    "keywords": [
+      "stratus"
+    ],
+    "author": {
+      "name": "Christian Sagel",
+      "email": "ckpsm@live.com"
+    }
+  }
