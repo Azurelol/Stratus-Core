@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Editor
 {
 	/// <summary>
 	/// Displays all present derived Stratus events in the assembly
@@ -65,14 +65,15 @@ namespace Stratus
 				TreeViewColumn column = null;
 				switch (columnType)
 				{
-					case Columns.Name:
+					case Columns.Namespace:
 						column = new TreeViewColumn
 						{
-							headerContent = new GUIContent("Name"),
-							sortedAscending = true,
-							width = 150,
+							headerContent = new GUIContent("Namespace"),
+							minWidth = 200,
+							width = 175,
 							autoResize = true,
-							selectorFunction = (TreeViewItem<EventTreeElement> element) => element.item.data.name
+							sortedAscending = true,
+							selectorFunction = (TreeViewItem<EventTreeElement> element) => element.item.data.@namespace
 						};
 						break;
 					case Columns.Class:
@@ -80,29 +81,33 @@ namespace Stratus
 						{
 							headerContent = new GUIContent("Class"),
 							sortedAscending = true,
-							width = 150,
+							minWidth = 200,
+							width = 200,
 							autoResize = true,
 							selectorFunction = (TreeViewItem<EventTreeElement> element) => element.item.data.members
 						};
 						break;
+					case Columns.Name:
+						column = new TreeViewColumn
+						{
+							headerContent = new GUIContent("Name"),
+							sortedAscending = true,
+							minWidth = 200,
+							width = 200,
+							autoResize = true,
+							selectorFunction = (TreeViewItem<EventTreeElement> element) => element.item.data.name
+						};
+						break;
+
 					case Columns.Members:
 						column = new TreeViewColumn
 						{
 							headerContent = new GUIContent("Members"),
 							sortedAscending = true,
+							minWidth = 400,
 							width = 450,
 							autoResize = true,
 							selectorFunction = (TreeViewItem<EventTreeElement> element) => element.item.data.members
-						};
-						break;
-					case Columns.Namespace:
-						column = new TreeViewColumn
-						{
-							headerContent = new GUIContent("Namespace"),
-							width = 175,
-							autoResize = true,
-							sortedAscending = true,
-							selectorFunction = (TreeViewItem<EventTreeElement> element) => element.item.data.@namespace
 						};
 						break;
 				}
@@ -162,7 +167,6 @@ namespace Stratus
 		[SerializeField]
 		private StratusSerializedTree<EventTreeElement, EventInformation> tree;
 
-		private Vector2 scrollPosition;
 		private Type[] events;
 
 		//------------------------------------------------------------------------/
@@ -178,10 +182,10 @@ namespace Stratus
 			this.treeView.TreeViewGUI(this.guiPosition);
 		}
 
-		[MenuItem("Stratus/Core/Event Browser")]
+		[MenuItem(StratusCore.rootFolder + "Event Browser")]
 		private static void Open()
 		{
-			OnOpen("Event Browser");
+			OpenWindow("Event Browser");
 		}
 
 		//------------------------------------------------------------------------/
@@ -195,10 +199,6 @@ namespace Stratus
 			{
 				eventsInformation[i] = new EventInformation(this.events[i]);
 			}
-
-			//var treeBuilder = new TreeBuilder<EventTreeElement, EventInformation>();
-			//treeBuilder.AddChildren(eventsInformation, 0);
-			//return treeBuilder.ToTree();
 
 			tree = new StratusSerializedTree<EventTreeElement, EventInformation>(eventsInformation);
 			return tree.elements;

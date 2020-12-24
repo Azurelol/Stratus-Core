@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Editor
 {
 	public class ExportPackageWindow : StratusEditorWindow<ExportPackageWindow>
 	{
@@ -28,7 +28,6 @@ namespace Stratus
 
 		protected override void OnWindowGUI()
 		{
-			//InspectProperty(nameof(preset));
 			if (this.InspectObjectFieldWithHeader(ref this.preset, "Preset"))
 			{
 				StratusPreferences.SaveObjectReference(recentPresetKey, preset);
@@ -37,34 +36,13 @@ namespace Stratus
 			{
 				this.InspectProperties(this.preset, "Properties");
 			}
-			//else
-			//{
-			//	this.InspectProperties("Temporary");
-			//}
-
-			//this.InspectProperties();
 			this.ExportControls();
 		}
 
-		[MenuItem("Stratus/Core/Export Package")]
+		[MenuItem(StratusCore.rootFolder + "Export Package")]
 		public static void Open()
 		{
-			OnOpen("Export Package");
-		}
-
-		//------------------------------------------------------------------------/
-		// Methods
-		//------------------------------------------------------------------------/
-		[MenuItem("Stratus/Core/")]
-		private static void ExportCore()
-		{
-			Export("Stratus/Core", "Stratus Framework Core");
-		}
-
-		[MenuItem("Stratus/Export/Full")]
-		private static void ExportAll()
-		{
-			Export("Stratus", "Stratus Framework");
+			OpenWindow("Export Package");
 		}
 
 		//------------------------------------------------------------------------/

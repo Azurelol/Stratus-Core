@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Editor
 {
 	[Serializable]
 	public class MemberInspectorTreeElement : TreeElement<StratusComponentInformation.MemberReference>
@@ -22,15 +22,8 @@ namespace Stratus
 			var tree = new StratusSerializedTree<MemberInspectorTreeElement, StratusComponentInformation.MemberReference>();
 			tree.AddElements(target.members, 0);
 			return tree.elements;
-			//TreeBuilder<MemberInspectorTreeElement, ComponentInformation.MemberReference> treeBuilder = new TreeBuilder<MemberInspectorTreeElement, ComponentInformation.MemberReference>();
-			//treeBuilder.AddChildren(target.members, 0);
-			//return treeBuilder.ToTree();
-
-
-
 		}
 	}
-
 
 	public class MemberInspectorTreeView : MultiColumnTreeView<MemberInspectorTreeElement, MemberInspectorWindow.Column>
 	{
@@ -199,12 +192,7 @@ namespace Stratus
 					menu.AddItem(new GUIContent("Watch"), false, () =>
 					{
 						GameObject target = member.componentInfo.gameObject;
-			  //bool hasBookmark = target.HasComponent<GameObjectBookmark>();
-			  //if (!hasBookmark)
-			  //{
-			  //  MemberInspectorWindow.SetBookmark(member.componentInfo.gameObject);
-			  //}
-			  member.componentInfo.Watch(member);
+						member.componentInfo.Watch(member);
 					});
 				}
 			}

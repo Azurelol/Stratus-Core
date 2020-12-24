@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace Stratus
+namespace Stratus.Editor
 {
 	[CanEditMultipleObjects]
 	[CustomEditor(typeof(StratusBehaviour), true)]

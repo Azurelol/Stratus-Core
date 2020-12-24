@@ -4,12 +4,12 @@ using UnityEditor.Callbacks;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Editor
 {
 	/// <summary>
 	/// Class that listens to Unity's asset pipeline events
 	/// </summary>
-	public static class StratusAssetProcessor //: UnityEditor.AssetModificationProcessor
+	public static class StratusAssetProcessor
 	{
 		public class AssetModification : UnityEditor.AssetModificationProcessor
 		{
@@ -101,7 +101,6 @@ namespace Stratus
 		[PostProcessBuildAttribute(1)]
 		public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
 		{
-			//Debug.Log(pathToBuiltProject);
 		}
 
 		private static UndoPropertyModification[] OnPostProcessModifications(UndoPropertyModification[] propertyModifications)
@@ -117,7 +116,6 @@ namespace Stratus
 
 		private static void OnSceneSaving(UnityEngine.SceneManagement.Scene scene, string path)
 		{
-			//Trace.Script($"Saving {scene.name}");
 		}
 
 		[DidReloadScripts]

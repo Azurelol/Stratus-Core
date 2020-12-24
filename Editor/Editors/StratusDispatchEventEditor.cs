@@ -5,50 +5,50 @@ using UnityEditor;
 using System.Reflection;
 using System;
 
-namespace Stratus.Gameplay
+namespace Stratus.Editor
 {
-  [CustomEditor(typeof(StratusDispatchEvent))]
-  public class DispatchEventEditor : TriggerableEditor<StratusDispatchEvent>
-  {
-    private Stratus.StratusEvent eventObject;
-    private StratusSerializedEditorObject serializedEvent;
-    private Type type => triggerable.type.Type;
-    private SerializedProperty eventDataProperty;
+	[CustomEditor(typeof(StratusDispatchEvent))]
+	public class DispatchEventEditor : TriggerableEditor<StratusDispatchEvent>
+	{
+		private Stratus.StratusEvent eventObject;
+		private StratusSerializedEditorObject serializedEvent;
+		private Type type => triggerable.type.Type;
+		private SerializedProperty eventDataProperty;
 
-    protected override void OnTriggerableEditorEnable()
-    {
-      AddConstraint(() => triggerable.eventScope == StratusEvent.Scope.GameObject, nameof(StratusDispatchEvent.targets));
-      eventDataProperty = serializedObject.FindProperty("eventData");
-      drawGroupRequests.Add(new DrawGroupRequest(SetMembers, () => triggerable.hasType && serializedEvent != null && serializedEvent.drawer.isDrawable));
-      propertyChangeCallbacks.Add(propertyMap[nameof(StratusDispatchEvent.type)], OnEventChanged);
+		protected override void OnTriggerableEditorEnable()
+		{
+			AddConstraint(() => triggerable.eventScope == StratusEvent.Scope.GameObject, nameof(StratusDispatchEvent.targets));
+			eventDataProperty = serializedObject.FindProperty("eventData");
+			drawGroupRequests.Add(new DrawGroupRequest(SetMembers, () => triggerable.hasType && serializedEvent != null && serializedEvent.drawer.isDrawable));
+			propertyChangeCallbacks.Add(propertyMap[nameof(StratusDispatchEvent.type)], OnEventChanged);
 
-      if (triggerable.hasType)
-        OnEventChanged();
-    }
+			if (triggerable.hasType)
+				OnEventChanged();
+		}
 
-    private void SetMembers(Rect rect)
-    {
-      EditorGUILayout.Space();
-      EditorGUILayout.LabelField($"{type.Name}", EditorStyles.boldLabel);
+		private void SetMembers(Rect rect)
+		{
+			EditorGUILayout.Space();
+			EditorGUILayout.LabelField($"{type.Name}", EditorStyles.boldLabel);
 
-      if (serializedEvent.DrawEditorGUILayout())
-        serializedEvent.Serialize(target, eventDataProperty);
-    }
+			if (serializedEvent.DrawEditorGUILayout())
+				serializedEvent.Serialize(target, eventDataProperty);
+		}
 
-    private void OnEventChanged()
-    {
-      endOfFrameRequests.Add(UpdateEventObject);
-    }
+		private void OnEventChanged()
+		{
+			endOfFrameRequests.Add(UpdateEventObject);
+		}
 
-    void UpdateEventObject()
-    {
-      if (!triggerable.hasType)
-        return;
+		void UpdateEventObject()
+		{
+			if (!triggerable.hasType)
+				return;
 
-      eventObject = (Stratus.StratusEvent)Utilities.StratusReflection.Instantiate(type);
-      serializedEvent = new StratusSerializedEditorObject(eventObject);
-      serializedEvent.Deserialize(eventDataProperty);
-    }
+			eventObject = (Stratus.StratusEvent)Utilities.StratusReflection.Instantiate(type);
+			serializedEvent = new StratusSerializedEditorObject(eventObject);
+			serializedEvent.Deserialize(eventDataProperty);
+		}
 
-  }
+	}
 }

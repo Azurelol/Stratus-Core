@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+
 using UnityEditor;
 using UnityEditor.AnimatedValues;
 using UnityEditor.SceneManagement;
+
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Editor
 {
 	/// <summary>
 	/// A window for easily bookmarking frequently used objects
@@ -173,8 +175,8 @@ namespace Stratus
 						  menu.AddItem(new GUIContent("Remove"), false,
 				  () =>
 				  {
-							  this.RemoveBookmarkedScene(scene);
-						  }
+					  this.RemoveBookmarkedScene(scene);
+				  }
 				  );
 						  menu.ShowAsContext();
 					  },
@@ -182,9 +184,7 @@ namespace Stratus
 					  null,
 					  true);
 				}
-				//EditorGUILayout.EndHorizontal();
 			}
-
 		}
 
 		private void ShowSceneObjects()
@@ -207,13 +207,13 @@ namespace Stratus
 					GenericMenu menu = new GenericMenu();
 					menu.AddItem(new GUIContent("Inspect"), false, () =>
 			{
-					  MemberInspectorWindow.Inspect(bookmark.gameObject);
-				  });
+				MemberInspectorWindow.Inspect(bookmark.gameObject);
+			});
 					menu.AddItem(new GUIContent("Remove"), false,
 			  () =>
 			  {
-						DestroyImmediate(bookmark);
-					}
+				  DestroyImmediate(bookmark);
+			  }
 			  );
 					menu.ShowAsContext();
 				},
@@ -251,24 +251,24 @@ namespace Stratus
 				{
 					GenericMenu menu = new GenericMenu();
 
-			// If it's a prefab, instantiate
-			if (PrefabUtility.GetPrefabType(currentObject) != PrefabType.None)
+					// If it's a prefab, instantiate
+					if (PrefabUtility.GetPrefabType(currentObject) != PrefabType.None)
 					{
 						menu.AddItem(new GUIContent("Instantiate"), false, () =>
 				{
-						GameObject instantiated = (GameObject)GameObject.Instantiate(currentObject);
-						instantiated.name = currentObject.name;
-					});
+					GameObject instantiated = (GameObject)GameObject.Instantiate(currentObject);
+					instantiated.name = currentObject.name;
+				});
 					}
 
-			// Remove
-			menu.AddItem(new GUIContent("Remove"), false,
-			  () =>
-			  {
-						bookmarks.projectBookmarks.Remove(currentObject);
-						this.OnChange();
-					}
-			  );
+					// Remove
+					menu.AddItem(new GUIContent("Remove"), false,
+					  () =>
+					  {
+						  bookmarks.projectBookmarks.Remove(currentObject);
+						  this.OnChange();
+					  }
+					  );
 					menu.ShowAsContext();
 				},
 				null);

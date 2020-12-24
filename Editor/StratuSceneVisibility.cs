@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace Stratus
+namespace Stratus.Editor
 {
 	[InitializeOnLoad]
 	public static class StratuSceneVisibility
@@ -39,7 +39,7 @@ namespace Stratus
 		}
 
 		private static void OnSelectionChanged()
-		{			
+		{
 			if (!enabled)
 			{
 				return;

@@ -4,8 +4,11 @@ using UnityEditor;
 using UnityEditor.AnimatedValues;
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Editor
 {
+	/// <summary>
+	/// Base class for editor windows used by the Stratus Framework
+	/// </summary>
 	public abstract class StratusEditorWindow : EditorWindow
 	{
 		//------------------------------------------------------------------------/
@@ -16,6 +19,9 @@ namespace Stratus
 		protected StratusSerializedPropertyMap serializedPropertyMap { get; set; }
 	}
 
+	/// <summary>
+	/// Base (singleton) class for editor windows used by the Stratus Framework
+	/// </summary>
 	public abstract class StratusEditorWindow<T> : StratusEditorWindow where T : EditorWindow
 	{
 		//------------------------------------------------------------------------/
@@ -77,7 +83,6 @@ namespace Stratus
 			return null;
 		}
 
-
 		//------------------------------------------------------------------------/
 		// Messages
 		//------------------------------------------------------------------------/
@@ -100,11 +105,9 @@ namespace Stratus
 
 		private void OnGUI()
 		{
-			//StratusGUIStyles.OverrideDefaultFont();
 			EditorGUILayout.Space();
 			this.menuBarDrawer?.Draw(this.currentPosition);
 			this.OnWindowGUI();
-			//StratusGUIStyles.RevertDefaultFont();
 		}
 
 		private void Update()
@@ -123,7 +126,7 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		// Methods: Static
 		//------------------------------------------------------------------------/    
-		public static void OnOpen(string title = null, bool utility = false)
+		protected static void OpenWindow(string title = null, bool utility = false)
 		{
 			Type type = typeof(T);
 			title = title != null ? title : type.Name;
@@ -197,15 +200,8 @@ namespace Stratus
 				this.objectEditors.Add(target, editor);
 
 			}
-			//Editor editor = this.objectEditors.GetValueOrAdd(target, (t) => Editor.CreateEditor(target));
 
 			this.objectEditors[target].OnInspectorGUI();
-			//editor.draw
-			//StratusSerializedPropertyMap so = this.inspectedObjects.GetValueOrAdd(target, (t) => new StratusSerializedPropertyMap(t));
-			//StratusSerializedPropertyMap so = this.inspectedObjects[target];
-			//StratusEditor editor = this.objectEditors[target];
-			//editor.OnInspectorGUI();
-			//this.InspectProperties(label, so.properties);
 		}
 
 		protected bool InspectObjectFieldWithHeader<T>(ref T objectField, string label) where T : UnityEngine.Object
@@ -217,10 +213,6 @@ namespace Stratus
 			}
 			return changed;
 		}
-
-		//protected bool InspectObjectFieldWithEditor<T>(ref T objectField, string label)
-		//{
-		//}
 
 		//------------------------------------------------------------------------/
 		// Methods: Setup

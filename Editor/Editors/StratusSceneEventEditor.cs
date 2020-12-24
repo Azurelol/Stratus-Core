@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace Stratus.Gameplay
+namespace Stratus.Editor
 {
 	[CustomEditor(typeof(StratusSceneEvent))]
 	public class SceneEventEditor : TriggerableEditor<StratusSceneEvent>

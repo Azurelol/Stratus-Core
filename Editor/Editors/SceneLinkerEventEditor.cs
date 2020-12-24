@@ -2,90 +2,70 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
-//using Stratus.Experimental;
 using System;
 
-namespace Stratus.Gameplay
+namespace Stratus.Editor
 {
-  [CustomEditor(typeof(SceneLinkerEvent))]
-  public class SceneLinkerEventEditor : TriggerableEditor<SceneLinkerEvent>
-  {
-    //private Vector2 poolScrollPos;
+	[CustomEditor(typeof(SceneLinkerEvent))]
+	public class SceneLinkerEventEditor : TriggerableEditor<SceneLinkerEvent>
+	{
+		protected override void OnTriggerableEditorEnable()
+		{
+			propertyConstraints.Add(propertyMap["selectedScenes"], False);
+			drawGroupRequests.Add(new DrawGroupRequest(SelectScenes, () => { return triggerable.scenePool != null; }));
+		}
 
-    protected override void OnTriggerableEditorEnable()
-    {
-      propertyConstraints.Add(propertyMap["selectedScenes"], False);
-      drawGroupRequests.Add(new DrawGroupRequest(SelectScenes, ()=> { return triggerable.scenePool != null; }));
-    }
+		private string GetName(StratusSceneField sceneField) => sceneField.name;
 
-    //public override void OnInspectorGUI()
-    //{
-    //  base.OnInspectorGUI();
-    //  if (link.scenePool == null)
-    //    return;
-    //  SelectScenes();
-    //
-    //  if (GUI.changed)
-    //  {
-    //    EditorUtility.SetDirty(link);
-    //    AssetDatabase.SaveAssets();
-    //  }
-    //
-    //}
+		private void SelectScenes2(Rect rect)
+		{
+			EditorGUILayout.BeginHorizontal();
+			{
+				EditorGUILayout.BeginVertical();
+				{
+					EditorGUILayout.LabelField("Available", EditorStyles.centeredGreyMiniLabel);
+					foreach (var scene in triggerable.scenePool.scenes)
+					{
+						var matchingScene = triggerable.selectedScenes.Find(x => x.name == scene.name);
+						if (matchingScene != null)
+							continue;
 
-    private string GetName(StratusSceneField sceneField) => sceneField.name;
+						if (GUILayout.Button(scene.name, EditorStyles.miniButton))
+						{
+							triggerable.selectedScenes.Add(scene);
+						}
+					}
+				}
+				//EditorGUILayout.EndScrollView();
+				EditorGUILayout.EndVertical();
 
-    private void SelectScenes2(Rect rect)
-    {
-      EditorGUILayout.BeginHorizontal();
-      {
-        // Pool
-        //poolScrollPos = EditorGUILayout.BeginScrollView(poolScrollPos);
-        EditorGUILayout.BeginVertical();
-        {
-          EditorGUILayout.LabelField("Available", EditorStyles.centeredGreyMiniLabel);
-          foreach (var scene in triggerable.scenePool.scenes)
-          {
-            var matchingScene = triggerable.selectedScenes.Find(x => x.name == scene.name);
-            if (matchingScene != null)
-              continue;
+				// Selected scenes
+				EditorGUILayout.BeginVertical();
+				{
+					EditorGUILayout.LabelField("Selected", EditorStyles.centeredGreyMiniLabel);
+					int indexToRemove = -1;
+					for (int i = 0; i < triggerable.selectedScenes.Count; ++i)
+					{
+						var scene = triggerable.selectedScenes[i];
+						if (GUILayout.Button(scene.name, EditorStyles.miniButton))
+						{
+							indexToRemove = i;
+						}
+					}
+					if (indexToRemove > -1)
+						triggerable.selectedScenes.RemoveAt(indexToRemove);
+				}
+				EditorGUILayout.EndVertical();
+			}
+			EditorGUILayout.EndHorizontal();
+		}
 
-            if (GUILayout.Button(scene.name, EditorStyles.miniButton))
-            {
-              triggerable.selectedScenes.Add(scene);
-            }
-          }
-        }
-        //EditorGUILayout.EndScrollView();
-        EditorGUILayout.EndVertical();
-
-        // Selected scenes
-        EditorGUILayout.BeginVertical();
-        {
-          EditorGUILayout.LabelField("Selected", EditorStyles.centeredGreyMiniLabel);
-          int indexToRemove = -1;
-          for (int i = 0; i < triggerable.selectedScenes.Count; ++i)
-          {
-            var scene = triggerable.selectedScenes[i];
-            if (GUILayout.Button(scene.name, EditorStyles.miniButton))
-            {
-              indexToRemove = i;
-            }
-          }
-          if (indexToRemove > -1)
-            triggerable.selectedScenes.RemoveAt(indexToRemove);
-        }
-        EditorGUILayout.EndVertical();
-      }
-      EditorGUILayout.EndHorizontal();
-    }
-
-    private void SelectScenes(Rect rect)
-    {
-      StratusEditorUtility.SelectSubset(triggerable.scenePool.scenes, triggerable.selectedScenes, GetName);      
-    }
+		private void SelectScenes(Rect rect)
+		{
+			StratusEditorUtility.SelectSubset(triggerable.scenePool.scenes, triggerable.selectedScenes, GetName);
+		}
 
 
-  }
+	}
 }
 

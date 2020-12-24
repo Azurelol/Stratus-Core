@@ -1,11 +1,14 @@
 #define STRATUS_CORE
 
 using System.Collections.Generic;
+
 using Stratus.OdinSerializer;
+
 using UnityEditor;
+
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Editor
 {
 	/// <summary>
 	/// The main data asset containing all the saved settings present among the Stratus framework's utilities
@@ -100,7 +103,6 @@ namespace Stratus
 			if (propertyMap == null)
 			{
 				propertyMap = new StratusSerializedPropertyMap(instance);
-				//StratusDebug.Log($"Instanced");
 			}
 
 			// First parameter is the path in the Settings window.

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-namespace Stratus.Gameplay
+namespace Stratus
 {
 	public class StratusMaterialEvent : StratusTriggerable
 	{

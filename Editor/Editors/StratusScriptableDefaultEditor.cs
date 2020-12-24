@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace Stratus
+namespace Stratus.Editor
 {
 	[CanEditMultipleObjects]
-	[CustomEditor(typeof(StratusScriptable), true)] 
+	[CustomEditor(typeof(StratusScriptable), true)]
 	public class StratusScriptableDefaultEditor : StratusScriptableEditor<StratusScriptable>
 	{
 		protected override void OnStratusEditorEnable()

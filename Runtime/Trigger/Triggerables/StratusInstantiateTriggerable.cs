@@ -2,7 +2,7 @@ using UnityEngine;
 using Stratus;
 using System.Collections.Generic;
 
-namespace Stratus.Gameplay
+namespace Stratus
 {
 	/// <summary>
 	/// Instantiates a prefab when triggered
