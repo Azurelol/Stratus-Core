@@ -7,9 +7,9 @@ using UnityEngine;
 namespace Stratus
 {
 	/// <summary>
-	/// Triggers another event dispatcher
+	/// When triggered, itself triggers another <see cref="StratusTriggerable"/>
 	/// </summary>
-	public class StratusTriggerAnotherEvent : StratusTriggerable
+	public class StratusTriggerableProxy : StratusTriggerable
 	{
 		[Header("Targeting")]
 		[Tooltip("What component to send the trigger event to")]

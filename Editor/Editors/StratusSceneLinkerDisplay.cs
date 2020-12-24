@@ -7,14 +7,14 @@ using UnityEngine;
 namespace Stratus.Editor
 {
 	[LayoutViewDisplayAttribute("Scene Linker", 225f, 200f, StratusGUI.Anchor.TopLeft, StratusGUI.Dimensions.Absolute)]
-	public class StratusSceneLinkerDisplay : SingletonSceneViewDisplay<SceneLinker>
+	public class StratusSceneLinkerDisplay : SingletonSceneViewDisplay<StratusSceneLinker>
 	{
 		private Vector2 displayScrollPosition { get; set; } = Vector2.zero;
 		private float displayOpenButtonWidth => 50f;
 		private Color displayLinksColor => Color.yellow;
 		private Color displayBoundariesColor => Color.gray;
 
-		private SceneLinkerEvent[] sceneLinks;
+		private StratusSceneLinkTriggerable[] sceneLinks;
 		private Bounds[] sceneBoundaries;
 
 		protected override bool isValid
@@ -27,7 +27,7 @@ namespace Stratus.Editor
 
 		protected override void OnInitializeSingletonState()
 		{
-			this.sceneLinks = StratusScene.GetComponentsInAllActiveScenes<SceneLinkerEvent>();
+			this.sceneLinks = StratusScene.GetComponentsInAllActiveScenes<StratusSceneLinkTriggerable>();
 			int numScenes = StratusScene.activeScenes.Length;
 			this.sceneBoundaries = new Bounds[numScenes];
 			for (int i = 0; i < numScenes; ++i)
@@ -71,8 +71,8 @@ namespace Stratus.Editor
 
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("Scenes:");
-			if (GUILayout.Button("Open All")) SceneLinker.OpenAll();
-			if (GUILayout.Button("Close All")) SceneLinker.CloseAll();
+			if (GUILayout.Button("Open All")) StratusSceneLinker.OpenAll();
+			if (GUILayout.Button("Close All")) StratusSceneLinker.CloseAll();
 			GUILayout.EndHorizontal();
 			GUILayout.Space(2.5f);
 

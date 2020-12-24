@@ -7,8 +7,8 @@ using System;
 
 namespace Stratus.Editor
 {
-	[CustomEditor(typeof(StratusDispatchEvent))]
-	public class DispatchEventEditor : TriggerableEditor<StratusDispatchEvent>
+	[CustomEditor(typeof(StratusDispatchEventTriggerable))]
+	public class DispatchEventEditor : TriggerableEditor<StratusDispatchEventTriggerable>
 	{
 		private Stratus.StratusEvent eventObject;
 		private StratusSerializedEditorObject serializedEvent;
@@ -17,10 +17,10 @@ namespace Stratus.Editor
 
 		protected override void OnTriggerableEditorEnable()
 		{
-			AddConstraint(() => triggerable.eventScope == StratusEvent.Scope.GameObject, nameof(StratusDispatchEvent.targets));
+			AddConstraint(() => triggerable.eventScope == StratusEvent.Scope.GameObject, nameof(StratusDispatchEventTriggerable.targets));
 			eventDataProperty = serializedObject.FindProperty("eventData");
 			drawGroupRequests.Add(new DrawGroupRequest(SetMembers, () => triggerable.hasType && serializedEvent != null && serializedEvent.drawer.isDrawable));
-			propertyChangeCallbacks.Add(propertyMap[nameof(StratusDispatchEvent.type)], OnEventChanged);
+			propertyChangeCallbacks.Add(propertyMap[nameof(StratusDispatchEventTriggerable.type)], OnEventChanged);
 
 			if (triggerable.hasType)
 				OnEventChanged();

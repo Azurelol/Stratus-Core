@@ -1,12 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Stratus
 {
-	public class StratusSceneEvent : StratusTriggerable
+	public class StratusSceneTriggerable : StratusTriggerable
 	{
 		public enum Type
 		{

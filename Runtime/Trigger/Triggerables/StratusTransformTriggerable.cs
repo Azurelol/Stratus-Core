@@ -5,9 +5,9 @@ using System.Collections;
 namespace Stratus
 {
 	/// <summary>
-	/// Provides common operations on a Transform
+	/// Provides common operations on a <seealso cref="Transform"/>
 	/// </summary>
-	public class StratusTransformEvent : StratusTriggerable, StratusTriggerBase.Restartable
+	public class StratusTransformTriggerable : StratusTriggerable, StratusTriggerBase.Restartable
 	{
 		public enum ValueType
 		{
@@ -48,8 +48,6 @@ namespace Stratus
 		[Tooltip("The transform whose values we are using for the operation")]
 		[DrawIf("valueType", ValueType.Mirror, ComparisonType.Equals)]
 		public Transform source;
-		//[DrawIf("eventType", EventType.Scale, ComparisonType.Equals)]    
-		//public float scalar = 0f;
 
 		// Options
 		[DrawIf("eventType", EventType.RotateAround, ComparisonType.Equals)]
@@ -64,11 +62,9 @@ namespace Stratus
 		[DrawIf("valueType", ValueType.Mirror, ComparisonType.NotEqual)]
 		public bool offset = false;
 
-
 		//--------------------------------------------------------------------------------------------/
 		// Properties
 		//--------------------------------------------------------------------------------------------/
-		public Vector3 currentValue => offset ? value + previousValue : value;
 		public Vector3 previousValue { get; private set; }
 		private StratusActionSet currentAction { get; set; }
 		private IEnumerator currentCoroutine { get; set; }
@@ -98,13 +94,12 @@ namespace Stratus
 
 		protected override void OnTrigger()
 		{
-			Apply(this.value);
+			Apply(value, true);
 		}
 
 		public void OnRestart()
 		{
 			Cancel();
-			//Revert();
 		}
 
 		//--------------------------------------------------------------------------------------------/
@@ -113,12 +108,9 @@ namespace Stratus
 		/// <summary>
 		/// Interpolates to the specified transformation.
 		/// </summary>
-		public void Apply(Vector3 value)
+		public void Apply(Vector3 value, bool applyOffset)
 		{
 			currentAction = StratusActions.Sequence(this);
-
-			if (debug)
-				StratusDebug.Log($"The {eventType} operation was applied on {target.name}", this);
 
 			switch (eventType)
 			{
@@ -129,21 +121,20 @@ namespace Stratus
 						if (local)
 						{
 							previousValue = target.localPosition;
-							currentCoroutine = StratusRoutines.Interpolate(previousValue, currentValue, duration, (Vector3 val) => { target.localPosition = val; }, ease);
-							//Actions.Property(currentAction, () => target.localPosition, currentValue, this.duration, this.ease);
+							if (applyOffset) value += previousValue;
+							currentCoroutine = StratusRoutines.Interpolate(previousValue, value, duration, (Vector3 val) => { target.localPosition = val; }, ease);
 						}
 						else
 						{
 							previousValue = target.position;
-							currentCoroutine = StratusRoutines.Interpolate(previousValue, currentValue, duration, (Vector3 val) => { target.position = val; }, ease);
-							//Actions.Property(currentAction, () => target.position, currentValue, this.duration, this.ease);
+							if (applyOffset) value += previousValue;
+							currentCoroutine = StratusRoutines.Interpolate(previousValue, value, duration, (Vector3 val) => { target.position = val; }, ease);
 						}
 					}
 					else if (valueType == ValueType.Mirror)
 					{
 						previousValue = target.position;
 						currentCoroutine = StratusRoutines.Interpolate(previousValue, source.position, duration, (Vector3 val) => { target.position = val; }, ease);
-						//Actions.Property(currentAction, () => target.position, source.position, this.duration, this.ease);
 					}
 					target.StartCoroutine(currentCoroutine, transformationType);
 					break;
@@ -151,25 +142,25 @@ namespace Stratus
 				case EventType.Rotate:
 					transformationType = TransformationType.Rotate;
 					previousValue = target.rotation.eulerAngles;
-					currentCoroutine = StratusRoutines.Rotate(target, isMirror ? source.rotation.eulerAngles : currentValue, duration);
+					if (applyOffset) value += previousValue;
+					currentCoroutine = StratusRoutines.Rotate(target, isMirror ? source.rotation.eulerAngles : value, duration);
 					target.StartCoroutine(currentCoroutine, transformationType);
-					//Actions.Property(currentAction, () => target.rotation.eulerAngles, isMirror ? source.localRotation.eulerAngles : currentValue, this.duration, this.ease);
 					break;
 
 				case EventType.RotateAround:
 					transformationType = TransformationType.Translate | TransformationType.Rotate;
 					previousValue = target.rotation.eulerAngles;
-					currentCoroutine = StratusRoutines.RotateAround(target, isMirror ? source.position : currentValue, axis, angleAroundTarget, duration);
+					if (applyOffset) value += previousValue;
+					currentCoroutine = StratusRoutines.RotateAround(target, isMirror ? source.position : value, axis, angleAroundTarget, duration);
 					target.StartCoroutine(currentCoroutine, transformationType);
 					break;
 
 				case EventType.Scale:
-					previousValue = target.localScale;
 					transformationType = TransformationType.Scale;
-					currentCoroutine = StratusRoutines.Interpolate(previousValue, isMirror ? source.localScale : currentValue, duration, (Vector3 val) => { target.localScale = val; }, ease); ;
-					//Routines.Scale(target, isMirror ? source.localScale : currentValue, this.duration);
+					previousValue = target.localScale;
+					if (applyOffset) value += previousValue;
+					currentCoroutine = StratusRoutines.Interpolate(previousValue, isMirror ? source.localScale : value, duration, (Vector3 val) => { target.localScale = val; }, ease);
 					target.StartCoroutine(currentCoroutine, transformationType);
-					//Actions.Property(currentAction, () => target.localScale, isMirror ? source.localScale : currentValue, this.duration, this.ease);
 					break;
 
 				case EventType.Parent:
@@ -202,7 +193,7 @@ namespace Stratus
 		/// </summary>
 		public void Revert()
 		{
-			this.Apply(this.previousValue);
+			this.Apply(this.previousValue, false);
 		}
 
 

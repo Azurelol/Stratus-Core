@@ -94,7 +94,7 @@ namespace Stratus
 		/// <summary>
 		/// Logs the given message of the given type to the console
 		/// </summary>
-		public static void Log(object message, LogType logType, object source = null, int frame = 1)
+		public static void Log(LogType logType, object message, object source = null, int frame = 1)
 		{
 			if (!logging || isPlayer)
 			{
@@ -153,7 +153,7 @@ namespace Stratus
 		/// <param name="color">The color of the message</param>
 		public static void Log(object message, object source = null, int frame = 1)
 		{
-			Log(message, LogType.Log, source, frame + 1);
+			Log(LogType.Log, message, source, frame + 1);
 		}
 
 		/// <summary>
@@ -181,7 +181,7 @@ namespace Stratus
 		/// <param name="color">The color of the message</param>
 		public static void LogWarning(object message, object source = null, int frame = 1)
 		{
-			Log(message, LogType.Warning, source, frame + 1);
+			Log(LogType.Warning, message, source, frame + 1);
 		}
 
 		/// <summary>
@@ -193,7 +193,7 @@ namespace Stratus
 		/// <param name="throwException">Whether to throw an exception.</param>
 		public static void LogError(object message, object source = null, int frame = 1)
 		{
-			Log(message, LogType.Error, source, frame + 1);
+			Log(LogType.Error, message, source, frame + 1);
 		}
 
 		public static void LogErrorBreak(object message, object source = null, int frame = 1)

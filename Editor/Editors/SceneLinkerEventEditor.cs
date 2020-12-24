@@ -6,8 +6,8 @@ using System;
 
 namespace Stratus.Editor
 {
-	[CustomEditor(typeof(SceneLinkerEvent))]
-	public class SceneLinkerEventEditor : TriggerableEditor<SceneLinkerEvent>
+	[CustomEditor(typeof(StratusSceneLinkTriggerable))]
+	public class SceneLinkerEventEditor : TriggerableEditor<StratusSceneLinkTriggerable>
 	{
 		protected override void OnTriggerableEditorEnable()
 		{

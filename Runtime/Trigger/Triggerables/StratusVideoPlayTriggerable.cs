@@ -10,7 +10,7 @@ namespace Stratus
 	/// <summary>
 	/// Plays a video on the specified RawImage using the VideoPlayer
 	/// </summary>
-	public class StratusVideoEvent : StratusTriggerable
+	public class StratusVideoPlayTriggerable : StratusTriggerable
 	{
 		[Header("Output")]
 		[Tooltip("Where the image will be displayed as a raw texture")]
@@ -23,19 +23,26 @@ namespace Stratus
 		[Tooltip("Number of bits in the depth buffer")]
 		public int depth = 16;
 		public RenderTextureFormat format = RenderTextureFormat.ARGB32;
+		public bool prepareOnAwake = false;
 
 		protected override void OnAwake()
 		{
+			if (prepareOnAwake)
+			{
+				PrepareVideo();
+			}
 		}
 
 		protected override void OnReset()
 		{
-
 		}
 
 		protected override void OnTrigger()
 		{
-			PrepareVideo();
+			if (!prepareOnAwake)
+			{
+				PrepareVideo();
+			}
 			PlayVideo();
 		}
 
@@ -44,6 +51,8 @@ namespace Stratus
 			if (debug)
 				StratusDebug.Log($"Now playing {clip.name}", this);
 
+			// Set the target audio source
+			videoPlayer.SetTargetAudioSource(0, audioSource);
 			// Set the clip
 			videoPlayer.clip = clip;
 
@@ -61,7 +70,6 @@ namespace Stratus
 			// Output the texture
 			target.texture = renderTexture;
 
-			videoPlayer.SetTargetAudioSource(0, audioSource);
 		}
 
 		private void PlayVideo()

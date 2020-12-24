@@ -1,32 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 namespace Stratus
 {
-	public class StratusMaterialEvent : StratusTriggerable
+	/// <summary>
+	/// Modifies a <see cref="Material"/> at runtime
+	/// </summary>
+	public class StratusMaterialPropertyTriggerable : StratusTriggerable
 	{
-		public enum Type
+		public enum PropertyType
 		{
-			[Tooltip("The main material's color")]
-			Color,
 			SetColor,
 			SetFloat,
 			SetInteger,
 			SetTexture,
-			[Tooltip("Interpolates properties between materials")]
-			Lerp = 16
+			SetMaterial
 		}
 
 		public Material material;
-		public Type type;
+		public PropertyType type;
 		public string propertyName;
+		[DrawIf(nameof(type), PropertyType.SetFloat, ComparisonType.Equals)] 
 		public float floatValue;
+		[DrawIf(nameof(type), PropertyType.SetInteger, ComparisonType.Equals)]
 		public int integerValue;
+		[DrawIf(nameof(type), PropertyType.SetColor, ComparisonType.Equals)]
 		public Color color = Color.white;
+		[DrawIf(nameof(type), PropertyType.SetTexture, ComparisonType.Equals)]
 		public Texture texture;
+		[DrawIf(nameof(type), PropertyType.SetMaterial, ComparisonType.Equals)]
 		public Material material2;
+
 		public float duration = 1.0f;
 
 		private Material originalMaterial;
@@ -48,7 +53,9 @@ namespace Stratus
 			// This is so that we can ensure that we restore the material?
 			bool hasBeenRestored = restoredMaterials.ContainsKey(material.name);
 			if (hasBeenRestored)
+			{
 				return;
+			}
 
 			// Restore the original material
 			material.CopyPropertiesFromMaterial(originalMaterial);
@@ -57,30 +64,29 @@ namespace Stratus
 
 		protected override void OnTrigger()
 		{
-
 			IEnumerator routine = null;
 			switch (type)
 			{
-				case Type.Color:
+				case PropertyType.SetColor:
 					routine = StratusRoutines.Lerp(material.color, color, duration, (Color val) => { material.color = val; }, Color.Lerp);
 					break;
-				case Type.SetFloat:
+				case PropertyType.SetFloat:
 					routine = StratusRoutines.Lerp(material.GetFloat(propertyName), floatValue, duration, (float val) => { material.SetFloat(propertyName, val); }, StratusRoutines.Lerp);
 					break;
-				case Type.SetInteger:
+				case PropertyType.SetInteger:
 					routine = StratusRoutines.Lerp(material.GetInt(propertyName), integerValue, duration, (float val) => { material.SetInt(propertyName, Mathf.CeilToInt(val)); }, StratusRoutines.Lerp);
 					break;
-				case Type.SetTexture:
+				case PropertyType.SetTexture:
 					routine = StratusRoutines.Call(() => { material.SetTexture(propertyName, texture); }, duration);
 					break;
-				case Type.Lerp:
+				case PropertyType.SetMaterial:
 					routine = StratusRoutines.Lerp((float t) => { material.Lerp(material, material2, t); }, duration);
 					break;
 				default:
 					break;
 			}
 
-			this.StartCoroutine(routine, "Interpolate");
+			this.StartCoroutine(routine, nameof(StratusMaterialPropertyTriggerable));
 		}
 	}
 

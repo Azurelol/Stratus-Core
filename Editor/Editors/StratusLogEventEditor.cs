@@ -2,8 +2,8 @@ using UnityEditor;
 
 namespace Stratus.Editor
 {
-	[CustomEditor(typeof(StratusLogEvent))]
-	public class LogEventEditor : TriggerableEditor<StratusLogEvent>
+	[CustomEditor(typeof(StratusLogTriggerable))]
+	public class LogEventEditor : TriggerableEditor<StratusLogTriggerable>
 	{
 		protected override void OnTriggerableEditorEnable()
 		{

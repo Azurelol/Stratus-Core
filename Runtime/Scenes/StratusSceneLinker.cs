@@ -8,13 +8,13 @@ namespace Stratus
 	/// unloading them as need fit.
 	/// </summary>
 	[StratusSingleton("Scene Linker", true, false)]
-	public class SceneLinker : StratusSingletonBehaviour<SceneLinker>
+	public class StratusSceneLinker : StratusSingletonBehaviour<StratusSceneLinker>
 	{
 		//----------------------------------------------------------------------/
 		// Fields
 		//----------------------------------------------------------------------/
 		[Tooltip("The pool of scenes being used in the project")]
-		public ScenePool scenePool;
+		public StratusScenePool scenePool;
 		public StratusSceneField[] scenes => scenePool.scenes;
 		[Tooltip("Whether to show a debug display in the editor's scene view")]
 		public bool showDisplay = true;

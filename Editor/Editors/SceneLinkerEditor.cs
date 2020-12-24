@@ -2,8 +2,8 @@ using UnityEditor;
 
 namespace Stratus.Editor
 {
-	[CustomEditor(typeof(SceneLinker))]
-  public class SceneLinkerEditor : StratusBehaviourEditor<SceneLinker>
+	[CustomEditor(typeof(StratusSceneLinker))]
+  public class SceneLinkerEditor : StratusBehaviourEditor<StratusSceneLinker>
   {
     protected override void OnStratusEditorEnable()
     {

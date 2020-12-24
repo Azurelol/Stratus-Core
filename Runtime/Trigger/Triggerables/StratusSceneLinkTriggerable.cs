@@ -9,13 +9,13 @@ namespace Stratus
 	/// <summary>
 	/// When triggered, makes sure the selected scenes are loaded
 	/// </summary>
-	public class SceneLinkerEvent : StratusTriggerable
+	public class StratusSceneLinkTriggerable : StratusTriggerable
 	{
 		//----------------------------------------------------------------------/
 		// Fields
 		//----------------------------------------------------------------------/
 		[Tooltip("What pool of scenes are being considered by this link")]
-		public ScenePool scenePool;
+		public StratusScenePool scenePool;
 
 		[Tooltip("What scenes should be loaded when this link is triggered.")]
 		[HideInInspector]
@@ -27,23 +27,23 @@ namespace Stratus
 		/// <summary>
 		/// The last link visited
 		/// </summary>
-		public static SceneLinkerEvent lastVisited { private set; get; }
+		public static StratusSceneLinkTriggerable lastVisited { private set; get; }
 		/// <summary>
 		/// All currently enabled links
 		/// </summary>
-		public static SceneLinkerEvent[] activeLinks => activeLinksList.ToArray();
+		public static StratusSceneLinkTriggerable[] activeLinks => activeLinksList.ToArray();
 
 		//----------------------------------------------------------------------/
 		// Fields: Private
 		//----------------------------------------------------------------------/
-		private static List<SceneLinkerEvent> activeLinksList = new List<SceneLinkerEvent>();
+		private static List<StratusSceneLinkTriggerable> activeLinksList = new List<StratusSceneLinkTriggerable>();
 
 		//----------------------------------------------------------------------/
 		// Messages
 		//----------------------------------------------------------------------/
 		protected override void OnAwake()
 		{
-			if (SceneLinker.instance == null)
+			if (StratusSceneLinker.instance == null)
 				throw new Exception($"No SceneLinker is available!");
 		}
 

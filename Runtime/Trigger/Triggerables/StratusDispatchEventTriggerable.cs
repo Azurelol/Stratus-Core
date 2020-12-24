@@ -6,7 +6,7 @@ using System;
 
 namespace Stratus
 {
-	public class StratusDispatchEvent : StratusTriggerable
+	public class StratusDispatchEventTriggerable : StratusTriggerable
 	{
 		//------------------------------------------------------------------------/
 		// Fields
@@ -14,7 +14,7 @@ namespace Stratus
 		[Header("Event")]
 		[Tooltip("The scope of the event")]
 		public StratusEvent.Scope eventScope;
-		[DrawIf(nameof(StratusDispatchEvent.eventScope), StratusEvent.Scope.GameObject, ComparisonType.Equals)]
+		[DrawIf(nameof(StratusDispatchEventTriggerable.eventScope), StratusEvent.Scope.GameObject, ComparisonType.Equals)]
 		[Tooltip("The GameObjects which we want to dispatch the event to")]
 		public List<GameObject> targets = new List<GameObject>();
 		[ClassExtends(typeof(Stratus.StratusEvent), Grouping = ClassGrouping.ByNamespace)]

@@ -6,7 +6,10 @@ using UnityEngine.Serialization;
 
 namespace Stratus
 {
-	public class StratusAnimatorEvent : StratusTriggerable
+	/// <summary>
+	/// Sets an <see cref="Animator"/>'s parameter
+	/// </summary>
+	public class StratusAnimatorParameterTriggerable : StratusTriggerable
 	{
 		[FormerlySerializedAs("Animator")]
 		public Animator animator;
@@ -25,12 +28,10 @@ namespace Stratus
 
 		protected override void OnAwake()
 		{
-
 		}
 
 		protected override void OnReset()
 		{
-
 		}
 
 		protected override void OnTrigger()
