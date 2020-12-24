@@ -204,7 +204,7 @@ namespace Stratus
 		/// </summary>
 		/// <param name="onLoad"></param>
 		/// <returns></returns>
-		public virtual StratusValidation Load()
+		public virtual StratusOperationResult Load()
 		{
 			return true;
 		}
@@ -213,7 +213,7 @@ namespace Stratus
 		/// Loads this save asynchronously, invoking the given action afterwards.
 		/// </summary>
 		/// <param name="onLoad"></param>
-		public virtual StratusValidation LoadAsync(Action onLoad)
+		public virtual StratusOperationResult LoadAsync(Action onLoad)
 		{
 			onLoad?.Invoke();
 			return true;
@@ -401,12 +401,12 @@ namespace Stratus
 			}
 		}
 
-		public override StratusValidation Load()
+		public override StratusOperationResult Load()
 		{
 			return LoadData();
 		}
 
-		public override StratusValidation LoadAsync(Action onLoad)
+		public override StratusOperationResult LoadAsync(Action onLoad)
 		{
 			return LoadDataAsync(onLoad);
 		}
@@ -430,16 +430,16 @@ namespace Stratus
 			this.data = data;
 		}
 
-		public StratusValidation LoadData()
+		public StratusOperationResult LoadData()
 		{
 			if (dataLoaded)
 			{
-				return new StratusValidation(true, "Data already loaded");
+				return new StratusOperationResult(true, "Data already loaded");
 			}
 
 			if (!serialized)
 			{
-				return new StratusValidation(false, "Cannot load data before the save has been serialized");
+				return new StratusOperationResult(false, "Cannot load data before the save has been serialized");
 			}
 
 			try
@@ -448,22 +448,22 @@ namespace Stratus
 			}
 			catch (Exception e)
 			{
-				return new StratusValidation(false, e.ToString());
+				return new StratusOperationResult(false, e.ToString());
 			}
 
 			if (data == null)
 			{
-				return new StratusValidation(false, $"Failed to deserialize data from {dataFilePath}");
+				return new StratusOperationResult(false, $"Failed to deserialize data from {dataFilePath}");
 			}
 
-			return new StratusValidation(true, $"Loaded data file from {dataFilePath}");
+			return new StratusOperationResult(true, $"Loaded data file from {dataFilePath}");
 		}
 
-		public StratusValidation LoadDataAsync(Action onLoad)
+		public StratusOperationResult LoadDataAsync(Action onLoad)
 		{
 			if (!Application.isPlaying)
 			{
-				return new StratusValidation(false, "Cannot load data asynchronously outside of playmode...");
+				return new StratusOperationResult(false, "Cannot load data asynchronously outside of playmode...");
 			}
 
 			IEnumerator routine()
@@ -474,7 +474,7 @@ namespace Stratus
 			}
 
 			StratusCoroutineRunner.Run(routine());
-			return new StratusValidation(true, "Now loading data asynchronously...");
+			return new StratusOperationResult(true, "Now loading data asynchronously...");
 		}
 
 		public void UnloadData()

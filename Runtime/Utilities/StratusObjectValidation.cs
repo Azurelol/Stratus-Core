@@ -9,7 +9,7 @@ namespace Stratus
 	/// <summary>
 	/// A validation message for the user
 	/// </summary>
-	public class StratusObjectValidation : StratusValidation
+	public class StratusObjectValidation : StratusOperationResult
 	{
 		//------------------------------------------------------------------------/
 		// Declarations
@@ -36,7 +36,8 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		// CTOR
 		//------------------------------------------------------------------------/
-		public StratusObjectValidation(string message, Level type, UnityEngine.Object target, Func<bool> onValidate = null) : base(!string.IsNullOrEmpty(message), message)
+		public StratusObjectValidation(string message, Level type, UnityEngine.Object target, Func<bool> onValidate = null) 
+			: base(!string.IsNullOrEmpty(message), message)
 		{
 			this.type = type;
 			this.target = target;
@@ -45,7 +46,8 @@ namespace Stratus
 			hasContext = target != null || onValidate != null;
 		}
 
-		public StratusObjectValidation(string message, Level type, System.Action onSelect, Func<bool> onValidate = null) : base(!string.IsNullOrEmpty(message), message)
+		public StratusObjectValidation(string message, Level type, System.Action onSelect, Func<bool> onValidate = null) 
+			: base(!string.IsNullOrEmpty(message), message)
 		{
 			this.type = type;
 			this.target = null;
@@ -55,6 +57,7 @@ namespace Stratus
 		}
 
 		public StratusObjectValidation(Level type, UnityEngine.Object target, Func<bool> onValidate = null)
+			: base(true)
 		{
 			this.type = type;
 			this.target = target;

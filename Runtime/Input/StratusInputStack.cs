@@ -23,12 +23,12 @@ namespace Stratus
 
         public event Action<InputLayer> onInputLayerChanged;
 
-        public StratusValidation Push(InputLayer layer)
+        public StratusOperationResult Push(InputLayer layer)
         {
             return Push(layer, true);
         }
 
-        private StratusValidation Push(InputLayer layer, bool update)
+        private StratusOperationResult Push(InputLayer layer, bool update)
         {
             if (hasActiveLayers && !layer.ignoreBlocking)
             {
@@ -36,7 +36,7 @@ namespace Stratus
                 if (activeLayer.blocking)
                 {
                     _queuedLayers.Enqueue(layer);
-                    return new StratusValidation(false, $"Active layer {activeLayer.label} is blocking. Queuing...");
+                    return new StratusOperationResult(false, $"Active layer {activeLayer.label} is blocking. Queuing...");
                 }
                 activeLayer.active = false;
             }

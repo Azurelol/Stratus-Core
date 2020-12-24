@@ -101,7 +101,7 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		private void OnPushLayerEvent(StratusInputLayer.PushEvent e)
 		{
-			StratusValidation result = inputLayers.Push(e.layer);
+			StratusOperationResult result = inputLayers.Push(e.layer);
 			if (debug)
 			{
 				this.Log($"Pushed input layer: {e.layer.label}. Result ? {result}");
