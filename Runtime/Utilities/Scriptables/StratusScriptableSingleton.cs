@@ -59,7 +59,6 @@ namespace Stratus
 			}
 			OnInitialize();
 			initialized = true;
-			this.Log("Initialized");
 		}
 
 		protected abstract void OnInitialize();
