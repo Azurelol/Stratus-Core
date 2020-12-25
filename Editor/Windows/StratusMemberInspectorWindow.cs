@@ -15,7 +15,7 @@ namespace Stratus.Editor
 	/// <summary>
 	/// A window used for inspecting the members of an object at runtime
 	/// </summary>
-	public class MemberInspectorWindow : StratusEditorWindow<MemberInspectorWindow>, ISerializationCallbackReceiver
+	public class StratusMemberInspectorWindow : StratusEditorWindow<StratusMemberInspectorWindow>, ISerializationCallbackReceiver
 	{
 		//------------------------------------------------------------------------/
 		// Declarations
@@ -64,7 +64,7 @@ namespace Stratus.Editor
 		private float pollSpeed = 1f;
 
 		[SerializeField]
-		private MemberInspectorTreeView memberInspector;
+		private StratusMemberInspectorTreeView memberInspector;
 
 		[SerializeField]
 		private TreeViewState treeViewState;
@@ -102,14 +102,13 @@ namespace Stratus.Editor
 			this.CheckTarget();
 
 			// Update tree view on assembly reload
-			//this.updateTreeView = true;
 			StratusGameObjectBookmark.onUpdate += this.OnBookmarkUpdate;
 			StratusGameObjectInformation.onChanged += this.OnGameObjectInformationChanged;
 		}
 
 		protected override void OnWindowGUI()
 		{
-			StratusEditorUtility.DrawAligned(this.DrawControls, TextAlignment.Center);
+			StratusEditorGUILayout.Aligned(this.DrawControls, TextAlignment.Center);
 
 			switch (this.mode)
 			{
@@ -215,7 +214,7 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		// Methods: Static
 		//------------------------------------------------------------------------/
-		[MenuItem(StratusCore.rootFolder + displayName)]
+		[MenuItem(StratusCore.rootFolder + "Member Inspector")]
 		private static void Open() => OpenWindow(displayName);
 
 		[OnOpenAsset]
@@ -394,16 +393,16 @@ namespace Stratus.Editor
 
 		private void SetTreeView()
 		{
-			IList<MemberInspectorTreeElement> members = null;
+			IList<StratusMemberInspectorTreeElement> members = null;
 			switch (this.mode)
 			{
 				case Mode.WatchList:
-					members = MemberInspectorTreeElement.GenerateFavoritesTree();
+					members = StratusMemberInspectorTreeElement.GenerateFavoritesTree();
 					break;
 
 				case Mode.Inspector:
 					if (this.hasTarget)
-						members = MemberInspectorTreeElement.GenerateInspectorTree(this.currentTargetInformation);
+						members = StratusMemberInspectorTreeElement.GenerateInspectorTree(this.currentTargetInformation);
 					else
 						return;
 					break;
@@ -411,7 +410,7 @@ namespace Stratus.Editor
 			//this.favoritesTree = MemberInspectorTreeElement.GenerateFavoritesTree();
 			if (this.memberInspector == null)
 			{
-				this.memberInspector = new MemberInspectorTreeView(this.treeViewState, members);
+				this.memberInspector = new StratusMemberInspectorTreeView(this.treeViewState, members);
 				//Trace.Script("Created member inspector tree view");
 			}
 			else

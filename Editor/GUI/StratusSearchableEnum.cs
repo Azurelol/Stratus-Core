@@ -30,7 +30,7 @@ namespace Stratus.Editor
 		/// <param name="label"></param>
 		/// <param name="selected"></param>
 		/// <returns></returns>
-		public static void EnumPopup(Rect position, string label, Enum selected, System.Action<Enum> onSelected)
+		public static void EnumPopup(Rect position, string label, Enum selected, Action<Enum> onSelected)
 		{
 			int id = GUIUtility.GetControlID(hash, FocusType.Keyboard, position);
 
@@ -46,7 +46,7 @@ namespace Stratus.Editor
 			GUIContent enumValueContent = new GUIContent(selected.ToString());
 			if (StratusSearchablePopup.DropdownButton(id, position, enumValueContent))
 			{
-				System.Action<int> onSelectIndex = i =>
+				Action<int> onSelectIndex = i =>
 				{
 					Enum value = GetEnumValue(enumType, i);
 					StratusDebug.Log($"Selected {value}");
@@ -63,7 +63,7 @@ namespace Stratus.Editor
 		/// <param name="label"></param>
 		/// <param name="selected"></param>
 		/// <returns></returns>
-		public static void EnumPopup(Rect position, string label, Type enumType, int selectedIndex, System.Action<Enum> onSelected)
+		public static void EnumPopup(Rect position, string label, Type enumType, int selectedIndex, Action<Enum> onSelected)
 		{
 			int id = GUIUtility.GetControlID(hash, FocusType.Keyboard, position);
 
@@ -76,7 +76,7 @@ namespace Stratus.Editor
 			GUIContent enumValueContent = new GUIContent(displayedOptions[selectedIndex]);
 			if (StratusSearchablePopup.DropdownButton(id, position, enumValueContent))
 			{
-				System.Action<int> onSelect = i =>
+				Action<int> onSelect = i =>
 				{
 					Enum value = GetEnumValue(enumType, i);
 					StratusDebug.Log($"Selected {value}");
@@ -104,7 +104,7 @@ namespace Stratus.Editor
 			GUIContent enumValueContent = new GUIContent(displayedOptions[property.enumValueIndex]);
 			if (StratusSearchablePopup.DropdownButton(id, position, enumValueContent))
 			{
-				System.Action<int> onSelect = i =>
+				Action<int> onSelect = i =>
 				{
 					property.enumValueIndex = i;
 					property.serializedObject.ApplyModifiedProperties();

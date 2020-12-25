@@ -6,7 +6,7 @@ using System;
 
 namespace Stratus.Editor
 {
-	[CustomPropertyDrawer(typeof(SearchableEnumAttribute))]
+	[CustomPropertyDrawer(typeof(StratusSearchableEnumAttribute))]
 	public class SearchableEnumDrawer : PropertyDrawer
 	{
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

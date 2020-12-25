@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using Stratus.Utilities;
 using UnityEditor;
-using UnityEditor.AnimatedValues;
 using UnityEngine;
 
 namespace Stratus.Editor
@@ -15,12 +14,6 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		// Declarations
 		//------------------------------------------------------------------------/
-		public enum ContextMenuType
-		{
-			Add,
-			Validation,
-			Options
-		}
 
 		public delegate bool DefaultPropertyFieldDelegate(Rect position, SerializedProperty property, GUIContent label);
 
@@ -124,18 +117,9 @@ namespace Stratus.Editor
 			defaultPropertyField = (DefaultPropertyFieldDelegate)System.Delegate.CreateDelegate(delegateType, m);
 		}
 
-
 		public static void UseDefaultDrawer(Rect position, SerializedProperty property, GUIContent label, Type type)
 		{
-			//var drawer =  StratusScriptAttributeUtility.s_DrawerStack.Pop();
-			//EditorGUI.MultiPropertyField
-			//var drawer = StratusScriptAttributeUtility.drawerForType[type];
-			//editorGUIReflection.ToString();
 			defaultPropertyField(position, property, label);
-			//StratusSerializedPropertyHandler handler = StratusScriptAttributeUtility.GetHandler(property);
-			//EditorGUI.ProgressBar()
-			//handler.OnGUI(position, property, label, true);
-			//StratusScriptAttributeUtility.s_DrawerStack.Push(drawer);
 		}
 
 		//------------------------------------------------------------------------/
@@ -143,26 +127,23 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		public static T Instantiate<T>()
 		{
-			return Utilities.StratusReflection.Instantiate<T>();
+			return StratusReflection.Instantiate<T>();
 		}
 
 		public static object Instantiate(Type type)
 		{
-			return Utilities.StratusReflection.Instantiate(type);
+			return StratusReflection.Instantiate(type);
 		}
 
-		public static void OnMouseClick(System.Action onLeftClick, System.Action onRightClick, System.Action onDoubleClick, bool used = false)
+		public static void OnMouseClick(Action onLeftClick, Action onRightClick, Action onDoubleClick, bool used = false)
 		{
 			if (!used && !currentEvent.isMouse)
 			{
 				return;
 			}
 
-			//bool clicked = currentEvent.type == EventType.MouseUp || currentEvent.type == EventType.MouseDown;
-			//if (!clicked)
-			//  return;
-
 			int button = currentEvent.button;
+
 			// Left click
 			if (button == 0)
 			{
@@ -185,17 +166,7 @@ namespace Stratus.Editor
 			}
 		}
 
-		public static void OnMouseClick(Rect rect, System.Action onLeftClick, System.Action onRightClick, System.Action onDoubleClick = null)
-		{
-			if (!IsMousedOver(rect))
-			{
-				return;
-			}
-
-			OnMouseClick(onLeftClick, onRightClick, onDoubleClick);
-		}
-
-		public static void OnLastControlMouseClick(System.Action onLeftClick, System.Action onRightClick, System.Action onDoubleClick = null)
+		public static void OnLastControlMouseClick(Action onLeftClick, Action onRightClick, Action onDoubleClick = null)
 		{
 			if (!IsMousedOver(GUILayoutUtility.GetLastRect()))
 			{
@@ -221,7 +192,7 @@ namespace Stratus.Editor
 		/// <returns></returns>
 		public static bool IsMousedOver(Rect rect)
 		{
-			return rect.Contains(UnityEngine.Event.current.mousePosition);
+			return rect.Contains(Event.current.mousePosition);
 		}
 
 		/// <summary>
@@ -229,22 +200,32 @@ namespace Stratus.Editor
 		/// </summary>
 		/// <param name="procedure"></param>
 		/// <returns></returns>
-		public static bool CheckControlChange(System.Action procedure)
+		public static bool CheckControlChange(Action procedure)
 		{
 			EditorGUI.BeginChangeCheck();
 			procedure();
 			return EditorGUI.EndChangeCheck();
 		}
 
+		public static void OnMouseClick(Rect rect, Action onLeftClick, Action onRightClick, Action onDoubleClick = null)
+		{
+			if (!IsMousedOver(rect))
+			{
+				return;
+			}
+
+			OnMouseClick(onLeftClick, onRightClick, onDoubleClick);
+		}
+
 		/// <summary>
 		/// If a GUI control was changed, saves the state of the object
 		/// </summary>
-		/// <param name="procedure"></param>
+		/// <param name="action"></param>
 		/// <param name="obj"></param>
-		public static void SaveOnControlChange(UnityEngine.Object obj, System.Action procedure)
+		public static void SaveOnControlChange(UnityEngine.Object obj, Action action)
 		{
 			EditorGUI.BeginChangeCheck();
-			procedure();
+			action();
 			if (EditorGUI.EndChangeCheck())
 			{
 				SerializedObject serializedObject = new SerializedObject(obj);
@@ -253,94 +234,6 @@ namespace Stratus.Editor
 				UnityEditor.SceneManagement.EditorSceneManager.MarkAllScenesDirty();
 				StratusDebug.Log($"Saving change on {obj.name}");
 			}
-		}
-
-		/// <summary>
-		/// Modifies the given property on the object
-		/// </summary>
-		/// <param name="procedure"></param>
-		/// <param name="obj"></param>
-		public static bool ModifyProperty(UnityEngine.Object obj, string propertyName, params GUILayoutOption[] options)
-		{
-			SerializedObject serializedObject = new SerializedObject(obj);
-			SerializedProperty prop = serializedObject.FindProperty(propertyName);
-			EditorGUI.BeginChangeCheck();
-			EditorGUILayout.PropertyField(prop, options);
-			if (EditorGUI.EndChangeCheck())
-			{
-				serializedObject.ApplyModifiedProperties();
-				return true;
-			}
-			return false;
-		}
-
-		/// <summary>
-		/// Modifies the given property on the object
-		/// </summary>
-		/// <param name="procedure"></param>
-		/// <param name="obj"></param>
-		public static bool ModifyProperty(UnityEngine.Object obj, string propertyName, GUIContent label, params GUILayoutOption[] options)
-		{
-			SerializedObject serializedObject = new SerializedObject(obj);
-			SerializedProperty prop = serializedObject.FindProperty(propertyName);
-			EditorGUI.BeginChangeCheck();
-			EditorGUILayout.PropertyField(prop, label, options);
-			if (EditorGUI.EndChangeCheck())
-			{
-				serializedObject.ApplyModifiedProperties();
-				return true;
-			}
-			return false;
-		}
-
-		/// <summary>
-		/// Modifies all the given properties on the object
-		/// </summary>
-		/// <param name="procedure"></param>
-		/// <param name="obj"></param>
-		public static void ModifyProperties(UnityEngine.Object obj, string[] propertyNames, params GUILayoutOption[] options)
-		{
-			SerializedObject serializedObject = new SerializedObject(obj);
-			EditorGUI.BeginChangeCheck();
-			foreach (string name in propertyNames)
-			{
-				SerializedProperty prop = serializedObject.FindProperty(name);
-				EditorGUILayout.PropertyField(prop, options);
-			}
-			if (EditorGUI.EndChangeCheck())
-			{
-				serializedObject.ApplyModifiedProperties();
-			}
-		}
-
-		/// <summary>
-		/// If a GUI control was changed, saves the state of the object
-		/// </summary>
-		/// <param name="procedure"></param>
-		/// <param name="obj"></param>
-		public static bool Toggle(UnityEngine.Object obj, string propertyName, string label = null)
-		{
-			SerializedObject serializedObject = new SerializedObject(obj);
-			SerializedProperty property = serializedObject.FindProperty(propertyName);
-			//SerializedProperty property = FindSerializedProperty(obj, propertyName);
-			return Toggle(serializedObject, property, label);
-		}
-
-		/// <summary>
-		/// If a GUI control was changed, saves the state of the object
-		/// </summary>
-		/// <param name="procedure"></param>
-		/// <param name="obj"></param>
-		public static bool Toggle(SerializedObject serializedObject, SerializedProperty prop, string label = null)
-		{
-			EditorGUI.BeginChangeCheck();
-			GUIContent content = new GUIContent(label == null ? prop.displayName : label);
-			prop.boolValue = GUILayout.Toggle(prop.boolValue, content);
-			if (EditorGUI.EndChangeCheck())
-			{
-				serializedObject.ApplyModifiedProperties();
-			}
-			return prop.boolValue;
 		}
 
 		/// <summary>
@@ -363,11 +256,8 @@ namespace Stratus.Editor
 		{
 			if (IsMousedOver(rect))
 			{
-				//int currentControl = GUIUtility.hotControl;
 				int control = GUIUtility.GetControlID(FocusType.Passive);
 				GUIUtility.hotControl = control;
-				//if (currentEvent.type == EventType.MouseDrag)
-				//  currentEvent.Use();
 			}
 		}
 
@@ -382,245 +272,7 @@ namespace Stratus.Editor
 			PlayerSettings.SetScriptingDefineSymbolsForGroup(
 				EditorUserBuildSettings.selectedBuildTargetGroup,
 				string.Join(";", allDefines.ToArray()));
-		}
-
-		/// <summary>
-		/// Selects the subset of a given set of elements, organized vertically
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="set"></param>
-		/// <param name="subset"></param>
-		public static void SelectSubset<T>(T[] set, List<T> subset, Func<T, string> name)
-		{
-			EditorGUILayout.BeginHorizontal();
-			{
-				EditorGUILayout.BeginVertical();
-				{
-					EditorGUILayout.LabelField("Available", EditorStyles.centeredGreyMiniLabel);
-					foreach (T element in set)
-					{
-						T matchingElement = subset.Find(x => x.Equals(element));
-						if (matchingElement != null)
-						{
-							continue;
-						}
-
-						if (GUILayout.Button(name(element), EditorStyles.miniButton))
-						{
-							subset.Add(element);
-						}
-					}
-				}
-				EditorGUILayout.EndVertical();
-
-				// Selected scenes
-				EditorGUILayout.BeginVertical();
-				{
-					EditorGUILayout.LabelField("Selected", EditorStyles.centeredGreyMiniLabel);
-					int indexToRemove = -1;
-					for (int i = 0; i < subset.Count; ++i)
-					{
-						T element = subset[i];
-						if (GUILayout.Button(name(element), EditorStyles.miniButton))
-						{
-							indexToRemove = i;
-						}
-					}
-					if (indexToRemove > -1)
-					{
-						subset.RemoveAt(indexToRemove);
-					}
-				}
-				EditorGUILayout.EndVertical();
-			}
-			EditorGUILayout.EndHorizontal();
-		}
-
-		/// <summary>
-		/// Selects the subset of a given set of elements, organized vertically
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="set"></param>
-		/// <param name="subset"></param>
-		public static void SelectSubset<T>(T[] set, List<T> subset) where T : UnityEngine.Object
-		{
-			SelectSubset(set, subset, GetName);
-		}
-
-		public static void DrawHeader(string text)
-		{
-			EditorGUILayout.LabelField("Effects", StratusGUIStyles.header);
-		}
-
-		private static string GetName<T>(T obj) where T : UnityEngine.Object
-		{
-			return obj.name;
-		}
-
-		public static bool ObjectField(FieldInfo field, object obj, GUIContent content = null)
-		{
-			object value = field.GetValue(obj);
-			EditorGUI.BeginChangeCheck();
-			{
-				string name = ObjectNames.NicifyVariableName(field.Name);
-
-				if (value is UnityEngine.Object)
-				{
-					field.SetValue(obj, EditorGUILayout.ObjectField(name, (UnityEngine.Object)value, field.FieldType, true));
-				}
-				else if (value is bool)
-				{
-					field.SetValue(obj, EditorGUILayout.Toggle(name, (bool)value));
-				}
-				else if (value is int)
-				{
-					field.SetValue(obj, EditorGUILayout.IntField(name, (int)value));
-				}
-				else if (value is float)
-				{
-					field.SetValue(obj, EditorGUILayout.FloatField(name, (float)value));
-				}
-				else if (value is string)
-				{
-					field.SetValue(obj, EditorGUILayout.TextField(name, (string)value));
-				}
-				else if (value is Enum)
-				{
-					field.SetValue(obj, EditorGUILayout.EnumPopup(name, (Enum)value));
-				}
-				else if (value is Vector2)
-				{
-					field.SetValue(obj, EditorGUILayout.Vector2Field(name, (Vector2)value));
-				}
-				else if (value is Vector3)
-				{
-					field.SetValue(obj, EditorGUILayout.Vector3Field(name, (Vector3)value));
-				}
-			}
-			if (EditorGUI.EndChangeCheck())
-			{
-				return true;
-			}
-
-			return false;
-		}
-
-		public static void DrawContextMenu(GenericMenu menu, ContextMenuType style)
-		{
-			Texture texture = null;
-			switch (style)
-			{
-				case ContextMenuType.Add:
-					texture = StratusGUIStyles.addIcon;
-					break;
-				case ContextMenuType.Validation:
-					texture = StratusGUIStyles.validateIcon;
-					break;
-				case ContextMenuType.Options:
-					texture = StratusGUIStyles.optionsIcon;
-					break;
-			}
-			if (GUILayout.Button(texture, StratusGUIStyles.smallLayout))
-			{
-				menu.ShowAsContext();
-			}
-		}
-
-		public static void DrawContextMenu(Func<GenericMenu> menuFunction, ContextMenuType context)
-		{
-			Texture texture = null;
-			switch (context)
-			{
-				case ContextMenuType.Add:
-					texture = StratusGUIStyles.addIcon;
-					break;
-				case ContextMenuType.Validation:
-					texture = StratusGUIStyles.validateIcon;
-					break;
-				case ContextMenuType.Options:
-					texture = StratusGUIStyles.optionsIcon;
-					break;
-			}
-
-			if (GUILayout.Button(texture, StratusGUIStyles.editorStyles.button, StratusGUIStyles.smallLayout))
-			{
-				GenericMenu menu = menuFunction();
-				menu.ShowAsContext();
-			}
-		}
-
-		public static void DrawFadeGroup(AnimBool show, string label, System.Action drawFunction)
-		{
-			show.target = EditorGUILayout.Foldout(show.target, label);
-			if (EditorGUILayout.BeginFadeGroup(show.faded))
-			{
-				drawFunction();
-			}
-			EditorGUILayout.EndFadeGroup();
-		}
-
-		public static void DrawVerticalFadeGroup(AnimBool show, string label, System.Action drawFunction, GUIStyle verticalStyle = null, bool validate = true)
-		{
-			show.target = EditorGUILayout.Foldout(show.target, label) && validate;
-			if (EditorGUILayout.BeginFadeGroup(show.faded))
-			{
-				EditorGUILayout.BeginVertical(verticalStyle);
-				drawFunction();
-				EditorGUILayout.EndVertical();
-			}
-			EditorGUILayout.EndFadeGroup();
-		}
-
-		public static void DrawVerticalFadeGroup<T>(AnimBool show, string label, System.Action<T> drawFunction, T argument, GUIStyle verticalStyle = null, bool validate = true)
-		{
-			show.target = EditorGUILayout.Foldout(show.target, label) && validate;
-			if (EditorGUILayout.BeginFadeGroup(show.faded))
-			{
-				EditorGUILayout.BeginVertical(verticalStyle);
-				drawFunction(argument);
-				EditorGUILayout.EndVertical();
-			}
-			EditorGUILayout.EndFadeGroup();
-		}
-
-		public static void DrawListView<T>(IEnumerable<T> list, Func<T, GUIContent> leftContent, Func<T, string> rightContent,
-										   GUILayoutOption leftWidth, GUILayoutOption rightWidth, GUILayoutOption height)
-		{
-			foreach (T element in list)
-			{
-				EditorGUILayout.BeginHorizontal();
-				{
-					GUILayout.Label(leftContent(element), StratusGUIStyles.listViewLabel, leftWidth, height);
-					EditorGUILayout.SelectableLabel(rightContent(element), StratusGUIStyles.textField, rightWidth, height);
-				}
-				EditorGUILayout.EndHorizontal();
-			}
-		}
-
-		public static void DrawAligned(System.Action drawFunction, TextAlignment alignment)
-		{
-			GUILayout.BeginHorizontal();
-
-			switch (alignment)
-			{
-				case TextAlignment.Left:
-					drawFunction();
-					GUILayout.FlexibleSpace();
-					break;
-
-				case TextAlignment.Center:
-					GUILayout.FlexibleSpace();
-					drawFunction();
-					GUILayout.FlexibleSpace();
-					break;
-
-				case TextAlignment.Right:
-					GUILayout.FlexibleSpace();
-					drawFunction();
-					break;
-			}
-			GUILayout.EndHorizontal();
-		}
+		}				
 
 		public static Rect Pad(Rect rect)
 		{
@@ -698,39 +350,7 @@ namespace Stratus.Editor
 		{
 			BindingFlags bindflags = BindingFlags.NonPublic | BindingFlags.Static;
 			MethodInfo method = typeof(UnityEditor.EditorGUIUtility).GetMethod("TempContent", bindflags, null, new[] { typeof(string) }, null);
-
 			return (GUIContent)method.Invoke(null, new[] { t });
 		}
-
-
-
-		///// <summary>
-		///// Adds the given define symbols to PlayerSettings define symbols.
-		///// Just add your own define symbols to the Symbols property at the below.
-		///// </summary>
-		//[InitializeOnLoad]
-		//public class AddDefineSymbols : Editor
-		//{
-		//  /// <summary>
-		//  /// Symbols that will be added to the editor
-		//  /// </summary>
-		//  public static readonly string[] Symbols = new string[] {
-		//     "MYCOMPANY",
-		//     "MYCOMPANY_MYPACKAGE"
-		// };
-		//
-		//  /// <summary>
-		//  /// Add define symbols as soon as Unity gets done compiling.
-		//  /// </summary>
-		//  static AddDefineSymbols()
-		//  {
-		//
-		//  }
-		//
-		//}
-
-
-
 	}
-
 }

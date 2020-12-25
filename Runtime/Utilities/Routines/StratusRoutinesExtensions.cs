@@ -17,7 +17,7 @@ namespace Stratus
 		/// <param name="routine">A routine that intends to modify the transform's rotation</param>
 		public static void Rotate(this Transform transform, IEnumerator routine)
 		{
-			TransformRoutinesDriver driver = transform.gameObject.GetOrAddComponent<TransformRoutinesDriver>();
+			StratusTransformRoutineRunner driver = transform.gameObject.GetOrAddComponent<StratusTransformRoutineRunner>();
 			driver.Rotate(routine);
 		}
 
@@ -31,7 +31,7 @@ namespace Stratus
 		/// <param name="onFinished"></param>
 		public static void StartCoroutine(this Transform transform, IEnumerator transformationRoutine, TransformationType type, System.Action onFinished = null)
 		{
-			TransformRoutinesDriver driver = transform.gameObject.GetOrAddComponent<TransformRoutinesDriver>();
+			StratusTransformRoutineRunner driver = transform.gameObject.GetOrAddComponent<StratusTransformRoutineRunner>();
 			driver.StartTransformation(transformationRoutine, type, onFinished);
 		}
 
@@ -42,7 +42,7 @@ namespace Stratus
 		/// <param name="type"></param>
 		public static void StopCoroutine(this Transform transform, TransformationType type)
 		{
-			TransformRoutinesDriver driver = transform.gameObject.GetOrAddComponent<TransformRoutinesDriver>();
+			StratusTransformRoutineRunner driver = transform.gameObject.GetOrAddComponent<StratusTransformRoutineRunner>();
 			driver.StopTransformation(type);
 		}
 

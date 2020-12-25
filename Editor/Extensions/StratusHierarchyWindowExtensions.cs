@@ -64,7 +64,7 @@ namespace Stratus
 			if (!Selection.activeTransform)
 				return;
 
-			GameObjectReplaceWizard.Open(Selection.gameObjects);
+			StratusGameObjectReplaceWizard.Open(Selection.gameObjects);
 		}
 
 

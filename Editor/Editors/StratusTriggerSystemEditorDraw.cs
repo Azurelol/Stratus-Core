@@ -37,16 +37,13 @@ namespace Stratus.Editor
 				{
 					GUILayout.BeginVertical();
 					{
-						//EditorGUILayout.LabelField("Triggers", EditorStyles.label);
 						DrawTriggers();
 					}
 					GUILayout.EndVertical();
-					//gridDrawer.Draw(GUILayoutUtility.GetLastRect(), Vector2.zero);
 
 
 					GUILayout.BeginVertical();
 					{
-						//EditorGUILayout.LabelField("Triggerables", EditorStyles.la);
 						DrawTriggerables();
 					}
 					GUILayout.EndVertical();
@@ -56,11 +53,6 @@ namespace Stratus.Editor
 			}
 			GUILayout.EndVertical();
 		}
-
-		//private void DrawMessages()
-		//{
-		//  EditorGUILayout.HelpBox("Boop", MessageType.Warning);
-		//}
 
 		private void DrawTriggers()
 		{
@@ -119,10 +111,6 @@ namespace Stratus.Editor
 				menu.ShowAsContext();
 			}
 
-			//if (GUILayout.Button(new GUIContent($"{messages.Count}", StratusGUIStyles.messageTexture), StratusGUIStyles.smallLayout))
-			//{
-			//}
-
 			// Validation
 			if (GUILayout.Button(StratusGUIStyles.validateIcon, StratusGUIStyles.smallLayout))
 			{
@@ -165,10 +153,6 @@ namespace Stratus.Editor
 			Draw(trigger, color, SelectTrigger, RemoveTrigger, SetTriggerContextMenu);
 		}
 
-
-
-
-
 		private void DrawTriggerable(StratusTriggerable triggerable)
 		{
 			StratusTriggerSystem.ConnectionStatus status = StratusTriggerSystem.ConnectionStatus.Disconnected;
@@ -190,7 +174,7 @@ namespace Stratus.Editor
 		{
 			string name = baseTrigger.GetType().Name;
 
-			System.Action onLeftClick = () =>
+			Action onLeftClick = () =>
 			{
 				selectedName = name;
 				selected = baseTrigger;
@@ -199,7 +183,7 @@ namespace Stratus.Editor
 				UpdateConnections();
 			};
 
-			System.Action onRightClick = () =>
+			Action onRightClick = () =>
 			{
 				var menu = new GenericMenu();
 				contextMenuSetter(baseTrigger, menu);
@@ -230,11 +214,11 @@ namespace Stratus.Editor
 				menu.ShowAsContext();
 			};
 
-			System.Action onDrag = () =>
+			Action onDrag = () =>
 			{
 			};
 
-			System.Action<object> onDrop = (object other) =>
+			Action<object> onDrop = (object other) =>
 			{
 				if (baseTrigger is StratusTriggerBehaviour)
 				{
@@ -259,7 +243,7 @@ namespace Stratus.Editor
 				return false;
 			};
 
-			var button = new StratusGUIObject();
+			var button = new StratusDefaultGUIObject();
 			button.label = baseTrigger.enabled ? name : $"<color=grey>{name}</color>";
 			button.description = $"<i><size={descriptionSize}>{baseTrigger.description}</size></i>";
 			button.showDescription = showDescriptions;
@@ -278,7 +262,6 @@ namespace Stratus.Editor
 				UpdateConnections();
 			});
 			button.isSelected = selected == baseTrigger;
-			//button.outlineColor = backgroundColor;
 
 			if (target.outlines)
 			{
@@ -292,9 +275,6 @@ namespace Stratus.Editor
 				button.outlineColor = Color.black;
 				button.Draw(buttonStyle, columnWidth);
 			}
-
 		}
-
 	}
-
 }

@@ -67,7 +67,7 @@ namespace Stratus.Editor
 			{
 				GenericMenu menu = new GenericMenu();
 				menu.AddItem(new GUIContent("Remove GameObject Bookmarks"), false, StratusGameObjectBookmark.RemoveAll);
-				StratusEditorUtility.DrawContextMenu(menu, StratusEditorUtility.ContextMenuType.Options);
+				StratusEditorGUILayout.ContextMenu(menu, StratusEditorGUILayout.ContextMenuType.Options);
 			}
 			EditorGUILayout.EndHorizontal();
 
@@ -75,10 +75,10 @@ namespace Stratus.Editor
 			EditorGUILayout.BeginVertical();
 			this.scrollPosition = EditorGUILayout.BeginScrollView(this.scrollPosition, false, false);
 			{
-				StratusEditorUtility.DrawVerticalFadeGroup(this.showScenesInBuild, "Scenes in Build", this.ShowScenesInBuild, EditorStyles.helpBox, EditorBuildSettings.scenes.Length > 0);
-				StratusEditorUtility.DrawVerticalFadeGroup(this.showScenes, "Scenes", this.ShowBookmarkedScenes, EditorStyles.helpBox, bookmarkedScenes.Count > 0);
-				StratusEditorUtility.DrawVerticalFadeGroup(this.showSceneObjects, "Scene Objects", this.ShowSceneObjects, EditorStyles.helpBox, StratusGameObjectBookmark.hasAvailable);
-				StratusEditorUtility.DrawVerticalFadeGroup(this.showProjectAssets, "Project Assets", this.ShowProjectAssets, EditorStyles.helpBox, bookmarks.projectBookmarks.Count > 0);
+				StratusEditorGUILayout.VerticalFadeGroup(this.showScenesInBuild, "Scenes in Build", this.ShowScenesInBuild, EditorStyles.helpBox, EditorBuildSettings.scenes.Length > 0);
+				StratusEditorGUILayout.VerticalFadeGroup(this.showScenes, "Scenes", this.ShowBookmarkedScenes, EditorStyles.helpBox, bookmarkedScenes.Count > 0);
+				StratusEditorGUILayout.VerticalFadeGroup(this.showSceneObjects, "Scene Objects", this.ShowSceneObjects, EditorStyles.helpBox, StratusGameObjectBookmark.hasAvailable);
+				StratusEditorGUILayout.VerticalFadeGroup(this.showProjectAssets, "Project Assets", this.ShowProjectAssets, EditorStyles.helpBox, bookmarks.projectBookmarks.Count > 0);
 			}
 			EditorGUILayout.EndScrollView();
 			EditorGUILayout.EndVertical();
@@ -207,7 +207,7 @@ namespace Stratus.Editor
 					GenericMenu menu = new GenericMenu();
 					menu.AddItem(new GUIContent("Inspect"), false, () =>
 			{
-				MemberInspectorWindow.Inspect(bookmark.gameObject);
+				StratusMemberInspectorWindow.Inspect(bookmark.gameObject);
 			});
 					menu.AddItem(new GUIContent("Remove"), false,
 			  () =>

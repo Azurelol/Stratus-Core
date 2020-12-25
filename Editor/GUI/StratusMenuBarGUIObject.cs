@@ -5,7 +5,7 @@ using UnityEditor;
 
 namespace Stratus.Editor
 {
-	public class StratusMenuBarGUI
+	public class StratusMenuBarGUIObject
 	{
 		//------------------------------------------------------------------------/
 		// Declarations
@@ -62,7 +62,7 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		// CTOR
 		//------------------------------------------------------------------------/  
-		public StratusMenuBarGUI(StratusOrientation orientation, params GUILayoutOption[] options)
+		public StratusMenuBarGUIObject(StratusOrientation orientation, params GUILayoutOption[] options)
 		{
 			this.orientation = orientation;
 			switch (this.orientation)
@@ -101,18 +101,18 @@ namespace Stratus.Editor
 			this.hasMenu = true;
 		}
 
-		public void AddItem(GUIContent content, GenericMenu.MenuFunction menuFunction, StratusEditorUtility.ContextMenuType type)
+		public void AddItem(GUIContent content, GenericMenu.MenuFunction menuFunction, StratusEditorGUILayout.ContextMenuType type)
 		{
 			MenuOption item = new MenuOption(content, menuFunction);
 			switch (type)
 			{
-				case StratusEditorUtility.ContextMenuType.Add:
+				case StratusEditorGUILayout.ContextMenuType.Add:
 					addItems.Add(item);
 					break;
-				case StratusEditorUtility.ContextMenuType.Validation:
+				case StratusEditorGUILayout.ContextMenuType.Validation:
 					validateItems.Add(item);
 					break;
-				case StratusEditorUtility.ContextMenuType.Options:
+				case StratusEditorGUILayout.ContextMenuType.Options:
 					optionItems.Add(item);
 					break;
 			}
@@ -120,7 +120,7 @@ namespace Stratus.Editor
 			this.hasToolbar = true;
 		}
 
-		public void AddItem(string content, GenericMenu.MenuFunction menuFunction, StratusEditorUtility.ContextMenuType type)
+		public void AddItem(string content, GenericMenu.MenuFunction menuFunction, StratusEditorGUILayout.ContextMenuType type)
 		{
 			this.AddItem(new GUIContent(content), menuFunction, type);
 		}
@@ -195,12 +195,12 @@ namespace Stratus.Editor
 
 		private void DrawToolbar(Rect rect)
 		{
-			this.DrawContextMenu(StratusEditorUtility.ContextMenuType.Add, this.addItems);
-			this.DrawContextMenu(StratusEditorUtility.ContextMenuType.Options, this.optionItems);
-			this.DrawContextMenu(StratusEditorUtility.ContextMenuType.Validation, this.validateItems);
+			this.DrawContextMenu(StratusEditorGUILayout.ContextMenuType.Add, this.addItems);
+			this.DrawContextMenu(StratusEditorGUILayout.ContextMenuType.Options, this.optionItems);
+			this.DrawContextMenu(StratusEditorGUILayout.ContextMenuType.Validation, this.validateItems);
 		}
 
-		private void DrawContextMenu(StratusEditorUtility.ContextMenuType type, List<MenuOption> options)
+		private void DrawContextMenu(StratusEditorGUILayout.ContextMenuType type, List<MenuOption> options)
 		{
 			if (options.NotEmpty())
 			{
@@ -209,7 +209,7 @@ namespace Stratus.Editor
 				{
 					menu.AddItem(option.content, false, option.menuFunction);
 				}
-				StratusEditorUtility.DrawContextMenu(menu, type);
+				StratusEditorGUILayout.ContextMenu(menu, type);
 			}
 		}
 	}

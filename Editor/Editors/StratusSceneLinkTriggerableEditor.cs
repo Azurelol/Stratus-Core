@@ -62,10 +62,7 @@ namespace Stratus.Editor
 
 		private void SelectScenes(Rect rect)
 		{
-			StratusEditorUtility.SelectSubset(triggerable.scenePool.scenes, triggerable.selectedScenes, GetName);
+			StratusEditorGUILayout.Subset(triggerable.scenePool.scenes, triggerable.selectedScenes, GetName);
 		}
-
-
 	}
 }
-

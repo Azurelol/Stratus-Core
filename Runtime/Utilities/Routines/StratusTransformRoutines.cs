@@ -7,7 +7,7 @@ namespace Stratus
 {
 	public static partial class StratusRoutines
 	{
-		public class RotateAroundRoutine : TransformRoutine
+		public class RotateAroundRoutine : StratusTransformRoutine
 		{
 			private Vector3 pivot;
 			private Vector3 axis;

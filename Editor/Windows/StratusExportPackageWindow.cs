@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace Stratus.Editor
 {
-	public class ExportPackageWindow : StratusEditorWindow<ExportPackageWindow>
+	public class StratusExportPackageWindow : StratusEditorWindow<StratusExportPackageWindow>
 	{
 		//------------------------------------------------------------------------/
 		// Fields
 		//------------------------------------------------------------------------/
 		[SerializeField]
-		public ExportPackagePreset preset;
+		public StratusExportPackagePreset preset;
 		private const string recentPresetKey = "Recent Export Package Preset";
 
 		//------------------------------------------------------------------------/
@@ -23,7 +23,7 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		protected override void OnWindowEnable()
 		{
-			preset = StratusPreferences.GetObjectReference<ExportPackagePreset>(recentPresetKey);
+			preset = StratusPreferences.GetObjectReference<StratusExportPackagePreset>(recentPresetKey);
 		}
 
 		protected override void OnWindowGUI()
@@ -48,16 +48,7 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		// Procedures
 		//------------------------------------------------------------------------/
-		private static void Export(string path, string packageName)
-		{
-			string location = StratusIO.GetFolderPath(path);
-			AssetDatabase.ExportPackage(location, $"{packageName}.unitypackage",
-			  ExportPackageOptions.Recurse | ExportPackageOptions.Default |
-			  ExportPackageOptions.Interactive);
-			StratusDebug.Log($"Exported {packageName} to {location}");
-		}
-
-		private static void Export(ExportPackageArguments arguments)
+		private static void Export(StratusExportPackageArguments arguments)
 		{
 			string location = StratusIO.GetFolderPath(arguments.path);
 			AssetDatabase.ExportPackage(location, $"{arguments.name}.unitypackage", arguments.options);
@@ -67,7 +58,7 @@ namespace Stratus.Editor
 
 		private void ExportControls()
 		{
-			StratusEditorGUI.BeginAligned(TextAlignment.Center);
+			StratusEditorGUILayout.BeginAligned(TextAlignment.Center);
 			{
 				StratusEditorGUILayout.Button("Export", () =>
 				{
@@ -78,20 +69,8 @@ namespace Stratus.Editor
 					}
 
 				});
-
-				//StratusEditorGUILayout.Button("Export To", () =>
-				//{
-				//	string path = StratusEditorGUILayout.FolderPath("Export");
-				//	if (path.IsValid())
-				//	{
-				//		if (this.hasPreset && this.preset.arguments.valid)
-				//		{
-				//			Export(preset.arguments);
-				//		}
-				//	}
-				//});
 			}
-			StratusEditorGUI.EndAligned();
+			StratusEditorGUILayout.EndAligned();
 		}
 
 

@@ -52,13 +52,12 @@ namespace Stratus.Editor
 
 		protected override void OnDrawEditorGUI(Rect position, StratusSymbol.Reference value)
 		{
-			//EditorGUI.LabelField(position, value.key);
-			StratusEditorGUI.DrawGUI(position, "Key", ref value.key);
+			StratusEditorGUI.TextField(position, "Key", ref value.key);
 		}
 
 		protected override void OnDrawEditorGUILayout(StratusSymbol.Reference value)
 		{
-			StratusEditorGUI.DrawGUILayout("Key", ref value.key);
+			StratusEditorGUILayout.TextField("Key", ref value.key);
 		}
 	}
 }

@@ -6,7 +6,8 @@ namespace Stratus
 {
 	/// <summary>
 	/// The type of transformation this routine performs
-	/// </summary>
+	/// </summary>k
+	/// </summary>k
 	[Flags]
 	public enum TransformationType
 	{
@@ -18,7 +19,7 @@ namespace Stratus
 	/// <summary>
 	/// A class encapsulating a transform routine
 	/// </summary>
-	public abstract class TransformRoutine
+	public abstract class StratusTransformRoutine
 	{
 		protected Transform transform;
 		protected System.Action onFinished;
@@ -34,9 +35,9 @@ namespace Stratus
 		}
 	}
 
-	public class TransformRoutineBinder
+	public class StratusTransformRoutineBinder
 	{
-		public TransformRoutineBinder(IEnumerator routine, TransformationType type)
+		public StratusTransformRoutineBinder(IEnumerator routine, TransformationType type)
 		{
 			this.routine = routine;
 			this.type = type;
@@ -51,7 +52,7 @@ namespace Stratus
 	/// It will make sure there's no overlap between routines of the same kind (translation, scaling, rotation).
 	/// </summary>
 	[DisallowMultipleComponent]
-	public class TransformRoutinesDriver : MonoBehaviour
+	public class StratusTransformRoutineRunner : StratusBehaviour
 	{
 		//--------------------------------------------------------------------------------------------/
 		// Classes
@@ -82,8 +83,6 @@ namespace Stratus
 
 		public void StartTransformation(IEnumerator routine, TransformationType type, System.Action onFinished = null)
 		{
-			RoutineActivity transformation = null;
-
 			bool isTranslation = type.HasFlag(TransformationType.Translate);
 			bool isRotation = type.HasFlag(TransformationType.Rotate);
 			bool isScaling = type.HasFlag(TransformationType.Scale);
@@ -93,6 +92,7 @@ namespace Stratus
 			if (isRotation) StopRotation();
 			if (isScaling) StopScaling();
 
+			RoutineActivity transformation;
 			if (isTranslation)
 			{
 				StopTranslation();

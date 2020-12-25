@@ -7,106 +7,29 @@ using UnityEngine;
 
 namespace Stratus.Editor
 {
+	/// <summary>
+	/// Provides methods using Unity's <see cref="EditorGUI"/> annd other GUI-drawing functions that work directly with <see cref="Rect"/>
+	/// </summary>
 	public static class StratusEditorGUI
 	{
-		//------------------------------------------------------------------------/
-		// Properties
-		//------------------------------------------------------------------------/
-		public static float standardPadding { get; } = 8f;
-		private static TextAlignment currentAlignGroup { get; set; }
-		private static bool alignGroupActive { get; set; }
+		#region Properties
+		public static float standardPadding { get; } = 8f; 
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Methods
-		//------------------------------------------------------------------------/
-		public static void GUILayoutPopup(string label, int selectedindex, string[] displayedOptions, System.Action<int> onSelected)
-		{
-			StratusSearchablePopup.Popup(label, selectedindex, displayedOptions, onSelected);
-		}
-
-		public static void GUILayoutPopup(string label, StratusDropdownList dropdownList)
-		{
-			StratusSearchablePopup.Popup(label, dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
-		}
-
-		public static void GUILayoutPopup(StratusDropdownList dropdownList)
-		{
-			StratusSearchablePopup.Popup(dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
-		}
-
-		public static void GUIPopup(Rect position, string label, StratusDropdownList dropdownList)
+		#region Methods
+		public static void Popup(Rect position, string label, StratusDropdownList dropdownList)
 		{
 			StratusSearchablePopup.Popup(position, label, dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
 		}
 
-		public static void GUIPopup(Rect position, StratusDropdownList dropdownList)
+		public static void Popup(Rect position, StratusDropdownList dropdownList)
 		{
 			StratusSearchablePopup.Popup(position, dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
 		}
 
-		public static void GUIPopup(Rect position, string label, int selectedindex, string[] displayedOptions, System.Action<int> onSelected)
+		public static void Popup(Rect position, string label, int selectedindex, string[] displayedOptions, System.Action<int> onSelected)
 		{
 			StratusSearchablePopup.Popup(position, label, selectedindex, displayedOptions, onSelected);
-		}
-
-		public static int GUILayoutPopup(string label, int selectedindex, string[] displayedOptions)
-		{
-			return EditorGUILayout.Popup(label, selectedindex, displayedOptions);
-		}
-
-
-
-
-
-		public static void EnumToolbar<T>(ref T enumValue)
-		{
-			string[] options = StratusSearchableEnum.GetEnumDisplayNames((Enum)(object)enumValue);
-			enumValue = (T)(object)GUILayout.Toolbar(Convert.ToInt32(enumValue), options, GUILayout.ExpandWidth(false));
-		}
-
-		public static void BeginAligned(TextAlignment alignment)
-		{
-			currentAlignGroup = alignment;
-			GUILayout.BeginHorizontal();
-			switch (alignment)
-			{
-				case TextAlignment.Left:
-					GUILayout.FlexibleSpace();
-					break;
-
-				case TextAlignment.Center:
-					GUILayout.FlexibleSpace();
-					break;
-
-				case TextAlignment.Right:
-					GUILayout.FlexibleSpace();
-					break;
-			}
-			alignGroupActive = true;
-		}
-
-		public static void EndAligned()
-		{
-			if (!alignGroupActive)
-			{
-				throw new ArgumentException("Missing a matching BeginAligned call!");
-			}
-
-			switch (currentAlignGroup)
-			{
-				case TextAlignment.Left:
-					GUILayout.FlexibleSpace();
-					break;
-
-				case TextAlignment.Center:
-					GUILayout.FlexibleSpace();
-					break;
-
-				case TextAlignment.Right:
-					break;
-			}
-			GUILayout.EndHorizontal();
-			alignGroupActive = false;
 		}
 
 		public static void Field(Rect position, FieldInfo field, object target)
@@ -155,14 +78,9 @@ namespace Stratus.Editor
 			}
 		}
 
-		public static void DrawGUI(Rect position, string label, ref string value)
+		public static void TextField(Rect position, string label, ref string value)
 		{
 			value = EditorGUI.TextField(position, label, value);
-		}
-
-		public static void DrawGUILayout(string label, ref string value)
-		{
-			value = EditorGUILayout.TextField(label, value);
 		}
 
 		public static bool ObjectFieldWithHeader<T>(Rect rect, ref T objectField, string label) where T : UnityEngine.Object
@@ -172,13 +90,7 @@ namespace Stratus.Editor
 			objectField = (T)EditorGUI.ObjectField(rect, objectField, typeof(T), true);
 			return EditorGUI.EndChangeCheck();
 		}
-
-		public static bool ObjectField<T>(ref T objectField) where T : UnityEngine.Object
-		{
-			EditorGUI.BeginChangeCheck();
-			objectField = (T)EditorGUILayout.ObjectField(objectField, typeof(T), true);
-			return EditorGUI.EndChangeCheck();
-		}
+		#endregion
 	}
 
 }

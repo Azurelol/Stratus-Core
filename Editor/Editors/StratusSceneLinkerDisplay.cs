@@ -97,8 +97,7 @@ namespace Stratus.Editor
 			GUILayout.BeginHorizontal();
 			{
 				GUILayout.Label($"Links ({sceneLinks.Length})");
-				StratusEditorUtility.Toggle(instance, "displayLinks", "Show");
-				//instance.displayLinks = GUILayout.Toggle(instance.displayLinks, "Show");
+				StratusEditorGUILayout.Toggle(instance, "displayLinks", "Show");
 				if (GUILayout.Button("Select"))
 				{
 					foreach (var link in sceneLinks)
@@ -110,8 +109,8 @@ namespace Stratus.Editor
 			}
 			GUILayout.EndHorizontal();
 
-			StratusEditorUtility.Toggle(instance, "displayBoundaries", "Show scene boundaries");
-			StratusEditorUtility.Toggle(instance, "loadInitial", "Load initial scene on play");
+			StratusEditorGUILayout.Toggle(instance, "displayBoundaries", "Show scene boundaries");
+			StratusEditorGUILayout.Toggle(instance, "loadInitial", "Load initial scene on play");
 
 		}
 

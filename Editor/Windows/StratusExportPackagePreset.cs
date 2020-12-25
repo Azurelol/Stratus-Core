@@ -7,7 +7,7 @@ using UnityEditor;
 namespace Stratus
 {
 	[Serializable]
-	public class ExportPackageArguments
+	public class StratusExportPackageArguments
 	{
 		[SerializeField]
 		public string name;
@@ -23,10 +23,10 @@ namespace Stratus
 	}
 
 	[CreateAssetMenu(fileName = "Stratus Export Package Preset", menuName = "Stratus/Core/Export Package Preset")]
-	public class ExportPackagePreset : StratusScriptable
+	public class StratusExportPackagePreset : StratusScriptable
 	{
 		[SerializeField]
-		public ExportPackageArguments arguments;
+		public StratusExportPackageArguments arguments;
 	}
 
 }
