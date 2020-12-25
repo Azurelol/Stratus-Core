@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Stratus
+namespace Stratus.Editor
 {
 	class StratusTreeElementTests
 	{
@@ -153,7 +153,7 @@ namespace Stratus
 			var listOfElements = new List<StratusTreeElement>();
 			listOfElements.Add(root);
 
-			var model = new TreeModel<StratusTreeElement>(listOfElements);
+			var model = new StratusTreeModel<StratusTreeElement>(listOfElements);
 			model.AddElement(new StratusTreeElement { name = "Element" }, root, 0);
 			model.AddElement(new StratusTreeElement { name = "Element " + root.children.Count }, root, 0);
 			model.AddElement(new StratusTreeElement { name = "Element " + root.children.Count }, root, 0);
@@ -176,7 +176,7 @@ namespace Stratus
 			var listOfElements = new List<StratusTreeElement>();
 			listOfElements.Add(root);
 
-			var model = new TreeModel<StratusTreeElement>(listOfElements);
+			var model = new StratusTreeModel<StratusTreeElement>(listOfElements);
 			model.AddElement(new StratusTreeElement { name = "Element" }, root, 0);
 			model.AddElement(new StratusTreeElement { name = "Element " + root.children.Count }, root, 0);
 			model.AddElement(new StratusTreeElement { name = "Element " + root.children.Count }, root, 0);

@@ -4,18 +4,18 @@ using UnityEngine;
 using UnityEditor;
 using System;
 
-namespace Stratus
+namespace Stratus.Editor
 {
-  [CustomPropertyDrawer(typeof(SearchableEnumAttribute))]
-  public class SearchableEnumDrawer : PropertyDrawer
-  {
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-    {
-      label = EditorGUI.BeginProperty(position, label, property);
-      {
-        StratusSearchableEnum.EnumPopup(position, label, property);
-      }
-      EditorGUI.EndProperty();
-    }
-  }
+	[CustomPropertyDrawer(typeof(SearchableEnumAttribute))]
+	public class SearchableEnumDrawer : PropertyDrawer
+	{
+		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+		{
+			label = EditorGUI.BeginProperty(position, label, property);
+			{
+				StratusSearchableEnum.EnumPopup(position, label, property);
+			}
+			EditorGUI.EndProperty();
+		}
+	}
 }

@@ -1,11 +1,13 @@
-
 using System;
 using System.Reflection;
+
 using Stratus.Utilities;
+
 using UnityEditor;
+
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Editor
 {
 	[CustomPropertyDrawer(typeof(DrawIfAttribute))]
 	public class DrawIfPropertyDrawer : PropertyDrawer

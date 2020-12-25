@@ -5,10 +5,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Text;
-using System.Linq;
 
 
-namespace Stratus.Types
+namespace Stratus
 {
 	/// <summary>
 	/// An internally-managed list of symbols

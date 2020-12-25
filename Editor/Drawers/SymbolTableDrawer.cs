@@ -1,7 +1,8 @@
 using UnityEditor;
+
 using UnityEngine;
 
-namespace Stratus.Types
+namespace Stratus.Editor
 {
 	[CustomPropertyDrawer(typeof(StratusSymbolTable), true)]
 	public class SymbolTableDrawer : PropertyDrawer

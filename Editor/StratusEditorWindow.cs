@@ -35,7 +35,7 @@ namespace Stratus.Editor
 		/// <summary>
 		/// A drawer for an optional menu bar
 		/// </summary>
-		protected StratusMenuBarDrawer menuBarDrawer { get; set; }
+		protected StratusMenuBarGUI menuBarDrawer { get; set; }
 
 		/// <summary>
 		/// A map of all objects currently being inspected
@@ -78,7 +78,7 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		protected abstract void OnWindowEnable();
 		protected abstract void OnWindowGUI();
-		protected virtual StratusMenuBarDrawer OnSetMenuBar()
+		protected virtual StratusMenuBarGUI OnSetMenuBar()
 		{
 			return null;
 		}

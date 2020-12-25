@@ -25,9 +25,9 @@ namespace Stratus.Editor
 		}
 	}
 
-	public class MemberInspectorTreeView : MultiColumnTreeView<MemberInspectorTreeElement, MemberInspectorWindow.Column>
+	public class MemberInspectorTreeView : StratusMultiColumnTreeView<MemberInspectorTreeElement, MemberInspectorWindow.Column>
 	{
-		public MemberInspectorTreeView(TreeViewState state, TreeModel<MemberInspectorTreeElement> model) : base(state, model)
+		public MemberInspectorTreeView(TreeViewState state, StratusTreeModel<MemberInspectorTreeElement> model) : base(state, model)
 		{
 		}
 
@@ -52,7 +52,7 @@ namespace Stratus.Editor
 						maxWidth = 45,
 						autoResize = false,
 						allowToggleVisibility = false,
-						selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.isWatched.ToString()
+						selectorFunction = (StratusTreeViewItem<MemberInspectorTreeElement> element) => element.item.data.isWatched.ToString()
 					};
 					break;
 				case MemberInspectorWindow.Column.GameObject:
@@ -66,7 +66,7 @@ namespace Stratus.Editor
 						maxWidth = 120,
 						autoResize = false,
 						allowToggleVisibility = true,
-						selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.gameObjectName
+						selectorFunction = (StratusTreeViewItem<MemberInspectorTreeElement> element) => element.item.data.gameObjectName
 					};
 					break;
 				case MemberInspectorWindow.Column.Component:
@@ -80,7 +80,7 @@ namespace Stratus.Editor
 						maxWidth = 250,
 						autoResize = false,
 						allowToggleVisibility = true,
-						selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.componentName
+						selectorFunction = (StratusTreeViewItem<MemberInspectorTreeElement> element) => element.item.data.componentName
 					};
 					break;
 				case MemberInspectorWindow.Column.Type:
@@ -93,7 +93,7 @@ namespace Stratus.Editor
 						minWidth = 60,
 						autoResize = false,
 						allowToggleVisibility = true,
-						selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.type.ToString()
+						selectorFunction = (StratusTreeViewItem<MemberInspectorTreeElement> element) => element.item.data.type.ToString()
 					};
 					break;
 				case MemberInspectorWindow.Column.Member:
@@ -107,7 +107,7 @@ namespace Stratus.Editor
 						maxWidth = 120,
 						autoResize = false,
 						allowToggleVisibility = false,
-						selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.name
+						selectorFunction = (StratusTreeViewItem<MemberInspectorTreeElement> element) => element.item.data.name
 					};
 					break;
 				case MemberInspectorWindow.Column.Value:
@@ -121,14 +121,14 @@ namespace Stratus.Editor
 						maxWidth = 250,
 						autoResize = true,
 						allowToggleVisibility = false,
-						selectorFunction = (TreeViewItem<MemberInspectorTreeElement> element) => element.item.data.latestValueString
+						selectorFunction = (StratusTreeViewItem<MemberInspectorTreeElement> element) => element.item.data.latestValueString
 					};
 					break;
 			}
 			return column;
 		}
 
-		protected override void DrawColumn(Rect cellRect, TreeViewItem<MemberInspectorTreeElement> item, MemberInspectorWindow.Column column, ref RowGUIArgs args)
+		protected override void DrawColumn(Rect cellRect, StratusTreeViewItem<MemberInspectorTreeElement> item, MemberInspectorWindow.Column column, ref RowGUIArgs args)
 		{
 			switch (column)
 			{

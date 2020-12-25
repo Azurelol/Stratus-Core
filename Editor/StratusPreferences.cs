@@ -34,7 +34,7 @@ namespace Stratus.Editor
 		/// <summary>
 		/// Allows objects in the scene and project to be bookmarked for quick access
 		/// </summary>
-		public ObjectBookmarksWindow.ObjectBookmarks objectBookmarks = new ObjectBookmarksWindow.ObjectBookmarks();
+		public StratusObjectBookmarksEditorWindow.ObjectBookmarks objectBookmarks = new StratusObjectBookmarksEditorWindow.ObjectBookmarks();
 
 		/// <summary>
 		/// Object references to store...

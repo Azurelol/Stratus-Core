@@ -54,7 +54,7 @@ namespace Stratus.Editor
 			Members,
 		}
 
-		public class EventTreeView : MultiColumnTreeView<EventTreeElement, Columns>
+		public class EventTreeView : StratusMultiColumnTreeView<EventTreeElement, Columns>
 		{
 			public EventTreeView(TreeViewState state, IList<EventTreeElement> data) : base(state, data)
 			{
@@ -73,7 +73,7 @@ namespace Stratus.Editor
 							width = 175,
 							autoResize = true,
 							sortedAscending = true,
-							selectorFunction = (TreeViewItem<EventTreeElement> element) => element.item.data.@namespace
+							selectorFunction = (StratusTreeViewItem<EventTreeElement> element) => element.item.data.@namespace
 						};
 						break;
 					case Columns.Class:
@@ -84,7 +84,7 @@ namespace Stratus.Editor
 							minWidth = 200,
 							width = 200,
 							autoResize = true,
-							selectorFunction = (TreeViewItem<EventTreeElement> element) => element.item.data.members
+							selectorFunction = (StratusTreeViewItem<EventTreeElement> element) => element.item.data.members
 						};
 						break;
 					case Columns.Name:
@@ -95,7 +95,7 @@ namespace Stratus.Editor
 							minWidth = 200,
 							width = 200,
 							autoResize = true,
-							selectorFunction = (TreeViewItem<EventTreeElement> element) => element.item.data.name
+							selectorFunction = (StratusTreeViewItem<EventTreeElement> element) => element.item.data.name
 						};
 						break;
 
@@ -107,14 +107,14 @@ namespace Stratus.Editor
 							minWidth = 400,
 							width = 450,
 							autoResize = true,
-							selectorFunction = (TreeViewItem<EventTreeElement> element) => element.item.data.members
+							selectorFunction = (StratusTreeViewItem<EventTreeElement> element) => element.item.data.members
 						};
 						break;
 				}
 				return column;
 			}
 
-			protected override void DrawColumn(Rect cellRect, TreeViewItem<EventTreeElement> item, Columns column, ref RowGUIArgs args)
+			protected override void DrawColumn(Rect cellRect, StratusTreeViewItem<EventTreeElement> item, Columns column, ref RowGUIArgs args)
 			{
 				switch (column)
 				{

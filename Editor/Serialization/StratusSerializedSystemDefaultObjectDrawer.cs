@@ -4,7 +4,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Editor
 {
 	public partial class StratusSerializedEditorObject
 	{

@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+
 using UnityEditor;
 
-namespace Stratus
+namespace Stratus.Editor
 {
 	/// <summary>
 	/// Encapsulates all serialized properties of a given object, so they can be easily found
@@ -153,17 +154,17 @@ namespace Stratus
 		{
 			return DrawSerializedProperty(property, this.serializedObject);
 		}
-        
-        /// <summary>
-        /// Draw all serialized properties
-        /// </summary>
-        public void DrawProperties()
-        {
-            foreach(var property in properties)
-            {
-                property.isExpanded = EditorGUILayout.PropertyField(property);
-            }
-        }
+
+		/// <summary>
+		/// Draw all serialized properties
+		/// </summary>
+		public void DrawProperties()
+		{
+			foreach (var property in properties)
+			{
+				property.isExpanded = EditorGUILayout.PropertyField(property);
+			}
+		}
 
 		/// <summary>
 		/// Draws a serialized property, saving any recorded changes

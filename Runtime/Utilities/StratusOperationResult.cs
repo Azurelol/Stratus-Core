@@ -35,7 +35,7 @@ namespace Stratus
 			return message != null ? $"{valid} ({message})" : $"{valid}";
 		}
 
-		public static implicit operator bool(StratusOperationResult validation) => validation.valid;
+		public static implicit operator bool(StratusOperationResult result) => result.valid;
 		public static implicit operator StratusOperationResult(bool valid) => new StratusOperationResult(valid, null);
 	}
 
@@ -43,7 +43,6 @@ namespace Stratus
 	/// The result of an operation which returns a value
 	/// </summary>
 	public class StratusOperationResult<T> : StratusOperationResult
-		where T : class
 	{
 		public T value { get; private set; }
 
@@ -65,6 +64,7 @@ namespace Stratus
 			this.value = value;
 		}
 
+		public static implicit operator T(StratusOperationResult<T> result) => result.value;
 		public static implicit operator StratusOperationResult<T>(T value) => new StratusOperationResult<T>(true, value);
 	}
 }
