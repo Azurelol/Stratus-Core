@@ -7,7 +7,7 @@ namespace Stratus
 	/// </summary>
 	public class StratusLogTriggerable : StratusTriggerable
 	{
-		public LogType type;
+		public LogType type = LogType.Log;
 
 		protected override void OnAwake()
 		{

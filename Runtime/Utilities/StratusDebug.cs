@@ -160,13 +160,13 @@ namespace Stratus
 		/// If log is true, prints the given message to the console, prefixing it with the name of the method
 		/// and the class name. (And optionally, its owner GameObject)
 		/// </summary>
-		/// <param name="log"></param>
+		/// <param name="condition"></param>
 		/// <param name="message"></param>
 		/// <param name="source"></param>
 		/// <param name="frame"></param>
-		public static void LogIf(bool log, object message, object source = null, int frame = 1)
+		public static void LogIf(bool condition, object message, object source = null, int frame = 1)
 		{
-			if (log)
+			if (condition)
 			{
 				Log(message, source, frame + 1);
 			}
@@ -200,6 +200,12 @@ namespace Stratus
 		{
 			LogError(message, source, frame + 1);
 			UnityEngine.Debug.Break();
+		}
+
+		public static void Log(StratusOperationResult result, object source = null, int frame = 1)
+		{
+			LogType logType = result.valid ? LogType.Log : LogType.Error;
+			Log(logType, result.message, source, frame);
 		}
 
 		/// <summary>

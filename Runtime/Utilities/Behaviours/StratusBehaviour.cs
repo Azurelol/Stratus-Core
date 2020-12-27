@@ -51,6 +51,12 @@ namespace Stratus
 		public void Log(object value) => StratusDebug.Log(value, this, 2);
 
 		/// <summary>
+		/// Prints the given message to the console
+		/// </summary>
+		/// <param name="value"></param>
+		public void LogIf(bool condition, object value) => StratusDebug.LogIf(condition, value, this, 2);
+
+		/// <summary>
 		/// Prints the given warning message to the console
 		/// </summary>
 		/// <param name="value"></param>
@@ -61,6 +67,12 @@ namespace Stratus
 		/// </summary>
 		/// <param name="value"></param>
 		public void LogError(object value) => StratusDebug.LogError(value, this, 2);
+
+		/// <summary>
+		/// Prints the given result to the console
+		/// </summary>
+		/// <param name="value"></param>
+		public void Log(StratusOperationResult result) => StratusDebug.Log(result, this, 2);
 
 		/// <summary>
 		/// Runs a coroutine on this behaviour

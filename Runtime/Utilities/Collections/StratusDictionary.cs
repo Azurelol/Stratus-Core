@@ -25,16 +25,6 @@ namespace Stratus
 			AddRange(values);
 		}
 
-		//public bool Add(KeyType key, ValueType value)
-		//{
-		//    if (dictionary.ContainsKey(key))
-		//    {
-		//        return false;
-		//    }
-		//    dictionary.Add(key, value);
-		//    return true;
-		//}
-
 		public bool Add(ValueType value)
 		{
 			KeyType key = keyFunction(value);
@@ -75,12 +65,6 @@ namespace Stratus
 			Remove(key);
 			return true;
 		}
-
-		//public bool Remove(KeyType key)
-		//{
-
-		//}
-
 	}
 
 }

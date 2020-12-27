@@ -27,6 +27,12 @@ namespace Stratus
 		/// </summary>
 		/// <param name="value"></param>
 		public static void LogError(this IStratusLogger logger, object value) => StratusDebug.LogError(value, logger, 2);
+
+		/// <summary>
+		/// Prints the given operation result to the console
+		/// </summary>
+		/// <param name="value"></param>
+		public static void Log(this IStratusLogger logger, StratusOperationResult result) => StratusDebug.Log(result, logger, 2);
 	}
 
 }

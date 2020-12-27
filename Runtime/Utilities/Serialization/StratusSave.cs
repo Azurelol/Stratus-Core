@@ -6,7 +6,7 @@ using System;
 namespace Stratus
 {
 	/// <summary>
-	/// Base class for saves
+	/// Base class for saves. Classes inherited from this class add which data they wish to be serialized.
 	/// </summary>
 	public abstract class StratusSave : ISerializationCallbackReceiver, IStratusLogger, IDisposable
 	{
@@ -35,7 +35,8 @@ namespace Stratus
 
 		/// <summary>
 		/// The index of this save. For save systems with a limited amount of slots,
-		/// this is its slot
+		/// this is its slot.
+		/// This must be assigned by the client before calling save.
 		/// </summary>
 		public int index = -1;
 

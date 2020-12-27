@@ -68,9 +68,9 @@ namespace Stratus
 		where SaveType : StratusSave, new()
 	{
 		StratusSortedList<int, SaveType> saves { get; }
-		bool Save(SaveType save, string fileName);
-		bool Save(SaveType save);
-		void SaveAsync(SaveType save, Action onFinished);
+		StratusOperationResult Save(SaveType save, string fileName);
+		StratusOperationResult Save(SaveType save);
+		StratusOperationResult SaveAsync(SaveType save, Action onFinished);
 		SaveType Load(string fileName, string folderName = null);
 		SaveType GetSaveAtIndex(int index);
 	}
@@ -429,7 +429,7 @@ namespace Stratus
 		/// Saves the data to the default path in the application's persistent path
 		/// using the specified name
 		/// </summary>
-		public bool Save(SaveType save, string fileName = null)
+		public StratusOperationResult Save(SaveType save, string fileName = null)
 		{
 			// No name provided
 			if (save.name == null)
@@ -474,12 +474,11 @@ namespace Stratus
 		/// Saves new data with a generated save name
 		/// </summary>
 		/// <param name="saveData"></param>
-		public bool Save(SaveType saveData)
+		public StratusOperationResult Save(SaveType saveData)
 		{
 			if (!saveData.hasValidIndex)
 			{
-				this.LogError("No index has been assigned for this save");
-				return false;
+				return new StratusOperationResult(false, "No index has been assigned for this save");
 			}
 
 			if (saveData.serialized)
@@ -501,12 +500,11 @@ namespace Stratus
 		/// Saves data asynchronously, at runtime
 		/// </summary>
 		/// <param name="save"></param>
-		public void SaveAsync(SaveType save, Action onFinished)
+		public StratusOperationResult SaveAsync(SaveType save, Action onFinished)
 		{
 			if (!Application.isPlaying)
 			{
-				this.LogError("Cannot save asynchronously outside of playmode...");
-				return;
+				return new StratusOperationResult(false, "Cannot save asynchronously outside of playmode...");
 			}
 
 			IEnumerator routine()
@@ -527,6 +525,7 @@ namespace Stratus
 			}
 
 			StratusCoroutineRunner.Run(routine());
+			return true;
 		}
 
 		/// <summary>
