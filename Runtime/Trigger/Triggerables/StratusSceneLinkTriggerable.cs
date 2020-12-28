@@ -9,7 +9,7 @@ namespace Stratus
 	/// <summary>
 	/// When triggered, makes sure the selected scenes are loaded
 	/// </summary>
-	public class StratusSceneLinkTriggerable : StratusTriggerable
+	public class StratusSceneLinkTriggerable : StratusTriggerableBehaviour
 	{
 		//----------------------------------------------------------------------/
 		// Fields

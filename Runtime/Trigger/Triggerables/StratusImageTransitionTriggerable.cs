@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Stratus
 {
-	public class StratusImageTransitionTriggerable : StratusTriggerable
+	public class StratusImageTransitionTriggerable : StratusTriggerableBehaviour
 	{
 		public enum DurationType { Each, Total }
 		public enum ImageSourceType { Scene, Asset }

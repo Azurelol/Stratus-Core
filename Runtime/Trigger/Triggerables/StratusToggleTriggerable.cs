@@ -4,7 +4,7 @@ namespace Stratus
 {
 	/// <summary>
 	/// </summary>
-	public class StratusToggleTriggerable : StratusTriggerable
+	public class StratusToggleTriggerable : StratusTriggerableBehaviour
 	{
 		public enum Scope 
 		{ 

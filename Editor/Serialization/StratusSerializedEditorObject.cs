@@ -95,6 +95,8 @@ namespace Stratus.Editor
 			}
 
 			return fieldDrawers[field];
-		}		
+		}
+
+		public static bool HasFieldDrawer(FieldInfo field) => fieldDrawers.ContainsKey(field);
 	}
 }

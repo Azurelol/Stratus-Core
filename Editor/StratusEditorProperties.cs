@@ -142,6 +142,7 @@ namespace Stratus.Editor
 				}
 				else
 				{
+					//changed |= StratusEditorGUILayout.Property(property.p);
 					changed |= StratusEditorGUILayout.Field(property.field, this.target);
 				}
 			}
@@ -168,24 +169,23 @@ namespace Stratus.Editor
 			for (int i = 0; i < properties.Length; i++)
 			{
 				StratusSerializedPropertyModel property = properties[i];
-				//Debug.Log($"Drawing property {property.displayName}");
 				switch (property.type)
 				{
 					case StratusSerializedPropertyModel.SerializationType.Unity:
-						bool hasConstraint = this.propertyConstraints.ContainsKey(property.unitySerialized);
+						bool hasConstraint = this.propertyConstraints.ContainsKey(property.unitySerialization);
 						if (hasConstraint)
 						{
-							bool canBeDrawn = this.propertyConstraints[property.unitySerialized].Invoke();
+							bool canBeDrawn = this.propertyConstraints[property.unitySerialization].Invoke();
 							if (!canBeDrawn)
 							{
 								continue;
 							}
 						}
-						propertiesChanged |= this.DrawSerializedProperty(property.unitySerialized, this.serializedObject);
+						propertiesChanged |= this.DrawSerializedProperty(property.unitySerialization, this.serializedObject);
 						break;
 
 					case StratusSerializedPropertyModel.SerializationType.Custom:
-						propertiesChanged |= this.DrawSerializedProperty(property.customSerialized);
+						propertiesChanged |= this.DrawSerializedProperty(property.customSerialization);
 						break;
 				}
 
@@ -225,7 +225,7 @@ namespace Stratus.Editor
 					{
 						case StratusSerializedPropertyModel.SerializationType.Unity:
 							{
-								SerializedProperty serializedProperty = propertyModel.unitySerialized;
+								SerializedProperty serializedProperty = propertyModel.unitySerialization;
 								this.propertyMap.Add(serializedProperty.name, serializedProperty);
 								//Debug.Log($"Added property {serializedProperty.name}");
 								this.unitySerializedPropertyModels.Add(serializedProperty, propertyModel);
@@ -252,10 +252,10 @@ namespace Stratus.Editor
 
 						case StratusSerializedPropertyModel.SerializationType.Custom:
 							{
-								this.customSerializedPropertyModels.Add(propertyModel.customSerialized, propertyModel);
-								if (propertyModel.customSerialized.isList)
+								this.customSerializedPropertyModels.Add(propertyModel.customSerialization, propertyModel);
+								if (propertyModel.customSerialization.isList)
 								{
-									this.reorderableLists.Add(propertyModel, StratusReorderableList.PolymorphicList(propertyModel.customSerialized));
+									this.reorderableLists.Add(propertyModel, StratusReorderableList.PolymorphicList(propertyModel.customSerialization));
 								}
 							}
 							break;
@@ -359,7 +359,7 @@ namespace Stratus.Editor
 					continue;
 				}
 
-				bool foundConstraint = this.propertyConstraints.ContainsKey(property.unitySerialized);
+				bool foundConstraint = this.propertyConstraints.ContainsKey(property.unitySerialization);
 
 				// If no constraint was found for this property, it means 
 				// that at least one property can be drawn
@@ -370,7 +370,7 @@ namespace Stratus.Editor
 				// If the property was found and validated, it means we can draw it
 				else
 				{
-					bool validated = this.propertyConstraints[property.unitySerialized]();
+					bool validated = this.propertyConstraints[property.unitySerialization]();
 					if (validated)
 					{
 						return true;

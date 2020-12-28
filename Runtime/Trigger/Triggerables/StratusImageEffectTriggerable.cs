@@ -9,7 +9,7 @@ namespace Stratus
 	/// <summary>
 	/// Affects an image
 	/// </summary>
-	public class StratusImageEffectTriggerable : StratusTriggerable
+	public class StratusImageEffectTriggerable : StratusTriggerableBehaviour
 	{
 		//--------------------------------------------------------------------------------------------/
 		// Declarations

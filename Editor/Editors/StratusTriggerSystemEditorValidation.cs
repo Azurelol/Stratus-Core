@@ -98,7 +98,7 @@ namespace Stratus.Editor
 			return status;
 		}
 
-		private StratusTriggerSystem.ConnectionStatus GetStatus(StratusTriggerable triggerable)
+		private StratusTriggerSystem.ConnectionStatus GetStatus(StratusTriggerableBehaviour triggerable)
 		{
 			StratusTriggerSystem.ConnectionStatus status = StratusTriggerSystem.ConnectionStatus.Disconnected;
 			if (selected)

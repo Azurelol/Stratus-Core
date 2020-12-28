@@ -9,7 +9,7 @@ namespace Stratus
 	/// <summary>
 	/// Sets an <see cref="Animator"/>'s parameter
 	/// </summary>
-	public class StratusAnimatorParameterTriggerable : StratusTriggerable
+	public class StratusAnimatorParameterTriggerable : StratusTriggerableBehaviour
 	{
 		[FormerlySerializedAs("Animator")]
 		public Animator animator;

@@ -34,10 +34,10 @@ namespace Stratus
     public bool outlines = false;
 
     public List<StratusTriggerBehaviour> triggers = new List<StratusTriggerBehaviour>();
-    public List<StratusTriggerable> triggerables = new List<StratusTriggerable>();
+    public List<StratusTriggerableBehaviour> triggerables = new List<StratusTriggerableBehaviour>();
     public bool descriptionsWithLabel = false;
     private Dictionary<StratusTriggerBehaviour, bool> triggersInitialState = new Dictionary<StratusTriggerBehaviour, bool>();
-    private Dictionary<StratusTriggerable, bool> triggerablesInitialState = new Dictionary<StratusTriggerable, bool>();
+    private Dictionary<StratusTriggerableBehaviour, bool> triggerablesInitialState = new Dictionary<StratusTriggerableBehaviour, bool>();
 
     //------------------------------------------------------------------------/
     // Properties
@@ -163,8 +163,8 @@ namespace Stratus
     {
       if (baseTrigger is StratusTriggerBehaviour)
         triggers.Add(baseTrigger as StratusTriggerBehaviour);
-      else if (baseTrigger is StratusTriggerable)
-        triggerables.Add(baseTrigger as StratusTriggerable);
+      else if (baseTrigger is StratusTriggerableBehaviour)
+        triggerables.Add(baseTrigger as StratusTriggerableBehaviour);
     }
 
     /// <summary>
@@ -191,7 +191,7 @@ namespace Stratus
 
       // Add previously not found
       triggers.AddRangeUnique(GetComponents<StratusTriggerBehaviour>());
-      triggerables.AddRangeUnique(GetComponents<StratusTriggerable>());
+      triggerables.AddRangeUnique(GetComponents<StratusTriggerableBehaviour>());
 
       // Hide any triggers managed by the system
       ShowComponents(false);
@@ -208,7 +208,7 @@ namespace Stratus
       }        
     }
 
-    public static bool IsConnected(StratusTriggerBehaviour trigger, StratusTriggerable triggerable)
+    public static bool IsConnected(StratusTriggerBehaviour trigger, StratusTriggerableBehaviour triggerable)
     {
       if (trigger.targets.Contains(triggerable))
         return true;

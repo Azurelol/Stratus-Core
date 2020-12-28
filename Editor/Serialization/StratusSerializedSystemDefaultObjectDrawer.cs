@@ -59,21 +59,13 @@ namespace Stratus.Editor
 				{
 					if (call.isField)
 					{
-						//call.field.Name
-						//EditorGUI.indentLevel++;
 						changed |= call.drawer.DrawEditorGUILayout(target);
-						//EditorGUI.indentLevel--;
 					}
 					else
 					{
-						//UnityEditor.EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-						//EditorGUI.indentLevel++;
 						object value = this.GetValueOrSetDefault(call.field, target);
 						changed |= call.drawer.DrawEditorGUILayout(value, true);
-						//EditorGUI.indentLevel--;
-						//UnityEditor.EditorGUILayout.EndVertical();
 					}
-					//EditorGUI.indentLevel = 0;
 
 				}
 

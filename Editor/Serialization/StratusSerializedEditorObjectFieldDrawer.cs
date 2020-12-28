@@ -57,40 +57,40 @@ namespace Stratus.Editor
 				switch (propertyType)
 				{
 					case StratusSerializedFieldType.ObjectReference:
-						this.field.SetValue(target, UnityEditor.EditorGUILayout.ObjectField(name, this.GetValue<UnityEngine.Object>(target), type, true));
+						this.field.SetValue(target, EditorGUILayout.ObjectField(name, this.GetValue<UnityEngine.Object>(target), type, true));
 						break;
 					case StratusSerializedFieldType.Integer:
-						this.field.SetValue(target, UnityEditor.EditorGUILayout.IntField(name, this.GetValue<int>(target)));
+						this.field.SetValue(target, EditorGUILayout.IntField(name, this.GetValue<int>(target)));
 						break;
 					case StratusSerializedFieldType.Boolean:
-						this.field.SetValue(target, UnityEditor.EditorGUILayout.Toggle(name, this.GetValue<bool>(target)));
+						this.field.SetValue(target, EditorGUILayout.Toggle(name, this.GetValue<bool>(target)));
 						break;
 					case StratusSerializedFieldType.Float:
 						OnFloatEditorGUILayout(target);
 						break;
 					case StratusSerializedFieldType.String:
-						this.field.SetValue(target, UnityEditor.EditorGUILayout.TextField(name, this.GetValue<string>(target)));
+						this.field.SetValue(target, EditorGUILayout.TextField(name, this.GetValue<string>(target)));
 						break;
 					case StratusSerializedFieldType.Color:
-						this.field.SetValue(target, UnityEditor.EditorGUILayout.ColorField(name, this.GetValue<Color>(target)));
+						this.field.SetValue(target, EditorGUILayout.ColorField(name, this.GetValue<Color>(target)));
 						break;
 					case StratusSerializedFieldType.LayerMask:
-						this.field.SetValue(target, UnityEditor.EditorGUILayout.LayerField(name, this.GetValue<LayerMask>(target)));
+						this.field.SetValue(target, EditorGUILayout.LayerField(name, this.GetValue<LayerMask>(target)));
 						break;
 					case StratusSerializedFieldType.Enum:
-						this.field.SetValue(target, UnityEditor.EditorGUILayout.EnumPopup(name, this.GetValue<Enum>(target)));
+						this.field.SetValue(target, EditorGUILayout.EnumPopup(name, this.GetValue<Enum>(target)));
 						break;
 					case StratusSerializedFieldType.Vector2:
-						this.field.SetValue(target, UnityEditor.EditorGUILayout.Vector2Field(name, this.GetValue<Vector2>(target)));
+						this.field.SetValue(target, EditorGUILayout.Vector2Field(name, this.GetValue<Vector2>(target)));
 						break;
 					case StratusSerializedFieldType.Vector3:
-						this.field.SetValue(target, UnityEditor.EditorGUILayout.Vector3Field(name, this.GetValue<Vector3>(target)));
+						this.field.SetValue(target, EditorGUILayout.Vector3Field(name, this.GetValue<Vector3>(target)));
 						break;
 					case StratusSerializedFieldType.Vector4:
-						this.field.SetValue(target, UnityEditor.EditorGUILayout.Vector4Field(name, this.GetValue<Vector4>(target)));
+						this.field.SetValue(target, EditorGUILayout.Vector4Field(name, this.GetValue<Vector4>(target)));
 						break;
 					case StratusSerializedFieldType.Rect:
-						this.field.SetValue(target, UnityEditor.EditorGUILayout.RectField(name, this.GetValue<Rect>(target)));
+						this.field.SetValue(target, EditorGUILayout.RectField(name, this.GetValue<Rect>(target)));
 						break;
 					default:
 						if (isArray)
@@ -100,14 +100,15 @@ namespace Stratus.Editor
 						}
 						else
 						{
-							UnityEditor.EditorGUILayout.LabelField($"No drawer implementation for {name} of type {type.Name}");
+							string warningMsg = $"No drawer implementation for {name} of type {type.Name}";
+							StratusDebug.LogWarning(warningMsg);
+							EditorGUILayout.LabelField(warningMsg);
 						}
 						break;
 				}
 
 				if (EditorGUI.EndChangeCheck())
 				{
-
 					return true;
 				}
 

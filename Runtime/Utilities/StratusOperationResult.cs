@@ -66,5 +66,6 @@ namespace Stratus
 
 		public static implicit operator T(StratusOperationResult<T> result) => result.value;
 		public static implicit operator StratusOperationResult<T>(T value) => new StratusOperationResult<T>(true, value);
+		public static implicit operator StratusOperationResult<T>(bool valid) => new StratusOperationResult<T>(valid, null);
 	}
 }

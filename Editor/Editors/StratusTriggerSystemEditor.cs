@@ -22,7 +22,7 @@ namespace Stratus.Editor
 		private const int descriptionSize = 10;
 		private const float connectedButtonWidth = 20f;
 		private List<Tuple<StratusTriggerBehaviour, StratusTriggerBehaviour>> triggerSwapOperations = new List<Tuple<StratusTriggerBehaviour, StratusTriggerBehaviour>>();
-		private List<Tuple<StratusTriggerable, StratusTriggerable>> triggerableSwapOperations = new List<Tuple<StratusTriggerable, StratusTriggerable>>();
+		private List<Tuple<StratusTriggerableBehaviour, StratusTriggerableBehaviour>> triggerableSwapOperations = new List<Tuple<StratusTriggerableBehaviour, StratusTriggerableBehaviour>>();
 		private GUILayoutOption columnWidth;
 		private StratusTypeSelector triggerTypes, triggerableTypes;
 
@@ -31,14 +31,14 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		private StratusEditor selectedEditor { get; set; }
 		private string selectedName { get; set; }
-		private StratusTriggerable selectedTriggerable { get; set; }
+		private StratusTriggerableBehaviour selectedTriggerable { get; set; }
 		private StratusTriggerBehaviour selectedTrigger { get; set; }
 		private StratusTriggerBase selected { get; set; }
-		private Dictionary<StratusTriggerable, bool> connectedTriggerables { get; set; } = new Dictionary<StratusTriggerable, bool>();
+		private Dictionary<StratusTriggerableBehaviour, bool> connectedTriggerables { get; set; } = new Dictionary<StratusTriggerableBehaviour, bool>();
 		private Dictionary<StratusTriggerBehaviour, bool> connectedTriggers { get; set; } = new Dictionary<StratusTriggerBehaviour, bool>();
-		public Dictionary<StratusTriggerable, StratusTriggerSystem.ConnectionStatus> triggerableConnectivity { get; private set; } = new Dictionary<StratusTriggerable, StratusTriggerSystem.ConnectionStatus>();
+		public Dictionary<StratusTriggerableBehaviour, StratusTriggerSystem.ConnectionStatus> triggerableConnectivity { get; private set; } = new Dictionary<StratusTriggerableBehaviour, StratusTriggerSystem.ConnectionStatus>();
 		public List<StratusTriggerBehaviour> triggers => target.triggers;
-		public List<StratusTriggerable> triggerables => target.triggerables;
+		public List<StratusTriggerableBehaviour> triggerables => target.triggerables;
 		public Dictionary<StratusTriggerBase, int> connectivityGroups { get; set; } = new Dictionary<StratusTriggerBase, int>();
 		private bool showDescriptions => target.showDescriptions;
 		private Vector2 scrollPos { get; set; } = Vector2.zero;
@@ -53,7 +53,7 @@ namespace Stratus.Editor
 		protected override void OnStratusEditorEnable()
 		{
 			triggerTypes = new StratusTypeSelector(typeof(StratusTriggerBehaviour), true);
-			triggerableTypes = new StratusTypeSelector(typeof(StratusTriggerable), true);
+			triggerableTypes = new StratusTypeSelector(typeof(StratusTriggerableBehaviour), true);
 
 			selectedColor = StratusGUIStyles.Colors.selectedColor;
 			connectedColor = StratusGUIStyles.Colors.connectedColor;
@@ -114,7 +114,7 @@ namespace Stratus.Editor
 
 		}
 
-		private void SetTriggerableContextMenu(StratusTriggerable triggerable, GenericMenu menu)
+		private void SetTriggerableContextMenu(StratusTriggerableBehaviour triggerable, GenericMenu menu)
 		{
 			// Connect
 			if (selectedTrigger)
@@ -199,7 +199,7 @@ namespace Stratus.Editor
 			//Highlighter.Highlight(nameof(TriggerSystem), trigger.GetType().Name);
 		}
 
-		private void SelectTriggerable(StratusTriggerable triggerable)
+		private void SelectTriggerable(StratusTriggerableBehaviour triggerable)
 		{
 			selectedTrigger = null;
 			selectedTriggerable = triggerable;
@@ -228,7 +228,7 @@ namespace Stratus.Editor
 			});
 		}
 
-		private void RemoveTriggerable(StratusTriggerable triggerable)
+		private void RemoveTriggerable(StratusTriggerableBehaviour triggerable)
 		{
 			if (selected == triggerable)
 			{
@@ -245,23 +245,23 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		// Methods: Connections
 		//------------------------------------------------------------------------/
-		private void Connect(StratusTriggerBehaviour trigger, StratusTriggerable triggerable)
+		private void Connect(StratusTriggerBehaviour trigger, StratusTriggerableBehaviour triggerable)
 		{
 			StratusDebug.Log($"Connecting {trigger.GetType().Name} and {triggerable.GetType().Name}");
 			trigger.targets.Add(triggerable);
 			UpdateConnections();
 		}
 
-		private void Disconnect(StratusTriggerBehaviour trigger, StratusTriggerable triggerable)
+		private void Disconnect(StratusTriggerBehaviour trigger, StratusTriggerableBehaviour triggerable)
 		{
 			StratusDebug.Log($"Disconnecting {trigger.GetType().Name} and {triggerable.GetType().Name}");
 			trigger.targets.Remove(triggerable);
 			UpdateConnections();
 		}
 
-		private bool IsConnected(StratusTriggerBehaviour trigger, StratusTriggerable triggerable) => StratusTriggerSystem.IsConnected(trigger, triggerable);
+		private bool IsConnected(StratusTriggerBehaviour trigger, StratusTriggerableBehaviour triggerable) => StratusTriggerSystem.IsConnected(trigger, triggerable);
 		private bool IsConnected(StratusTriggerBehaviour trigger) => StratusTriggerSystem.IsConnected(trigger);
-		private bool IsConnected(StratusTriggerable triggerable) => triggerableConnectivity.ContainsKey(triggerable) && triggerableConnectivity[triggerable] == StratusTriggerSystem.ConnectionStatus.Connected;
+		private bool IsConnected(StratusTriggerableBehaviour triggerable) => triggerableConnectivity.ContainsKey(triggerable) && triggerableConnectivity[triggerable] == StratusTriggerSystem.ConnectionStatus.Connected;
 
 		private void UpdateConnections()
 		{

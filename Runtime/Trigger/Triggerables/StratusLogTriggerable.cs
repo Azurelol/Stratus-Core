@@ -5,7 +5,7 @@ namespace Stratus
 	/// <summary>
 	/// Simple event that logs a message to the console when triggered.
 	/// </summary>
-	public class StratusLogTriggerable : StratusTriggerable
+	public class StratusLogTriggerable : StratusTriggerableBehaviour
 	{
 		public LogType type = LogType.Log;
 

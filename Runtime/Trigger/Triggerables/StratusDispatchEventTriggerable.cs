@@ -6,7 +6,7 @@ using System;
 
 namespace Stratus
 {
-	public class StratusDispatchEventTriggerable : StratusTriggerable
+	public class StratusDispatchEventTriggerable : StratusTriggerableBehaviour
 	{
 		//------------------------------------------------------------------------/
 		// Fields

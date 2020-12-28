@@ -64,7 +64,7 @@ namespace Stratus
 		/// </summary>
 		[Header("Targeting")]
 		[Tooltip("What component to send the trigger event to")]
-		public List<StratusTriggerable> targets = new List<StratusTriggerable>();
+		public List<StratusTriggerableBehaviour> targets = new List<StratusTriggerableBehaviour>();
 		/// <summary>
 		/// What instruction to send to the triggerable
 		/// </summary>

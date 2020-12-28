@@ -17,7 +17,7 @@ namespace Stratus
 			this.keyFunction = keyFunction;
 		}
 
-		public StratusSortedList(IEnumerable<ValueType> values, Func<ValueType, KeyType> keyFunction,
+		public StratusSortedList(Func<ValueType, KeyType> keyFunction, IEnumerable<ValueType> values,
 			int capacity = 0,
 			IComparer<KeyType> comparer = null)
 			: this(keyFunction, capacity, comparer)

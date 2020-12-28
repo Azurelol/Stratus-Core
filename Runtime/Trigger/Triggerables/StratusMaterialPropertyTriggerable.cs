@@ -7,7 +7,7 @@ namespace Stratus
 	/// <summary>
 	/// Modifies a <see cref="Material"/> at runtime
 	/// </summary>
-	public class StratusMaterialPropertyTriggerable : StratusTriggerable
+	public class StratusMaterialPropertyTriggerable : StratusTriggerableBehaviour
 	{
 		public enum PropertyType
 		{

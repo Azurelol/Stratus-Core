@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 namespace Stratus
 {
-	public class StratusSceneTriggerable : StratusTriggerable
+	public class StratusSceneTriggerable : StratusTriggerableBehaviour
 	{
 		public enum Type
 		{

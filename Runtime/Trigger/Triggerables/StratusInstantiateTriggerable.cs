@@ -7,7 +7,7 @@ namespace Stratus
 	/// <summary>
 	/// Instantiates a prefab when triggered
 	/// </summary>
-	public class StratusInstantiateTriggerable : StratusTriggerable
+	public class StratusInstantiateTriggerable : StratusTriggerableBehaviour
 	{
 		[Header("Instantiate")]
 		public StratusPrefabInstantiateProcedure type = StratusPrefabInstantiateProcedure.Parent;

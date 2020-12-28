@@ -7,13 +7,13 @@ using UnityEngine;
 namespace Stratus
 {
 	/// <summary>
-	/// When triggered, itself triggers another <see cref="StratusTriggerable"/>
+	/// When triggered, itself triggers another <see cref="StratusTriggerableBehaviour"/>
 	/// </summary>
-	public class StratusTriggerableProxy : StratusTriggerable
+	public class StratusTriggerableProxy : StratusTriggerableBehaviour
 	{
 		[Header("Targeting")]
 		[Tooltip("What component to send the trigger event to")]
-		public StratusTriggerable target;
+		public StratusTriggerableBehaviour target;
 		[Tooltip("Whether the trigger will be sent to the GameObject as an event or invoked directly on the dispatcher component")]
 		public StratusTriggerBehaviour.Scope delivery = StratusTriggerBehaviour.Scope.GameObject;
 		[Tooltip("Whether it should also trigger all of the object's children")]

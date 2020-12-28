@@ -29,7 +29,7 @@ namespace Stratus
     [Tooltip("The triggers to observe")]
     public StratusTriggerBehaviour[] triggers;
     [Tooltip("The triggerables to observe")]
-    public StratusTriggerable[] triggerables;
+    public StratusTriggerableBehaviour[] triggerables;
 
     private List<MonoBehaviour> current = new List<MonoBehaviour>();
 
@@ -92,7 +92,7 @@ namespace Stratus
         Activate();
     }
 
-    void OnTriggered(StratusTriggerable other)
+    void OnTriggered(StratusTriggerableBehaviour other)
     {
       current.Remove(other);
       if (ShouldActivate())

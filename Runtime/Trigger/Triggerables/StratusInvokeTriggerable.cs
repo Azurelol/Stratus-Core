@@ -8,7 +8,7 @@ namespace Stratus
 	/// <summary>
 	/// Invokes a method when triggered.
 	/// </summary>
-	public class StratusInvokeTriggerable : StratusTriggerable
+	public class StratusInvokeTriggerable : StratusTriggerableBehaviour
 	{
 		public UnityEvent callbacks = new UnityEvent();
 

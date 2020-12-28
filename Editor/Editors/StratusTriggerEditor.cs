@@ -16,8 +16,8 @@ namespace Stratus.Editor
 		}
 	}
 
-	[CustomEditor(typeof(StratusTriggerable), true), CanEditMultipleObjects]
-	public class TriggerableEditor : StratusTriggerBaseEditor<StratusTriggerable>
+	[CustomEditor(typeof(StratusTriggerableBehaviour), true), CanEditMultipleObjects]
+	public class TriggerableEditor : StratusTriggerBaseEditor<StratusTriggerableBehaviour>
 	{
 		internal override void OnTriggerBaseEditorEnable()
 		{
@@ -41,8 +41,8 @@ namespace Stratus.Editor
 		}
 	}
 
-	[CustomEditor(typeof(StratusTriggerable), true), CanEditMultipleObjects]
-	public abstract class TriggerableEditor<T> : TriggerableEditor where T : StratusTriggerable
+	[CustomEditor(typeof(StratusTriggerableBehaviour), true), CanEditMultipleObjects]
+	public abstract class TriggerableEditor<T> : TriggerableEditor where T : StratusTriggerableBehaviour
 	{
 		/// <summary>
 		/// The target cast as the declared triggerable type

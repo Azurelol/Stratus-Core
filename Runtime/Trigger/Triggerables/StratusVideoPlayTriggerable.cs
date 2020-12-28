@@ -10,7 +10,7 @@ namespace Stratus
 	/// <summary>
 	/// Plays a video on the specified RawImage using the VideoPlayer
 	/// </summary>
-	public class StratusVideoPlayTriggerable : StratusTriggerable
+	public class StratusVideoPlayTriggerable : StratusTriggerableBehaviour
 	{
 		[Header("Output")]
 		[Tooltip("Where the image will be displayed as a raw texture")]

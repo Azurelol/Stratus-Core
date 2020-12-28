@@ -3,7 +3,7 @@ namespace Stratus
 	/// <summary>
 	/// Provides the ability to provide changes to a specified MonoBehaviour's properties at runtime
 	/// </summary>
-	public class StratusSetPropertyTriggerable : StratusTriggerable
+	public class StratusSetPropertyTriggerable : StratusTriggerableBehaviour
 	{
 		//--------------------------------------------------------------------------------------------/
 		// Fields

@@ -153,7 +153,7 @@ namespace Stratus.Editor
 			Draw(trigger, color, SelectTrigger, RemoveTrigger, SetTriggerContextMenu);
 		}
 
-		private void DrawTriggerable(StratusTriggerable triggerable)
+		private void DrawTriggerable(StratusTriggerableBehaviour triggerable)
 		{
 			StratusTriggerSystem.ConnectionStatus status = StratusTriggerSystem.ConnectionStatus.Disconnected;
 			if (selected)
@@ -224,21 +224,21 @@ namespace Stratus.Editor
 				{
 					if (other is StratusTriggerBehaviour)
 						triggerSwapOperations.Add(new Tuple<StratusTriggerBehaviour, StratusTriggerBehaviour>(baseTrigger as StratusTriggerBehaviour, other as StratusTriggerBehaviour));
-					else if (other is StratusTriggerable)
-						Connect(baseTrigger as StratusTriggerBehaviour, other as StratusTriggerable);
+					else if (other is StratusTriggerableBehaviour)
+						Connect(baseTrigger as StratusTriggerBehaviour, other as StratusTriggerableBehaviour);
 				}
-				else if (baseTrigger is StratusTriggerable)
+				else if (baseTrigger is StratusTriggerableBehaviour)
 				{
-					if (other is StratusTriggerable)
-						triggerableSwapOperations.Add(new Tuple<StratusTriggerable, StratusTriggerable>(baseTrigger as StratusTriggerable, other as StratusTriggerable));
+					if (other is StratusTriggerableBehaviour)
+						triggerableSwapOperations.Add(new Tuple<StratusTriggerableBehaviour, StratusTriggerableBehaviour>(baseTrigger as StratusTriggerableBehaviour, other as StratusTriggerableBehaviour));
 					else if (other is StratusTriggerBehaviour)
-						Connect(other as StratusTriggerBehaviour, baseTrigger as StratusTriggerable);
+						Connect(other as StratusTriggerBehaviour, baseTrigger as StratusTriggerableBehaviour);
 				}
 			};
 
 			Func<object, bool> onValidateDrag = (object other) =>
 			{
-				if (other is StratusTriggerBehaviour || other is StratusTriggerable)
+				if (other is StratusTriggerBehaviour || other is StratusTriggerableBehaviour)
 					return true;
 				return false;
 			};

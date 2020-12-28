@@ -7,7 +7,7 @@ namespace Stratus
 	/// <summary>
 	/// Provides common operations on a <seealso cref="Transform"/>
 	/// </summary>
-	public class StratusTransformTriggerable : StratusTriggerable, StratusTriggerBase.Restartable
+	public class StratusTransformTriggerable : StratusTriggerableBehaviour, StratusTriggerBase.Restartable
 	{
 		public enum ValueType
 		{

@@ -39,29 +39,39 @@ namespace Stratus
 					FieldInfo field = fields[i];
 					if (field != null && (field.Attributes != FieldAttributes.NotSerialized))
 					{
-						bool serializedbyOdin = OdinSerializer.UnitySerializationUtility.OdinWillSerialize(field, true);
-						bool serializedByUnity = OdinSerializer.UnitySerializationUtility.GuessIfUnityWillSerialize(field);
+						StratusSerializedPropertyModel propertyModel = null;
 
-
-						//Debug.LogWarning($"{field.Name} is serialized by odin?{serializedbyOdin} unity?{serializedByUnity}");
-
-
-						// Odin
-						if (serializedbyOdin && !serializedByUnity)
-						{
-							StratusSerializedField serializedField = new StratusSerializedField(field, serializedObject.targetObject);
-							serializedFields.Add(serializedField);
-							propertyModels.Add(new StratusSerializedPropertyModel(serializedField));
-						}
 						// Unity
-						else
+						bool serializedByUnity = OdinSerializer.UnitySerializationUtility.GuessIfUnityWillSerialize(field);
+						if (serializedByUnity)
 						{
 							SerializedProperty property = serializedObject.FindProperty(field.Name);
 							if (property != null)
 							{
 								serializedProperties.Add(property);
-								propertyModels.Add(new StratusSerializedPropertyModel(property, field));
+								propertyModel = new StratusSerializedPropertyModel(property, field);
 							}
+						}
+						// Odin
+						if (propertyModel == null)
+						{
+							var isSerializable = field.FieldType.HasAttribute<SerializableAttribute>();
+							if (isSerializable)
+							{
+								bool serializedbyOdin = OdinSerializer.UnitySerializationUtility.OdinWillSerialize(field, true);
+								if (serializedbyOdin)
+								{
+									StratusSerializedField serializedField = new StratusSerializedField(field, serializedObject.targetObject);
+									serializedFields.Add(serializedField);
+									propertyModel = new StratusSerializedPropertyModel(serializedField);
+								}
+							}
+
+						}
+
+						if (propertyModel != null)
+						{
+							propertyModels.Add(propertyModel);
 						}
 
 					}
@@ -75,22 +85,22 @@ namespace Stratus
 		}
 
 		public SerializationType type { get; private set; }
-		public SerializedProperty unitySerialized { get; private set; }
-		public StratusSerializedField customSerialized { get; private set; }
+		public SerializedProperty unitySerialization { get; private set; }
+		public StratusSerializedField customSerialization { get; private set; }
 		public FieldInfo field { get; private set; }
 		public bool isExpanded
 		{
-			get => (this.type == SerializationType.Unity) ? this.unitySerialized.isExpanded : this.customSerialized.isExpanded;
+			get => (this.type == SerializationType.Unity) ? this.unitySerialization.isExpanded : this.customSerialization.isExpanded;
 
 			set
 			{
 				switch (this.type)
 				{
 					case SerializationType.Unity:
-						this.unitySerialized.isExpanded = value;
+						this.unitySerialization.isExpanded = value;
 						break;
 					case SerializationType.Custom:
-						this.customSerialized.isExpanded = value;
+						this.customSerialization.isExpanded = value;
 						break;
 				}
 			}
@@ -98,18 +108,18 @@ namespace Stratus
 
 		public Attribute[] attributes => field.GetAttributes().ToArray();
 
-		public string displayName => (this.type == SerializationType.Unity) ? this.unitySerialized.displayName : this.customSerialized.displayName;
+		public string displayName => (this.type == SerializationType.Unity) ? this.unitySerialization.displayName : this.customSerialization.displayName;
 
 		public StratusSerializedPropertyModel(SerializedProperty serializedProperty, FieldInfo field)
 		{
-			this.unitySerialized = serializedProperty;
+			this.unitySerialization = serializedProperty;
 			this.field = field;
 			this.type = SerializationType.Unity;
 		}
 
 		public StratusSerializedPropertyModel(StratusSerializedField serializedField)
 		{
-			this.customSerialized = serializedField;
+			this.customSerialization = serializedField;
 			this.field = serializedField.field;
 			this.type = SerializationType.Custom;
 		}

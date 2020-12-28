@@ -6,7 +6,7 @@ namespace Stratus
 	/// <summary>
 	/// A component that when triggered will perform a specific action.
 	/// </summary>
-	public abstract class StratusTriggerable : StratusTriggerBase
+	public abstract class StratusTriggerableBehaviour : StratusTriggerBase
 	{
 		/// <summary>
 		/// This event signals that the triggerable has finished
@@ -38,7 +38,7 @@ namespace Stratus
 		/// <summary>
 		/// Subscribe to be notified when this trigger has been activated
 		/// </summary>
-		public UnityAction<StratusTriggerable> onTriggered { get; set; }
+		public UnityAction<StratusTriggerableBehaviour> onTriggered { get; set; }
 
 		//------------------------------------------------------------------------/
 		// Interface
@@ -57,7 +57,7 @@ namespace Stratus
 			awoke = true;
 			this.gameObject.Connect<StratusTriggerBehaviour.TriggerEvent>(this.OnTriggerEvent);
 			this.OnAwake();
-			onTriggered = (StratusTriggerable trigger) => { };
+			onTriggered = (StratusTriggerableBehaviour trigger) => { };
 		}
 
 		/// <summary>
