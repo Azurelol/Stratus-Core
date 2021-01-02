@@ -98,7 +98,7 @@ namespace Stratus
 			if (!assets.ContainsKey(label))
 			{
 				this.LogError($"Could not find asset named {label}");
-				this.LogError($"Available assets: {assetNames.JoinToString()}");
+				this.LogError($"Available assets: {assetNames.ToStringJoin()}");
 				return null;
 			}
 			return assets[label]; ;

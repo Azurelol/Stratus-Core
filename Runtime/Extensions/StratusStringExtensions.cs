@@ -8,6 +8,41 @@ using System.Linq;
 
 namespace Stratus
 {
+	/// <summary>
+	/// Encloses a string. For example, "dog" -> "<dog>"
+	/// </summary>
+	public enum StratusStringEnclosure
+	{
+		/// <summary>
+		/// foo
+		/// </summary>
+		None,
+		/// <summary>
+		/// (foo)
+		/// </summary>
+		Parenthesis,
+		/// <summary>
+		/// 'foo'
+		/// </summary>
+		Quote,
+		/// <summary>
+		/// "foo"
+		/// </summary>
+		DoubleQuote,
+		/// <summary>
+		/// [foo]
+		/// </summary>
+		SquareBracket,
+		/// <summary>
+		/// {foo}
+		/// </summary>
+		CurlyBracket,
+		/// <summary>
+		/// <foo>
+		/// </summary>
+		AngleBracket
+	}
+
 	public static partial class Extensions
 	{
 		//--------------------------------------------------------------------/
@@ -22,6 +57,32 @@ namespace Stratus
 		//--------------------------------------------------------------------/
 		// Methods
 		//--------------------------------------------------------------------/
+		/// <summary>
+		/// Encloses the given string. For example, with <see cref="StratusStringEnclosure.SquareBracket"/>: "foo" -> "[foo]"
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="enclosure"></param>
+		/// <returns></returns>
+		public static string Enclose(this string input, StratusStringEnclosure enclosure)
+		{
+			switch (enclosure)
+			{
+				case StratusStringEnclosure.Parenthesis:
+					return $"({input})";
+				case StratusStringEnclosure.Quote:
+					return $"'{input}'";
+				case StratusStringEnclosure.DoubleQuote:
+					return $"\"{input}\"";
+				case StratusStringEnclosure.SquareBracket:
+					return $"[{input}]";
+				case StratusStringEnclosure.CurlyBracket:
+					return $"{{{input}}}";
+				case StratusStringEnclosure.AngleBracket:
+					return $"<{input}>";
+			}
+			return input;
+		}
+
 		/// <summary>
 		/// Returns true if the string is null or empty
 		/// </summary>

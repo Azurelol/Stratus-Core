@@ -12,6 +12,18 @@ namespace Stratus.Tests
 	public class StratusStringExtensionsTests
 	{
 		[Test]
+		public void TestEnclosure()
+		{
+			string input = "foo";
+			Assert.AreEqual("(foo)", input.Enclose(StratusStringEnclosure.Parenthesis));
+			Assert.AreEqual("[foo]", input.Enclose(StratusStringEnclosure.SquareBracket));
+			Assert.AreEqual("{foo}", input.Enclose(StratusStringEnclosure.CurlyBracket));
+			Assert.AreEqual("<foo>", input.Enclose(StratusStringEnclosure.AngleBracket));
+			Assert.AreEqual("\"foo\"", input.Enclose(StratusStringEnclosure.DoubleQuote));
+			Assert.AreEqual("'foo'", input.Enclose(StratusStringEnclosure.Quote));
+		}
+
+		[Test]
 		public void TestNullOrEmpty()
 		{
 			string value = null;

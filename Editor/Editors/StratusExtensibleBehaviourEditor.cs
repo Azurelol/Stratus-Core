@@ -32,7 +32,7 @@ namespace Stratus.Editor
 		private bool hasSelectedExtension => selectedExtensionBehaviour != null;
 		private bool removingExtension { get; set; }
 		public IStratusExtensionBehaviour selectedExtension => target.hasExtensions ? target.extensions[extensionIndex] : null;
-		public MonoBehaviour selectedExtensionBehaviour => target.extensionBehaviours.HasIndex(extensionIndex) ? target.extensionBehaviours[extensionIndex] : null;
+		public MonoBehaviour selectedExtensionBehaviour => target.extensionBehaviours.ContainsIndex(extensionIndex) ? target.extensionBehaviours[extensionIndex] : null;
 		public string selectedExtensionTypeName => extensionTypeNames[extensionTypesIndex];
 		public Type selectedExtensionType => extensionTypes[extensionTypesIndex];
 

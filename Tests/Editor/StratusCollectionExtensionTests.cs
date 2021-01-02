@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
+using System.Linq;
 
 namespace Stratus.Tests
 {
@@ -74,20 +75,6 @@ namespace Stratus.Tests
 					(tdo) => tdo.value < 5);
 				Assert.True(values.Count == 1);
 				Assert.True(values.First().name == "A" && values.First().value == 4);
-			}
-
-			// First/Last 
-			{
-				int[] values = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-
-				Assert.AreEqual(1, values.First());
-				Assert.AreEqual(9, values.Last());
-
-				values = values.TruncateFront();
-				Assert.AreEqual(2, values.First());
-
-				values = values.TruncateBack();
-				Assert.AreEqual(8, values.Last());
 			}
 
 			// Remove Invalid
@@ -193,9 +180,9 @@ namespace Stratus.Tests
 					a
 				};
 
-				Assert.False(values.HasIndex(-1));
-				Assert.True(values.HasIndex(0));
-				Assert.False(values.HasIndex(1));
+				Assert.False(values.ContainsIndex(-1));
+				Assert.True(values.ContainsIndex(0));
+				Assert.False(values.ContainsIndex(1));
 
 				Assert.AreEqual(a, values.AtIndexOrDefault(0));
 				Assert.AreEqual(a, values.AtIndexOrDefault(5, a));

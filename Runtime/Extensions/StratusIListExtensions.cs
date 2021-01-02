@@ -113,19 +113,11 @@ namespace Stratus
 		}
 
 		/// <summary>
-		/// Returns true if index is valid for this list
-		/// </summary>
-		public static bool HasIndex<T>(this IList<T> list, int index)
-		{
-			return (index >= 0) && ((list.Count - 1) >= index);
-		}
-
-		/// <summary>
 		/// Returns the element at the given index, or the default (null for class types)
 		/// </summary>
 		public static T AtIndexOrDefault<T>(this IList<T> list, int index)
 		{
-			return list.HasIndex(index) ? list[index] : default(T);
+			return list.ContainsIndex(index) ? list[index] : default(T);
 		}
 
 		/// <summary>
@@ -133,7 +125,7 @@ namespace Stratus
 		/// </summary>
 		public static T AtIndexOrDefault<T>(this IList<T> list, int index, T defaultValue)
 		{
-			return list.HasIndex(index) ? list[index] : defaultValue;
+			return list.ContainsIndex(index) ? list[index] : defaultValue;
 		}
 
 		/// <summary>
@@ -163,6 +155,13 @@ namespace Stratus
 			return Enumerable.Contains(source, value, comparer);
 		}
 
+		/// <summary>
+		/// Returns true if the list contains the given index
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="source"></param>
+		/// <param name="index"></param>
+		/// <returns></returns>
 		public static bool ContainsIndex<T>(this IList<T> source, int index)
 		{
 			if (source == null || source.Count== 0 || index < 0)
@@ -172,104 +171,6 @@ namespace Stratus
 
 			return index <= source.Count - 1;
 		}
-
-		/// <summary>
-		///Returns the maximum value in a sequence of values.
-		/// </summary>
-		public static float Max(this IList<float> source)
-		{
-			return Enumerable.Max(source);
-		}
-
-		/// <summary>
-		/// Returns the maximum value in a sequence of values.
-		/// </summary>
-		public static float Min(this IList<float> source)
-		{
-			return Enumerable.Min(source);
-		}
-
-		/// <summary>
-		/// Returns the maximum value in a sequence of values.
-		/// </summary>
-		public static int Max(this IList<int> source)
-		{
-			return Enumerable.Max(source);
-		}
-
-		/// <summary>
-		///Returns the maximum value in a sequence of values.
-		/// </summary>
-		public static int Min(this IList<int> source)
-		{
-			return Enumerable.Min(source);
-		}
-
-		/// <summary>
-		/// Computes the sum of a sequence of numeric values.
-		/// </summary>
-		public static int Sum(this IList<int> source)
-		{
-			return Enumerable.Sum(source);
-		}
-
-		/// <summary>
-		/// Computes the sum of a sequence of numeric values.
-		/// </summary>
-		public static float Sum(this IList<float> source)
-		{
-			return Enumerable.Sum(source);
-		}
-
-		/// <summary>
-		/// Invokes a transform function on each element of a sequence and returns the maximum value.
-		/// </summary>
-		public static float Max<T>(this IList<T> source, Func<T, float> selector)
-		{
-			return Enumerable.Max(source, selector);
-		}
-
-		/// <summary>
-		/// Invokes a transform function on each element of a sequence and returns the maximum value.
-		/// </summary>
-		public static int Max<T>(this IList<T> source, Func<T, int> selector)
-		{
-			return Enumerable.Max(source, selector);
-		}
-
-		/// <summary>
-		/// Invokes a transform function on each element of a sequence and returns the minimum value.
-		/// </summary>
-		public static float Min<T>(this IList<T> source, Func<T, float> selector)
-		{
-			return Enumerable.Min(source, selector);
-		}
-
-		/// <summary>
-		/// Invokes a transform function on each element of a sequence and returns the minimum value.
-		/// </summary>
-		public static float Min<T>(this IList<T> source, Func<T, int> selector)
-		{
-			return Enumerable.Min(source, selector);
-		}
-
-		/// <summary>
-		/// Returns a specified number of contiguous elements from the start of a sequence.
-		/// </summary>
-		public static IEnumerable<T> Take<T>(this IList<T> source, int count)
-		{
-			return Enumerable.Take(source, count);
-		}
-
-		/// <summary>
-		/// Returns elements from a sequence as long as a specified condition is true, and then skips the remaining elements.
-		/// </summary>
-		public static IEnumerable<T> TakeWhile<T>(this IList<T> source, Func<T, bool> predicate)
-		{
-			return Enumerable.TakeWhile(source, predicate);
-		}
-
-
 	}
 
 }

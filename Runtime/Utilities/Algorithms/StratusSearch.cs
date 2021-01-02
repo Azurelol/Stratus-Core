@@ -136,7 +136,7 @@ namespace Stratus
 
 			public override string ToString()
 			{
-				return $"{element}: cost({cost}), path({path.JoinToString()})";
+				return $"{element}: cost({cost}), path({path.ToStringJoin()})";
 			}
 		}
 

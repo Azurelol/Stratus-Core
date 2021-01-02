@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define STRATUS_IMPORT_LINQ_EXTENSIONS
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,67 +11,44 @@ namespace Stratus
 	public static partial class Extensions
 	{
 		/// <summary>
-		/// Returns a string joining the names of the enumerable.
-		/// EG: "{a,b,c,...}"
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="enumerable"></param>
-		/// <returns></returns>
-		public static string JoinToString<T>(this IEnumerable<T> enumerable, string separator = ",")
-		{
-			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder.Append("{");
-			stringBuilder.Append(enumerable.ToStringArray().Join(separator));
-			stringBuilder.Append("}");
-			return stringBuilder.ToString();
-		}
-
-		/// <summary>
-		/// Returns a string joining the names of the enumerable.
-		/// EG: "{a,b,c,...}"
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="enumerable"></param>
-		/// <returns></returns>
-		public static string JoinToString<T>(this IEnumerable<T> enumerable, Func<T, string> nameFunc, string separator = ",")
-		{
-			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder.Append("{");
-			stringBuilder.Append(enumerable.ToStringArray(nameFunc).Join(separator));
-			stringBuilder.Append("}");
-			return stringBuilder.ToString();
-		}
-
-		/// <summary>
-		/// Returns an array of strings, consisting of the names identified on their name property
+		/// Given a sequence, returns an array of each elements <see cref="object.ToString"/>'s method
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="enumerable"></param>
 		/// <returns></returns>
 		public static string[] ToStringArray<T>(this IEnumerable<T> enumerable)
-		{
-			List<string> names = new List<string>();
-			foreach (T entry in enumerable)
-			{
-				names.Add(entry.ToString());
-			}
-			return names.ToArray();
-		}
+			=> enumerable.ToStringArray(x => x.ToString());
 
 		/// <summary>
-		/// Returns an array of strings, consisting of the names identified on their name property
+		/// Given a sequence, returns an array of each elements stringified by the provided function
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="enumerable"></param>
 		/// <returns></returns>
-		public static string[] ToStringArray<T>(this IEnumerable<T> enumerable, Func<T, string> nameFunc)
+		public static string[] ToStringArray<T>(this IEnumerable<T> enumerable, Func<T, string> stringFunction)
 		{
-			List<string> names = new List<string>();
+			List<string> values = new List<string>();
 			foreach (T entry in enumerable)
 			{
-				names.Add(nameFunc(entry));
+				values.Add(stringFunction(entry));
 			}
-			return names.ToArray();
+			return values.ToArray();
+		}
+
+		/// <summary>
+		/// Given a sequence of elements, stringifies them before joining them together into a single string.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="enumerable"></param>
+		/// <returns></returns>
+		public static string ToStringJoin<T>(this IEnumerable<T> enumerable,
+											 string separator = ",",
+											 StratusStringEnclosure enclosure = StratusStringEnclosure.None,
+											 Func<T, string> stringFunction = null)
+		{
+			return stringFunction != null ?
+				enumerable.ToStringArray(stringFunction).Join(separator)
+				: enumerable.ToStringArray().Join(separator).Enclose(enclosure);
 		}
 
 		/// <summary>
@@ -102,72 +81,6 @@ namespace Stratus
 				names.Add(item.Name);
 			}
 			return names.ToArray();
-		}
-
-		/// <summary>
-		/// Returns the first element from the sequence
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		public static T First<T>(this IEnumerable<T> source)
-		{
-			return Enumerable.First(source);
-		}
-
-		/// <summary>
-		/// Returns the first element in a sequence that satisfies a specified condition.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		public static T First<T>(this IEnumerable<T> source, Func<T, bool> predicate)
-		{
-			return Enumerable.First(source, predicate);
-		}
-
-		/// <summary>
-		/// Returns the first element of a sequence, or a default value if no element is found.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		public static T FirstOrDefault<T>(this IEnumerable<T> source)
-		{
-			return Enumerable.FirstOrDefault(source);
-		}
-
-		/// <summary>
-		/// Returns the first element of a sequence, or a default value if no element is found.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		public static T FirstOrDefault<T>(this IEnumerable<T> source, Func<T, bool> predicate)
-		{
-			return Enumerable.FirstOrDefault(source, predicate);
-		}
-
-		/// <summary>
-		/// Returns the last element of a sequence
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		public static T Last<T>(this IEnumerable<T> source)
-		{
-			return Enumerable.Last(source);
-		}
-
-		/// <summary>
-		/// Returns the last element of a sequence
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		public static T Last<T>(this IEnumerable<T> source, Func<T, bool> predicate)
-		{
-			return Enumerable.Last(source, predicate);
 		}
 
 		/// <summary>
@@ -206,7 +119,7 @@ namespace Stratus
 
 		/// <summary>
 		/// Checks whether this enumerables has elements with duplicate keys (uniquely identifying properties),
-		/// given a function that determines the key for each element
+		/// using the default comprarer
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="enumerable"></param>
@@ -234,7 +147,7 @@ namespace Stratus
 					return element;
 				}
 			}
-			return default(T);
+			return default;
 		}
 
 		/// <summary>
@@ -244,7 +157,8 @@ namespace Stratus
 		/// <param name="enumerable"></param>
 		/// <param name="predicate"></param>
 		/// <returns></returns>
-		public static T FindFirstDuplicate<T>(this IEnumerable<T> enumerable, Func<T, string> keyFunction)
+		public static T FindFirstDuplicate<T>(this IEnumerable<T> enumerable, 
+			Func<T, string> keyFunction)
 		{
 			HashSet<string> hashset = new HashSet<string>();
 			foreach (T element in enumerable)
@@ -256,7 +170,7 @@ namespace Stratus
 				}
 				hashset.Add(key);
 			}
-			return default(T);
+			return default;
 		}
 
 		/// <summary>
@@ -287,28 +201,15 @@ namespace Stratus
 		/// <typeparam name="T"></typeparam>
 		/// <param name="enumerable"></param>
 		/// <returns></returns>
-		public static T[] TruncateNull<T>(this IEnumerable<T> enumerable)
+		public static IEnumerable<T> TruncateNull<T>(this IEnumerable<T> enumerable)
 		{
-			List<T> list = new List<T>();
 			foreach (T item in enumerable)
 			{
 				if (item != null)
 				{
-					list.Add(item);
+					yield return item;
 				}
 			}
-			return list.ToArray();
-		}
-
-		/// <summary>
-		/// Filters the elements of an IEnumerable based on a specified type.
-		/// </summary>
-		/// <typeparam name="TResult"></typeparam>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		public static IEnumerable<TResult> OfType<TResult>(this IEnumerable source)
-		{
-			return Enumerable.OfType<TResult>(source);
 		}
 
 		/// <summary>
@@ -650,5 +551,84 @@ namespace Stratus
 				return enumerable.ToList();
 			}
 		}
+
+		#region STRATUS_IMPORT_LINQ_EXTENSIONS
+		/// <summary>
+		/// Returns the first element from the sequence
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="source"></param>
+		/// <returns></returns>
+		public static T First<T>(this IEnumerable<T> source)
+		{
+			return Enumerable.First(source);
+		}
+
+		/// <summary>
+		/// Returns the first element in a sequence that satisfies a specified condition.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="source"></param>
+		/// <returns></returns>
+		public static T First<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+		{
+			return Enumerable.First(source, predicate);
+		}
+
+		/// <summary>
+		/// Returns the first element of a sequence, or a default value if no element is found.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="source"></param>
+		/// <returns></returns>
+		public static T FirstOrDefault<T>(this IEnumerable<T> source)
+		{
+			return Enumerable.FirstOrDefault(source);
+		}
+
+		/// <summary>
+		/// Returns the first element of a sequence, or a default value if no element is found.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="source"></param>
+		/// <returns></returns>
+		public static T FirstOrDefault<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+		{
+			return Enumerable.FirstOrDefault(source, predicate);
+		}
+
+		/// <summary>
+		/// Returns the last element of a sequence
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="source"></param>
+		/// <returns></returns>
+		public static T Last<T>(this IEnumerable<T> source)
+		{
+			return Enumerable.Last(source);
+		}
+
+		/// <summary>
+		/// Returns the last element of a sequence
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="source"></param>
+		/// <returns></returns>
+		public static T Last<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+		{
+			return Enumerable.Last(source, predicate);
+		}
+
+		/// <summary>
+		/// Filters the elements of an IEnumerable based on a specified type.
+		/// </summary>
+		/// <typeparam name="TResult"></typeparam>
+		/// <param name="source"></param>
+		/// <returns></returns>
+		public static IEnumerable<TResult> OfType<TResult>(this IEnumerable source)
+		{
+			return Enumerable.OfType<TResult>(source);
+		}
+		#endregion
 	}
 }

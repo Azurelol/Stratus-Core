@@ -28,7 +28,7 @@ namespace Stratus
 			{
 				if (prefabs != null)
 				{
-					string value = $"Instantiate {prefabs.JoinToString()} at {position} ({space})";
+					string value = $"Instantiate {prefabs.ToStringJoin()} at {position} ({space})";
 					return value;
 				}
 				return string.Empty;

@@ -416,14 +416,14 @@ namespace Stratus
 			switch (memberReference.type)
 			{
 				case MemberTypes.Field:
-					if (!this.fields.HasIndex(index))
+					if (!this.fields.ContainsIndex(index))
 						return false;
 					if (this.fields[index].Name != memberReference.name)
 						return UpdateMemberIndex(memberReference);
 					break;
 
 				case MemberTypes.Property:
-					if (!this.properties.HasIndex(index))
+					if (!this.properties.ContainsIndex(index))
 						return false;
 					if (this.properties[index].Name != memberReference.name)
 						return UpdateMemberIndex(memberReference);
