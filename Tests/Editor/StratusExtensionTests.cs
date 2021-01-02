@@ -6,40 +6,39 @@ using UnityEngine;
 
 namespace Stratus.Tests
 {
-	public partial class StratusExtensionsTests
+	[ClassDescription(classDescription)]
+	internal class TestDataObject
 	{
-		private const string testDataObjectDescription = "A test class used for the unit tests";
-		[ClassDescription(testDataObjectDescription)]
-		private class TestDataObject
+		[MemberDescription(nameDescription)]
+		public string name;
+		[HideInInspector, SerializeField]
+		public int value;
+		[MemberDescription(inverseValueDescription)]
+		public int inverseValue => -this.value;
+
+		public const string classDescription = "A test class used for the unit tests";
+		public const string nameDescription = "The name of the object";
+		public const string inverseValueDescription = "The inverse value";
+
+		public TestDataObject(string name, int value)
 		{
-			[MemberDescription(nameDescription)]
-			public string name;
-			public const string nameDescription = "The name of the object";
-
-			[HideInInspector, SerializeField]
-			public int value;
-
-			[MemberDescription(inverseValueDescription)]
-			public int inverseValue => -this.value;
-			public const string inverseValueDescription = "The inverse value";
-
-			public TestDataObject(string name, int value)
-			{
-				this.name = name;
-				this.value = value;
-			}
-
-			public override string ToString()
-			{
-				return this.name;
-			}
-
-			public void Boop(int n, int b)
-			{
-				n.Iterate(() => Console.WriteLine(this.value + b));
-			}
+			this.name = name;
+			this.value = value;
 		}
 
+		public override string ToString()
+		{
+			return this.name;
+		}
+
+		public void Boop(int n, int b)
+		{
+			n.Iterate(() => Console.WriteLine(this.value + b));
+		}
+	}
+
+	public partial class StratusExtensionsTests
+	{
 		[Test]
 		public void TestIntegerExtensions()
 		{
@@ -91,74 +90,7 @@ namespace Stratus.Tests
 
 		
 
-		[Test]
-		public void TestStringExtensions()
-		{
-			// Count Lines, Trim Lines
-			{
-				string value = "hello\nthere\ncat";
-				Assert.AreEqual(3, value.CountLines());
-				value = value.ReplaceNewLines(" ");
-				Assert.AreEqual("hello there cat", value);
-			}
-
-			// Title Case
-			{
-				void TestTitleCase(string value, string expected) => Assert.AreEqual(expected, value.ToTitleCase());
-				TestTitleCase("COOL_MEMBER_NAME", "Cool Member Name");
-				TestTitleCase("war and peace", "War And Peace");
-				TestTitleCase("cool_class_name", "Cool Class Name");
-				TestTitleCase("_cool_class_name", "Cool Class Name");
-				TestTitleCase("_coolClassName", "Cool Class Name");
-			}
-
-			// Upper First
-			{
-				string value = "cat";
-				Assert.AreEqual("Cat", value.UpperFirst());
-			}
-
-			// Append Line
-			{
-				string value = "dog";
-				Assert.AreEqual("dog\ncat", value.AppendLine("cat"));
-			}
-
-			// Join
-			{
-				string[] values = new string[]
-				{
-					"A",
-					"B",
-					"C"
-				};
-				Assert.AreEqual("A B C", values.Join(" "));
-				Assert.AreEqual("A,B,C", values.Join(","));
-				Assert.AreEqual("A\nB\nC", values.JoinLines());
-			}
-
-			// Null or Empty, Valid
-			{
-				string value = null;
-				Assert.True(value.IsNullOrEmpty());
-				value = string.Empty;
-				Assert.True(value.IsNullOrEmpty());
-				value = "Boo!";
-				Assert.True(value.IsValid());
-			}
-
-			// Rich Text
-			{
-				string value = "Boo";
-				Assert.AreEqual($"<b>Boo</b>", value.ToRichText(FontStyle.Bold));
-				Assert.AreEqual($"<i>Boo</i>", value.ToRichText(FontStyle.Italic));
-				Assert.AreEqual($"<b><i>Boo</i></b>", value.ToRichText(FontStyle.BoldAndItalic));
-
-				Color color = Color.red;
-				Assert.AreEqual($"<b><color=#{color.ToHex()}>Boo</color></b>", value.ToRichText(FontStyle.Bold, color));
-			}
-
-		}
+		
 
 		[Test]
 		public static void TestVectorExtensions()
@@ -224,7 +156,7 @@ namespace Stratus.Tests
 
 			// Get Description
 			{
-				Assert.AreEqual(testType.GetDescription(), testDataObjectDescription);
+				Assert.AreEqual(testType.GetDescription(), TestDataObject.classDescription);
 				Assert.AreEqual(nameField.GetDescription(), TestDataObject.nameDescription);
 				Assert.AreEqual(inverseValueProperty.GetDescription(), TestDataObject.inverseValueDescription);
 			}
