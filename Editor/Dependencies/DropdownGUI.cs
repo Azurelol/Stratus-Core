@@ -82,7 +82,7 @@ namespace Stratus.Dependencies.Ludiq.Controls.Editor
 
 			if (options != null)
 			{
-				optionsCache = options.CacheToCollection();
+				optionsCache = CacheToCollection(options);
 				hasOptions = optionsCache.Count > 0;
 			}
 			else
@@ -337,7 +337,7 @@ namespace Stratus.Dependencies.Ludiq.Controls.Editor
 
 			if (options != null)
 			{
-				optionsCache = options.CacheToCollection();
+				optionsCache = CacheToCollection(options);
 				hasOptions = optionsCache.Count > 0;
 			}
 			else
@@ -552,7 +552,19 @@ namespace Stratus.Dependencies.Ludiq.Controls.Editor
 				return selectedOptions.ToHashSet();
 			}
 		}
-		
+
+		public static ICollection<T> CacheToCollection<T>(IEnumerable<T> enumerable)
+		{
+			if (enumerable is ICollection<T>)
+			{
+				return (ICollection<T>)enumerable;
+			}
+			else
+			{
+				return enumerable.ToList();
+			}
+		}
+
 		#endregion
 	}
 }

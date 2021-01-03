@@ -1,4 +1,4 @@
-﻿#define STRATUS_IMPORT_LINQ_EXTENSIONS
+﻿
 
 using System;
 using System.Collections;
@@ -157,7 +157,7 @@ namespace Stratus
 		/// <param name="enumerable"></param>
 		/// <param name="predicate"></param>
 		/// <returns></returns>
-		public static T FindFirstDuplicate<T>(this IEnumerable<T> enumerable, 
+		public static T FindFirstDuplicate<T>(this IEnumerable<T> enumerable,
 			Func<T, string> keyFunction)
 		{
 			HashSet<string> hashset = new HashSet<string>();
@@ -224,6 +224,28 @@ namespace Stratus
 		}
 
 		/// <summary>
+		/// Perform an action on each item that isn't null
+		/// </summary>
+		/// <param name="source">The source.</param>
+		/// <param name="action">The action to perform.</param>
+		public static IEnumerable<U> ConvertNotNull<T, U>(this IEnumerable<T> source, Func<T, U> func)
+			where T : class
+		{
+			if (source == null)
+			{
+				yield break;
+			}
+
+			foreach (T item in source)
+			{
+				if (item != null)
+				{
+					yield return func(item);
+				}
+			}
+		}
+
+		/// <summary>
 		/// Converts an enumerable from one type to an array of another through a conversion function
 		/// </summary>
 		public static U[] ToArray<T, U>(this IEnumerable<T> source, Func<T, U> function)
@@ -277,33 +299,11 @@ namespace Stratus
 		}
 
 		/// <summary>
-		/// Perform an action on each item that isn't null
-		/// </summary>
-		/// <param name="source">The source.</param>
-		/// <param name="action">The action to perform.</param>
-		public static IEnumerable<U> ForEachNotNull<T, U>(this IEnumerable<T> source, Func<T, U> func)
-			where T : class
-		{
-			if (source == null)
-			{
-				yield break;
-			}
-
-			foreach (T item in source)
-			{
-				if (item != null)
-				{
-					yield return func(item);
-				}
-			}
-		}
-
-		/// <summary>
 		/// Perform an action on each item, with an iteration counter
 		/// </summary>
 		/// <param name="source">The source.</param>
 		/// <param name="action">The action to perform.</param>
-		public static IEnumerable<T> ForEach<T>(this IEnumerable<T> source, Action<T, int> action)
+		public static IEnumerable<T> ForEachIndexed<T>(this IEnumerable<T> source, Action<T, int> action)
 		{
 			int counter = 0;
 
@@ -316,24 +316,23 @@ namespace Stratus
 		}
 
 		/// <summary>
-		/// Perform an action on each item that isn't null, with an iteration counter
+		/// Executes an action on 2 sequences in parallel
 		/// </summary>
-		/// <param name="source">The source.</param>
-		/// <param name="action">The action to perform.</param>
-		public static IEnumerable<T> ForEachNotNull<T>(this IEnumerable<T> source, Action<T, int> action)
-			where T : class
+		public static void ForEachParallel<T, U>(this IEnumerable<T> source, IEnumerable<U> other, Action<T, U> action)
 		{
-			int counter = 0;
+			var firstEnumerator = source.GetEnumerator();
+			var secondEnumerator = other.GetEnumerator();
 
-			foreach (T item in source)
+			if (!firstEnumerator.MoveNext() || secondEnumerator.MoveNext())
 			{
-				if (item != null)
-				{
-					action(item, counter++);
-				}
+				return;
 			}
 
-			return source;
+			do
+			{
+				action(firstEnumerator.Current, secondEnumerator.Current);
+			}
+			while (firstEnumerator.MoveNext() && secondEnumerator.MoveNext());
 		}
 
 		/// <summary>
@@ -359,7 +358,7 @@ namespace Stratus
 		/// </summary>
 		/// <param name="source">The collection.</param>
 		/// <param name="append">The collection to append.</param>
-		public static IEnumerable<T> AppendWhere<T>(this IEnumerable<T> source, Predicate<T> predicate, IEnumerable<T> append)
+		public static IEnumerable<T> AppendWhere<T>(this IEnumerable<T> source, IEnumerable<T> append, Predicate<T> predicate)
 		{
 			foreach (T item in source)
 			{
@@ -446,24 +445,6 @@ namespace Stratus
 		}
 
 		/// <summary>
-		/// Invokes a transform function on each element of a sequence and returns the element with maximum value.
-		/// </summary>
-		public static T SelectMax<T>(this IEnumerable<T> source, Func<T, int> selector)
-		{
-			return Enumerable.Range(0, int.MaxValue)
-			   .Zip(source, (index, element) => (selector(element), index, element)).Max().Item3;
-		}
-
-		/// <summary>
-		/// Invokes a transform function on each element of a sequence and returns the element with minimum value.
-		/// </summary>
-		public static T SelectMin<T>(this IEnumerable<T> source, Func<T, int> selector)
-		{
-			return Enumerable.Range(0, int.MaxValue)
-			   .Zip(source, (index, element) => (selector(element), index, element)).Min().Item3;
-		}
-
-		/// <summary>
 		/// Sorts the elements of a sequence in ascending or descending order. 
 		/// </summary>
 		public static IOrderedEnumerable<T> Order<T, TKey>(this IEnumerable<T> source, Func<T, TKey> selector, bool ascending)
@@ -496,7 +477,9 @@ namespace Stratus
 		/// <summary>
 		/// Returns a dictionary from the given enumerable, given a function to get the key for each value
 		/// </summary>
-		public static Dictionary<Key, Value> ToDictionary<Key, Value>(this IEnumerable<Value> source, Func<Value, Key> keyFunction, bool unique = true)
+		public static Dictionary<Key, Value> ToDictionary<Key, Value>(this IEnumerable<Value> source,
+			Func<Value, Key> keyFunction,
+			bool unique = true)
 		{
 			Dictionary<Key, Value> dictionary = new Dictionary<Key, Value>();
 			if (unique)
@@ -514,7 +497,9 @@ namespace Stratus
 		/// <summary>
 		/// Returns a dictionary from the given enumerable, given a function to get a value for each key and a predicate
 		/// </summary>
-		public static Dictionary<Key, Value> ToDictionary<Key, Value>(this IEnumerable<Key> source, Func<Key, Value> valueFunction, Predicate<Key> predicate = null)
+		public static Dictionary<Key, Value> ToDictionaryFromKey<Key, Value>(this IEnumerable<Key> source,
+			Func<Key, Value> valueFunction,
+			Predicate<Key> predicate = null)
 		{
 			Dictionary<Key, Value> dictionary = new Dictionary<Key, Value>();
 			if (predicate != null)
@@ -529,106 +514,6 @@ namespace Stratus
 			return dictionary;
 		}
 
-		/// <summary>
-		/// Builds a hashset out of the given enumerable
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		public static HashSet<T> ToHashSet<T>(this IEnumerable<T> source)
-		{
-			return new HashSet<T>(source);
-		}
 
-		public static ICollection<T> CacheToCollection<T>(this IEnumerable<T> enumerable)
-		{
-			if (enumerable is ICollection<T>)
-			{
-				return (ICollection<T>)enumerable;
-			}
-			else
-			{
-				return enumerable.ToList();
-			}
-		}
-
-		#region STRATUS_IMPORT_LINQ_EXTENSIONS
-		/// <summary>
-		/// Returns the first element from the sequence
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		public static T First<T>(this IEnumerable<T> source)
-		{
-			return Enumerable.First(source);
-		}
-
-		/// <summary>
-		/// Returns the first element in a sequence that satisfies a specified condition.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		public static T First<T>(this IEnumerable<T> source, Func<T, bool> predicate)
-		{
-			return Enumerable.First(source, predicate);
-		}
-
-		/// <summary>
-		/// Returns the first element of a sequence, or a default value if no element is found.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		public static T FirstOrDefault<T>(this IEnumerable<T> source)
-		{
-			return Enumerable.FirstOrDefault(source);
-		}
-
-		/// <summary>
-		/// Returns the first element of a sequence, or a default value if no element is found.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		public static T FirstOrDefault<T>(this IEnumerable<T> source, Func<T, bool> predicate)
-		{
-			return Enumerable.FirstOrDefault(source, predicate);
-		}
-
-		/// <summary>
-		/// Returns the last element of a sequence
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		public static T Last<T>(this IEnumerable<T> source)
-		{
-			return Enumerable.Last(source);
-		}
-
-		/// <summary>
-		/// Returns the last element of a sequence
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		public static T Last<T>(this IEnumerable<T> source, Func<T, bool> predicate)
-		{
-			return Enumerable.Last(source, predicate);
-		}
-
-		/// <summary>
-		/// Filters the elements of an IEnumerable based on a specified type.
-		/// </summary>
-		/// <typeparam name="TResult"></typeparam>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		public static IEnumerable<TResult> OfType<TResult>(this IEnumerable source)
-		{
-			return Enumerable.OfType<TResult>(source);
-		}
-		#endregion
 	}
 }

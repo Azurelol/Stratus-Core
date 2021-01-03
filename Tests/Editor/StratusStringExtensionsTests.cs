@@ -87,7 +87,7 @@ namespace Stratus.Tests
 
 
 		}
-		
+
 		[Test]
 		public void TestAppend()
 		{
@@ -122,28 +122,26 @@ namespace Stratus.Tests
 		[Test]
 		public void TestCase()
 		{
-			// Title Case
-			{
-				void TestTitleCase(string value, string expected) => Assert.AreEqual(expected, value.ToTitleCase());
-				TestTitleCase("COOL_MEMBER_NAME", "Cool Member Name");
-				TestTitleCase("war and peace", "War And Peace");
-				TestTitleCase("cool_class_name", "Cool Class Name");
-				TestTitleCase("_cool_class_name", "Cool Class Name");
-				TestTitleCase("_coolClassName", "Cool Class Name");
-			}
-
-			// Upper First
-			{
-				string value = "cat";
-				Assert.AreEqual("Cat", value.UpperFirst());
-			}
+			void TestTitleCase(string value, string expected) => Assert.AreEqual(expected, value.ToTitleCase());
+			TestTitleCase("COOL_MEMBER_NAME", "Cool Member Name");
+			TestTitleCase("war and peace", "War And Peace");
+			TestTitleCase("cool_class_name", "Cool Class Name");
+			TestTitleCase("_cool_class_name", "Cool Class Name");
+			TestTitleCase("_coolClassName", "Cool Class Name");
 		}
-		
+
+		[Test]
+		public void TestUpperFirst()
+		{
+			string value = "cat";
+			Assert.AreEqual("Cat", value.UpperFirst());
+		}
+
 		[Test]
 		public void TestTruncation()
 		{
 			string input = "Hello there brown cow";
-			
+
 			string text;
 			text = input.Truncate(5);
 			Assert.AreEqual("Hello...", text);

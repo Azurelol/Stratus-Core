@@ -49,7 +49,7 @@ namespace Stratus
 			{
 				this.Log($"Instantiating {prefabs.Length} prefabs...");
 			}
-			_instances.AddRange(prefabs.ForEachNotNull(x => InstantiatePrefab(x)));
+			_instances.AddRange(prefabs.ConvertNotNull(x => InstantiatePrefab(x)));
 			if (destroyOnInstantiate)
 			{
 				DestroyGameObjectOnNextFrame();

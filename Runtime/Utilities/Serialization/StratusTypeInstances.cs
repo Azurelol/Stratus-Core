@@ -19,7 +19,7 @@ namespace Stratus
 		{
 			baseType = typeof(T);
 			types = Utilities.StratusReflection.GetSubclass<T>();
-			instances = types.ToDictionary<Type, T>((Type t) => (T)Activator.CreateInstance(t));
+			instances = types.ToDictionaryFromKey((Type t) => (T)Activator.CreateInstance(t));
 		}
 
 		public U Get<U>() where U : T

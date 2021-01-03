@@ -176,7 +176,7 @@ namespace Stratus
 		/// <returns></returns>
 		public static T[] AppendWhere<T>(this T[] array, Predicate<T> predicate, params T[] values)
 		{
-			return array.AppendWhere(predicate, (IEnumerable<T>)values).ToArray();
+			return array.AppendWhere((IEnumerable<T>)values, predicate).ToArray();
 		}
 
 		/// <summary>
