@@ -20,7 +20,7 @@ namespace Stratus
 		/// <summary>
 		/// Returns the first instance listed
 		/// </summary>
-		public static T first => availableList.FirstOrNull() as T;
+		public static T first => availableList.FirstOrDefault() as T;
 		/// <summary>
 		/// All currently active instances
 		/// </summary>

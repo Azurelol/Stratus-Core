@@ -81,9 +81,9 @@ namespace Stratus
 		/// <typeparam name="T"></typeparam>
 		/// <param name="list"></param>
 		/// <returns></returns>
-		public static T FirstOrNull<T>(this IList<T> list)
+		public static T FirstOrDefault<T>(this IList<T> list)
 		{
-			return list.NotEmpty() ? list[0] : default(T);
+			return list.NotEmpty() ? list[0] : default;
 		}
 
 		/// <summary>
@@ -137,40 +137,15 @@ namespace Stratus
 		}
 
 		/// <summary>
-		/// Determines whether a sequence contains a specified element by using the default equality comparer.
-		/// </summary>
-		public static bool Contains<T>(this IList<T> source, T value)
-			where T : IComparable
-		{
-			return Enumerable.Contains(source, value);
-		}
-
-		/// <summary>
 		/// Determines whether a sequence contains a specified element by using a specified IEqualityComparer<T>.
 		/// </summary>
 		/// <param name="comparer"></param>
 		/// <returns></returns>
-		public static bool Contains<T>(this IList<T> source, T value, IEqualityComparer<T> comparer)
+		public static bool Contains<T>(this IList<T> source, T value)
 		{
-			return Enumerable.Contains(source, value, comparer);
+			return source.IsValid() && source.Contains(value);
 		}
 
-		/// <summary>
-		/// Returns true if the list contains the given index
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="source"></param>
-		/// <param name="index"></param>
-		/// <returns></returns>
-		public static bool ContainsIndex<T>(this IList<T> source, int index)
-		{
-			if (source == null || source.Count== 0 || index < 0)
-			{
-				return false;
-			}
 
-			return index <= source.Count - 1;
-		}
 	}
-
 }

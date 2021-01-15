@@ -73,7 +73,7 @@ namespace Stratus.Dependencies.Ludiq.Reflection.Editor
 			parameterTypesProperty = property.FindPropertyRelative("_parameterTypes");
 
 			// Fetch the filter
-			filter = filterOverride ?? (FilterAttribute)fieldInfo.GetCustomAttributes(typeof(FilterAttribute), true).FirstOrDefault() ?? new FilterAttribute();
+			this.filter = filterOverride ?? (FilterAttribute)Enumerable.FirstOrDefault(fieldInfo.GetCustomAttributes(typeof(FilterAttribute), true)) ?? new FilterAttribute();
 
 			// Check for the label type after attribute
 			labelTypeAfter = labelTypeAfterOverride ?? fieldInfo.IsDefined(typeof(LabelTypeAfterAttribute), true);

@@ -82,6 +82,12 @@ namespace Stratus.Tests
 			int[] a = new int[] { 1, 3, 5 }, b = new int[] { 2, 4, 6 };
 			Assert.AreEqual(new int[] { 1, 3, 5, 2, 4, 6 }, a.Concat(b));
 		}
+
+		[Test]
+		public void TestLenghOrZero()
+		{
+
+		}
 	}
 
 }

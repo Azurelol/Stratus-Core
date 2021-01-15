@@ -142,6 +142,18 @@ namespace Stratus
 
 		public static bool IsNullOrEmpty<T>(this ICollection<T> collection) => collection == null || collection.Count == 0;
 
+		public static bool IsValid<T>(this ICollection<T> source) => source != null && source.Count > 0;
+		public static int LengthOrZero<T>(this ICollection<T> array) => array != null ? array.Count : 0;
 
+		public static bool TryContains<T>(this ICollection<T> source, T value) => source.IsValid() && source.Contains(value);
+		public static bool ContainsIndex<T>(this IList<T> source, int index)
+		{
+			if (source == null || source.Count == 0 || index < 0)
+			{
+				return false;
+			}
+
+			return index <= source.Count - 1;
+		}
 	}
 }

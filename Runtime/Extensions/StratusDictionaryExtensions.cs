@@ -159,7 +159,7 @@ namespace Stratus
 		/// <summary>
 		/// Invokes the given action on every element of the list if the key is present within the dictionary
 		/// </summary>
-		public static void TryInvoke<Key, Value>(this Dictionary<Key, List<Value>> dictionary, Key key, System.Action<Value> action)
+		public static void TryInvoke<Key, Value>(this Dictionary<Key, List<Value>> dictionary, Key key, Action<Value> action)
 		{
 			if (dictionary.ContainsKey(key))
 			{
@@ -173,7 +173,7 @@ namespace Stratus
 		/// <summary>
 		/// Invokes the given action on the value within the dictionary if present
 		/// </summary>
-		public static void TryInvoke<Key, Value>(this Dictionary<Key, Value> dictionary, Key key, System.Action<Value> action)
+		public static void TryInvoke<Key, Value>(this Dictionary<Key, Value> dictionary, Key key, Action<Value> action)
 		{
 			if (dictionary.ContainsKey(key))
 			{
@@ -184,13 +184,14 @@ namespace Stratus
 		/// <summary>
 		/// Invokes the given function on the value within the dictionary if present
 		/// </summary>
-		public static Return TryInvoke<Key, Value, Return>(this Dictionary<Key, Value> dictionary, Key key, System.Func<Value, Return> action)
+		public static ReturnValue TryInvoke<Key, Value, ReturnValue>(this Dictionary<Key, Value> dictionary, Key key, Func<Value, ReturnValue> func)
 		{
 			if (dictionary.ContainsKey(key))
 			{
-				return action(dictionary[key]);
+				Value value = dictionary[key];
+				return func(value);
 			}
-			return default(Return);
+			return default;
 		}
 
 		/// <summary>

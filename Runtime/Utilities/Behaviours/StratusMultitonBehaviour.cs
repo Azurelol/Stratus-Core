@@ -24,7 +24,7 @@ namespace Stratus
 		/// <summary>
 		/// Returns the first listed multiton
 		/// </summary>
-		public static T first => instances.FirstOrNull() as T;
+		public static T first => instances.FirstOrDefault() as T;
 		/// <summary>
 		/// All currently active instances
 		/// </summary>

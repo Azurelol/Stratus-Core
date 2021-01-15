@@ -280,19 +280,5 @@ namespace Stratus
 		{
 			return array.Cast<T>().ToArray();
 		}
-
-		public static int LengthOrZero<T>(this T[] array) => array != null ? array.Length : 0;
-
-		public static bool ContainsIndex<T>(this T[] array, int index)
-		{
-			if (array == null || array.Length == 0 || index < 0)
-			{
-				return false;
-			}
-
-			return index <= array.Length - 1;
-		}
-
-
 	}
 }
