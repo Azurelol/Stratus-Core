@@ -64,35 +64,6 @@ namespace Stratus.Tests
 		}
 
 		[Test]
-		public static void TestFloatExtensions()
-		{
-			float a = 0f, b = 1f;
-
-			// Lerp To
-			Assert.AreEqual(0f, a.LerpTo(b, 0f));
-			Assert.AreEqual(0.25f, a.LerpTo(b, 0.25f));
-			Assert.AreEqual(0.5f, a.LerpTo(b, 0.5f));
-			Assert.AreEqual(0.75f, a.LerpTo(b, 0.75f));
-			Assert.AreEqual(1f, a.LerpTo(b, 1f));
-
-			// Lerp From
-			Assert.AreEqual(0f, b.LerpFrom(a, 0f));
-			Assert.AreEqual(0.25f, b.LerpFrom(a, 0.25f));
-			Assert.AreEqual(0.5f, b.LerpFrom(a, 0.5f));
-			Assert.AreEqual(0.75f, b.LerpFrom(a, 0.75f));
-			Assert.AreEqual(1f, b.LerpFrom(a, 1f));
-
-			// To Percentage String
-			float percentage = 0.75f;
-			Assert.AreEqual(percentage.ToPercentageRoundedString(), $"75%");
-			Assert.AreEqual(75f.ToPercent(), percentage);
-		}
-
-		
-
-		
-
-		[Test]
 		public static void TestVectorExtensions()
 		{
 			float min = 0f, max = 1f;

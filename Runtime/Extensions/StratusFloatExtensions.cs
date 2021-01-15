@@ -31,43 +31,45 @@ namespace Stratus
 			return (1f - t) * a + t * b;
 		}
 
-		
 		/// <summary>
-		/// Returns this float as a percentage string (eg: 97.7%)
+		/// Rounds the given float value by N decimal places
 		/// </summary>
-		/// <param name="f"></param>
-		/// <returns></returns>
-		public static string ToPercentageString(this float f)
-		{
-			return $"{(f * 100.0f):0.00}%";
-		}
-
-		/// <summary>
-		/// Returns this float as a percentage string, rounded as an integer
-		/// </summary>
-		/// <param name="f"></param>
-		/// <returns></returns>
-		public static string ToPercentageRoundedString(this float f)
-		{
-			return $"{(f * 100.0f):0}%";
-		}
-
-		/// <summary>
-		/// Returns a string of the float rounded to 2 decimal places by default
-		/// </summary>
-		/// <param name="f"></param>
-		/// <returns></returns>
-		public static string ToRoundedString(this float f)
-		{
-			return $"{(f):0.00}%";
-		}
+		public static float Round(this float f, int digits = 2) => (float)Math.Round(f, digits);
 
 		/// <summary>
 		/// Converts this value to its percentage (dividing by 100)
 		/// </summary>
 		/// <param name="f"></param>
 		/// <returns></returns>
-		public static float ToPercent(this float f) => f * 0.01f;
+		public static float ToPercent(this float f) => (f * 0.01f).Round();
 
+		/// <summary>
+		/// Converts this value from a percentage (multiplying by 100)
+		/// </summary>
+		/// <param name="f"></param>
+		/// <returns></returns>
+		public static float FromPercent(this float f) => (f * 100f).Round();
+
+		/// <summary>
+		/// Given a percentage float value, returns the string.
+		/// (e.g: 1.5f -> 150.00%)
+		/// </summary>
+		/// <param name="f"></param>
+		/// <returns></returns>
+		public static string FromPercentString(this float f)
+		{
+			return $"{(f.FromPercent()):0.00}%";
+		}
+
+		/// <summary>
+		/// Given a percentage float value rounded, returns the string.
+		/// (e.g: 1.5f -> 150%)
+		/// </summary>
+		/// <param name="f"></param>
+		/// <returns></returns>
+		public static string FromPercentRoundedString(this float f)
+		{
+			return $"{(f.FromPercent()):0}%";
+		}
 	}
 }
