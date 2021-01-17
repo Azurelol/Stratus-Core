@@ -5,7 +5,7 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Linq;
 
-namespace Stratus.Tests
+namespace Stratus.Editor.Tests
 {
 	public class StratusFloatExtensionsTests
 	{
@@ -32,7 +32,11 @@ namespace Stratus.Tests
 		[TestCase(5.555f, 5.55f)]
 		[TestCase(5.4333f, 5.43f)]
 		[TestCase(8.21111111f, 8.21f)]
-		[TestCase(-5.5555f, -5.55f)]
+		[TestCase(-5.5111f, -5.51f)]
+		[TestCase(5.5111f, 5.51f)]
+		[TestCase(5.54444f, 5.54f)]
+		[TestCase(5.55555f, 5.55f)]
+		[TestCase(5.58888f, 5.58f)]
 		public void TestRound(float value, float expected,  int decimalPlaces = 2)
 		{
 			Assert.AreEqual(expected, value.Round(decimalPlaces));
@@ -60,6 +64,27 @@ namespace Stratus.Tests
 			float valueAsPercent = value.ToPercent();
 			Assert.AreEqual("350.00%", valueAsPercent.FromPercentString());
 			Assert.AreEqual("350%", valueAsPercent.FromPercentRoundedString());
+		}
+
+		[Test]
+		public void TestIterate()
+		{
+			int n = 3;
+
+			int result = 0;
+			n.Iterate(() => result += 1);
+			Assert.AreEqual(n, result);
+
+			result = 0;
+			n.Iterate((i) => result += i * 2);
+			Assert.AreEqual(0 * 2 + 1 * 2 + 2 * 2, result);
+
+			result = 3;
+			n.IterateReverse((i) =>
+			{
+				Assert.AreEqual(result - 1, i);
+				result--;
+			});
 		}
 	}
 }

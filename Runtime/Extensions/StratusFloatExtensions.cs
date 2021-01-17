@@ -34,7 +34,7 @@ namespace Stratus
 		/// <summary>
 		/// Rounds the given float value by N decimal places
 		/// </summary>
-		public static float Round(this float f, int digits = 2) => (float)Math.Round(f, digits);
+		public static float Round(this float f, int digits = 2) => (float)Math.Round(f, digits, MidpointRounding.AwayFromZero);
 
 		/// <summary>
 		/// Converts this value to its percentage (dividing by 100)

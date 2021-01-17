@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 using UnityEngine;
 
-namespace Stratus.Tests
+namespace Stratus.Editor.Tests
 {
 	public class StratusStringExtensionsTests
 	{

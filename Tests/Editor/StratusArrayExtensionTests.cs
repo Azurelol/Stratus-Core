@@ -6,10 +6,14 @@ using NUnit.Framework;
 
 using UnityEngine;
 
-namespace Stratus.Tests
+namespace Stratus.Editor.Tests
 {
 	public class StratusArrayExtensionTests
 	{
+		private static readonly int a = 1, b = 2, c = 3, d = 4;
+		private static readonly int[] first = new int[] { a, b };
+		private static readonly int[] second = new int[] { c, d };
+
 		[Test]
 		public void TestFind()
 		{
@@ -60,18 +64,27 @@ namespace Stratus.Tests
 		[Test]
 		public void TestAppend()
 		{
-			int a = 1, b = 2, c = 3, d = 4;
-			int[] first = new int[] { a, b };
-			int[] second = new int[] { c, d };
-
 			int[] third = first.Append(second);
 			Assert.AreEqual(new int[] { a, b, c, d }, third);
-			int[] fourth = first.Prepend(second);
-			Assert.AreEqual(new int[] { c, d, a, b }, fourth);
+		}
 
+		[Test]
+		public void TestAppendWhere()
+		{
 			int[] fifth = first.AppendWhere((x) => x < 4, second);
 			Assert.AreEqual(new int[] { a, b, c }, fifth);
+		}
 
+		[Test]
+		public void TestPrepend()
+		{
+			int[] fourth = first.Prepend(second);
+			Assert.AreEqual(new int[] { c, d, a, b }, fourth);
+		}
+
+		[Test]
+		public void TestPrependWhere()
+		{
 			int[] sixth = first.PrependWhere((x) => x > 3, second);
 			Assert.AreEqual(new int[] { d, a, b }, sixth);
 		}
@@ -86,7 +99,13 @@ namespace Stratus.Tests
 		[Test]
 		public void TestLenghOrZero()
 		{
-
+			string[] values;
+			values = null;
+			Assert.AreEqual(0, values.LengthOrZero());
+			values = new string[] { };
+			Assert.AreEqual(0, values.LengthOrZero());
+			values = new string[] { "a" };
+			Assert.AreEqual(1, values.LengthOrZero());
 		}
 	}
 

@@ -51,6 +51,11 @@ namespace Stratus
 			this.value = value;
 		}
 
+		public StratusOperationResult(bool valid, T value, string message) : base(valid, message)
+		{
+			this.value = value;
+		}
+
 		public StratusOperationResult(Exception exception) : base(exception)
 		{
 		}

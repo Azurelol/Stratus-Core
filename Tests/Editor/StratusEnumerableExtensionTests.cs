@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 
 using UnityEngine;
 
-namespace Stratus.Tests
+namespace Stratus.Editor.Tests
 {
 	public class StratusEnumerableExtensionTests
 	{

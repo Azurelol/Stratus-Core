@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Stratus.Editor
+namespace Stratus.Editor.Tests
 {
 	class StratusTreeElementTests
 	{
@@ -140,58 +140,6 @@ namespace Stratus.Editor
 			expectedResult = new[] { b0, f0, c0 };
 			result = StratusTreeElement.FindCommonAncestorsWithinList(input).ToArray();
 			Assert.IsTrue(UnityEditor.ArrayUtility.ArrayEquals(expectedResult, result), "Common ancestor should only be b0, f0, c0");
-		}
-	}
-
-
-	class TreeModelTests
-	{
-		[Test]
-		public static void TestTreeModelCanAddElements()
-		{
-			var root = new StratusTreeElement { name = "Root", depth = -1 };
-			var listOfElements = new List<StratusTreeElement>();
-			listOfElements.Add(root);
-
-			var model = new StratusTreeModel<StratusTreeElement>(listOfElements);
-			model.AddElement(new StratusTreeElement { name = "Element" }, root, 0);
-			model.AddElement(new StratusTreeElement { name = "Element " + root.children.Count }, root, 0);
-			model.AddElement(new StratusTreeElement { name = "Element " + root.children.Count }, root, 0);
-			model.AddElement(new StratusTreeElement { name = "Sub Element" }, root.children[1], 0);
-
-			// Assert order is correct
-			string[] namesInCorrectOrder = { "Root", "Element 2", "Element 1", "Sub Element", "Element" };
-			Assert.AreEqual(namesInCorrectOrder.Length, listOfElements.Count, "Result count does not match");
-			for (int i = 0; i < namesInCorrectOrder.Length; ++i)
-				Assert.AreEqual(namesInCorrectOrder[i], listOfElements[i].name);
-
-			// Assert depths are valid
-			StratusTreeElement.Assert(listOfElements);
-		}
-
-		[Test]
-		public static void TestTreeModelCanRemoveElements()
-		{
-			var root = new StratusTreeElement { name = "Root", depth = -1 };
-			var listOfElements = new List<StratusTreeElement>();
-			listOfElements.Add(root);
-
-			var model = new StratusTreeModel<StratusTreeElement>(listOfElements);
-			model.AddElement(new StratusTreeElement { name = "Element" }, root, 0);
-			model.AddElement(new StratusTreeElement { name = "Element " + root.children.Count }, root, 0);
-			model.AddElement(new StratusTreeElement { name = "Element " + root.children.Count }, root, 0);
-			model.AddElement(new StratusTreeElement { name = "Sub Element" }, root.children[1], 0);
-
-			model.RemoveElements(new[] { root.children[1].children[0], root.children[1] });
-
-			// Assert order is correct
-			string[] namesInCorrectOrder = { "Root", "Element 2", "Element" };
-			Assert.AreEqual(namesInCorrectOrder.Length, listOfElements.Count, "Result count does not match");
-			for (int i = 0; i < namesInCorrectOrder.Length; ++i)
-				Assert.AreEqual(namesInCorrectOrder[i], listOfElements[i].name);
-
-			// Assert depths are valid
-			StratusTreeElement.Assert(listOfElements);
 		}
 	}
 }

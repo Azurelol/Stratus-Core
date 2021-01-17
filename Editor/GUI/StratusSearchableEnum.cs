@@ -16,8 +16,7 @@ namespace Stratus.Editor
 		// Properties
 		//------------------------------------------------------------------------/
 		private static int hash { get; } = nameof(StratusSearchableEnum).GetHashCode();
-		private static Dictionary<Type, string[]> enumDisplayNames { get; set; } = new Dictionary<Type, string[]>();
-		private static Dictionary<Type, Array> enumValues { get; set; } = new Dictionary<Type, Array>();
+		
 
 
 		//------------------------------------------------------------------------/
@@ -42,13 +41,13 @@ namespace Stratus.Editor
 
 			// Enum Drawer
 			Type enumType = selected.GetType();
-			string[] displayedOptions = GetEnumDisplayNames(enumType);
+			string[] displayedOptions = StratusEnum.Names(enumType);
 			GUIContent enumValueContent = new GUIContent(selected.ToString());
 			if (StratusSearchablePopup.DropdownButton(id, position, enumValueContent))
 			{
 				Action<int> onSelectIndex = i =>
 				{
-					Enum value = GetEnumValue(enumType, i);
+					Enum value = StratusEnum.Value(enumType, i);
 					StratusDebug.Log($"Selected {value}");
 					onSelected(value);
 				};
@@ -72,13 +71,13 @@ namespace Stratus.Editor
 			position = EditorGUI.PrefixLabel(position, id, labelContent);
 
 			// Enum Drawer
-			string[] displayedOptions = GetEnumDisplayNames(enumType);
+			string[] displayedOptions = StratusEnum.Names(enumType);
 			GUIContent enumValueContent = new GUIContent(displayedOptions[selectedIndex]);
 			if (StratusSearchablePopup.DropdownButton(id, position, enumValueContent))
 			{
 				Action<int> onSelect = i =>
 				{
-					Enum value = GetEnumValue(enumType, i);
+					Enum value = StratusEnum.Value(enumType, i);
 					StratusDebug.Log($"Selected {value}");
 					onSelected(value);
 				};
@@ -137,26 +136,7 @@ namespace Stratus.Editor
 			EnumPopup(StratusSearchablePopup.defaultPosition, property);
 		}
 
-		public static string[] GetEnumDisplayNames(Enum value)
-		{
-			Type type = value.GetType();
-			return enumDisplayNames.GetValueOrAdd(type, Enum.GetNames);
-		}
 
-		public static string[] GetEnumDisplayNames(Type enumType)
-		{
-			return enumDisplayNames.GetValueOrAdd(enumType, Enum.GetNames);
-		}
-
-		public static Array GetEnumValues(Type enumType)
-		{
-			return enumValues.GetValueOrAdd(enumType, Enum.GetValues);
-		}
-
-		public static Enum GetEnumValue(Type enumType, int index)
-		{
-			return (Enum)GetEnumValues(enumType).GetValue(index);
-		}
 
 	}
 

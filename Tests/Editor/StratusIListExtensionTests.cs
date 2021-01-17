@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Stratus.Tests
+namespace Stratus.Editor.Tests
 {
 	public class StratusIListExtensionTests
 	{

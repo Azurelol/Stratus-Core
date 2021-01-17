@@ -4,7 +4,7 @@ using UnityEngine;
 using Stratus;
 using System.Collections.Generic;
 
-namespace Stratus.Tests
+namespace Stratus.Editor.Tests
 {
     public class StratusSearchTests
     {

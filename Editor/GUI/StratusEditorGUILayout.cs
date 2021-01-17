@@ -185,9 +185,9 @@ namespace Stratus.Editor
 			return EditorGUI.EndChangeCheck();
 		}
 
-		public static void EnumToolbar<T>(ref T enumValue)
+		public static void EnumToolbar<T>(ref T enumValue) where T : Enum
 		{
-			string[] options = StratusSearchableEnum.GetEnumDisplayNames((Enum)(object)enumValue);
+			string[] options = StratusEnum.Names<T>();
 			enumValue = (T)(object)GUILayout.Toolbar(Convert.ToInt32(enumValue), options, GUILayout.ExpandWidth(false));
 		}
 

@@ -5,7 +5,7 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Linq;
 
-namespace Stratus.Tests
+namespace Stratus.Editor.Tests
 {
 	public partial class StratusListExtensionsTests
 	{

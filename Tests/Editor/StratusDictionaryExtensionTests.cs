@@ -4,8 +4,9 @@ using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 using System.Linq;
+using Stratus.Editor.Tests;
 
-namespace Stratus.Tests
+namespace Stratus.Editor.Tests
 {
 	public partial class StratusDictionaryExtensionsTests
 	{
