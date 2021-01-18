@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Stratus
 {
-	public enum VectorAxis
+	public enum StratusVectorAxis
 	{
 		X,
 		Y,
@@ -16,16 +16,6 @@ namespace Stratus
 
 	public static class StratusCameraExtensions
 	{
-		/// <summary>
-		/// Prints formatted information about the results of the raycast
-		/// </summary>
-		/// <param name="hit"></param>
-		/// <returns></returns>
-		public static string Print(this RaycastHit hit)
-		{
-			return "Raycast hit on " + hit.transform.name + " at " + hit.point;
-		}
-
 		/// <summary>
 		/// Returns the world position of the first point hit by a ray cast from the
 		/// mouse's current position on the screen.
@@ -82,9 +72,6 @@ namespace Stratus
 		/// <returns></returns>
 		public static Transform RayCast2DGetTransform(this Camera camera, Vector3 position)
 		{
-			//Ray ray = new Ray(camera.transform.position, position);
-			//RaycastHit hit;
-			//  RaycastHit2D hit2 = Physics2D.Raycast(mousePosition, cam.transform.position - mousePosition , 0,001, mouseInteract);
 			var hit = Physics2D.Raycast(position, camera.transform.position - position, float.Epsilon);
 			return hit.transform;
 		}
@@ -162,10 +149,10 @@ namespace Stratus
 		/// <param name="camera"></param>
 		/// <param name="inputAxis"></param>
 		/// <returns></returns>
-		public static Vector3 CalculateRelativeDirection(this Camera camera, Transform transform, Vector2 inputAxis, VectorAxis axixToIgnore)
+		public static Vector3 CalculateRelativeDirection(this Camera camera, Transform transform, Vector2 inputAxis, StratusVectorAxis axixToIgnore)
 		{
 			Vector3 cameraToTransform = transform.position - camera.transform.position;
-			if (axixToIgnore == VectorAxis.Y)
+			if (axixToIgnore == StratusVectorAxis.Y)
 				cameraToTransform.y = 0;
 
 
@@ -179,8 +166,6 @@ namespace Stratus
 		public static GameObject FindClosestToCenter(this Camera camera, GameObject[] targetsInView)
 		{
 			GameObject closestTarget = null;
-			// Camera viewspace consists of 0 to 1 distances.
-			//float closestDist = 1f;
 			// We want to look for the target that is closest to 0.5
 			foreach (var target in targetsInView)
 			{

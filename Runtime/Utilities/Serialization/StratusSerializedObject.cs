@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.Reflection;
 using System.Text;
+using Stratus.Utilities;
 
 namespace Stratus
 {
