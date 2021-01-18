@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 
 using UnityEditor;
+using UnityEngine;
 
 namespace Stratus.Editor
 {
@@ -98,16 +99,16 @@ namespace Stratus.Editor
 		/// <returns></returns>
 		public static SerializedProperty[] GetSerializedProperties(SerializedObject serializedObject, Type type)
 		{
-			FieldInfo[] propInfo = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
-			SerializedProperty[] properties = new SerializedProperty[propInfo.Length];
+			FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
+				.Where(f => !f.HasAttribute<HideInInspector>()).ToArray();
+			SerializedProperty[] properties = new SerializedProperty[fields.Length];
 
 			for (int a = 0; a < properties.Length; a++)
 			{
-				properties[a] = serializedObject.FindProperty(propInfo[a].Name);
+				properties[a] = serializedObject.FindProperty(fields[a].Name);
 
 				if (properties[a] == null)
 				{
-					//Trace.Script("Could not find property: " + propInfo[a].Name);
 				}
 			}
 

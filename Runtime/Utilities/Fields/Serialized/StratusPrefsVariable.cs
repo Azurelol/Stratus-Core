@@ -37,7 +37,8 @@ namespace Stratus
 			this.type = type;
 		}
 
-		public StratusPrefsVariable(Type key, VariableType type) : this(key.GetNiceFullName(), type)
+		public StratusPrefsVariable(Type key, VariableType type) 
+			: this(key.GetNiceFullName(), type)
 		{
 		}
 
@@ -103,7 +104,9 @@ namespace Stratus
 			return (T)Get();
 		}
 
+		public abstract bool Exists();
 		public abstract void Delete();
+
 		public abstract void SetInt(int value);
 		public abstract int GetInt();
 
@@ -205,6 +208,11 @@ namespace Stratus
 		public override void Delete()
 		{
 			PlayerPrefs.DeleteKey(key);
+		}
+
+		public override bool Exists()
+		{
+			return PlayerPrefs.HasKey(key);
 		}
 	}
 

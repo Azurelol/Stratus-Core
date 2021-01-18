@@ -61,9 +61,9 @@ namespace Stratus
 		public bool isList { get; private set; }
 		public IList asList { get; private set; }
 		/// <summary>
-		/// If this field is a list, the type of its elements
+		/// If this field is a collection, the type of its elements
 		/// </summary>
-		public Type listElementType { get; private set; }
+		public Type elementType { get; private set; }
 		/// <summary>
 		/// If an enum, the names of its possible enum values
 		/// </summary>
@@ -141,7 +141,12 @@ namespace Stratus
 					this.value = Activator.CreateInstance(this.type);
 					this.asList = this.field.GetValue(target) as IList;
 				}
-				this.listElementType = Utilities.StratusReflection.GetIndexedType(this.asList);
+
+				this.elementType = this.type.GetArrayOrListElementType();
+				if (elementType == null)
+				{
+					StratusDebug.LogError($"Failed to retrieve element type for {this}");
+				}
 			}
 			else
 			{
@@ -211,7 +216,7 @@ namespace Stratus
 
 		public object AddArrayElement()
 		{
-			object value = asList.Add(Activator.CreateInstance(listElementType));
+			object value = asList.Add(Activator.CreateInstance(elementType));
 			return value;
 		}
 

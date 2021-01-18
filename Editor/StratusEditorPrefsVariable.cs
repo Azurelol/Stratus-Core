@@ -18,6 +18,11 @@ namespace Stratus
 		{
 		}
 
+		public override bool Exists()
+		{
+			return EditorPrefs.HasKey(key);
+		}
+
 		public override void Delete()
 		{
 			EditorPrefs.DeleteKey(key);

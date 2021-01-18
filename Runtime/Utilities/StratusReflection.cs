@@ -131,10 +131,10 @@ namespace Stratus.Utilities
 		}
 
 		[System.Diagnostics.DebuggerHidden]
-		public static Type GetIndexedType(this ICollection poICollection)
+		public static Type GetIndexedType(this ICollection collection)
 		{
-			PropertyInfo oPropertyInfo = poICollection == null ? null : poICollection.GetType().GetProperty("Item");
-			return oPropertyInfo == null ? null : oPropertyInfo.PropertyType;
+			PropertyInfo propertyInfo = collection == null ? null : collection.GetType().GetProperty("Item");
+			return propertyInfo == null ? null : propertyInfo.PropertyType;
 		}
 
 		/// <summary>

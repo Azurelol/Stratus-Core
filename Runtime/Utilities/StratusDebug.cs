@@ -17,42 +17,51 @@ namespace Stratus
 #endif
 	public static class StratusDebug
 	{
-		//------------------------------------------------------------------------/
-		// Properties
-		//------------------------------------------------------------------------/
-		/// <summary>
-		/// Whether logging is currently enabled
-		/// </summary>
-		public static bool logging = true;
-		/// <summary>
-		/// Whether time stamps are enabled
-		/// </summary>
-		public static bool timeStamp = true;
-		/// <summary>
-		/// If true, will notify subscribes to <see cref="onLog"/> of logging callbacks
-		/// </summary>
-		public static bool invokeLogEvent = false;
-		/// <summary>
-		/// The color of the time stamp
-		/// </summary>
-		public static Color timestampLabelColor => _timestampLabelColor.Value;
-		private static readonly Lazy<Color> _timestampLabelColor = new Lazy<Color>(() => isProSkin ? Color.green.ScaleSaturation(0.5f) : Color.green);
-		/// <summary>
-		/// The color used of the GameObject of the class being called
-		/// </summary>
-		public static Color gameObjectLabelColor => _gameObjectLabelColor.Value;
-		private static readonly Lazy<Color> _gameObjectLabelColor = new Lazy<Color>(() => isProSkin ? StratusGUIStyles.Colors.azureTriad.first.ScaleSaturation(0.5f) : StratusGUIStyles.Colors.azureTriad.first);
-		/// <summary>
-		/// The color of the class the function being called belongs to
-		/// </summary>
-		public static Color classLabelColor => _classLabelColor.Value;
-		private static readonly Lazy<Color> _classLabelColor = new Lazy<Color>(() => isProSkin ? StratusGUIStyles.Colors.azureTriad.second.ScaleSaturation(0.5f) : StratusGUIStyles.Colors.azureTriad.second);
-		/// <summary>
-		/// The color of the function being called
-		/// </summary>
-		public static Color methodLabelColor => _methodLabelColor.Value;
-		private static readonly Lazy<Color> _methodLabelColor = new Lazy<Color>(() => isProSkin ? StratusGUIStyles.Colors.azureTriad.third.ScaleSaturation(0.5f) : StratusGUIStyles.Colors.azureTriad.third);
+		[Serializable]
+		public class Settings
+		{
+			/// <summary>
+			/// Whether logging is currently enabled
+			/// </summary>
+			public bool logging = true;
+			/// <summary>
+			/// Whether time stamps are enabled
+			/// </summary>
+			public bool timeStamp = true;
+			/// <summary>
+			/// If true, will notify subscribers to <see cref="onLog"/> of logging callbacks
+			/// </summary>
+			public bool invokeLogEvent = false;
+			/// <summary>
+			/// Whether to disable default log output on player builds
+			/// </summary>
+			public bool disableIfPlayer = false;
 
+			/// <summary>
+			/// The color of the time stamp
+			/// </summary>
+			public Color timestampLabelColor => _timestampLabelColor.Value;
+			private readonly Lazy<Color> _timestampLabelColor = new Lazy<Color>(() => isProSkin ? Color.green.ScaleSaturation(0.5f) : Color.green);
+			/// <summary>
+			/// The color used of the GameObject of the class being called
+			/// </summary>
+			public Color gameObjectLabelColor => _gameObjectLabelColor.Value;
+			private readonly Lazy<Color> _gameObjectLabelColor = new Lazy<Color>(() => isProSkin ? StratusGUIStyles.Colors.azureTriad.first.ScaleSaturation(0.5f) : StratusGUIStyles.Colors.azureTriad.first);
+			/// <summary>
+			/// The color of the class the function being called belongs to
+			/// </summary>
+			public Color classLabelColor => _classLabelColor.Value;
+			private readonly Lazy<Color> _classLabelColor = new Lazy<Color>(() => isProSkin ? StratusGUIStyles.Colors.azureTriad.second.ScaleSaturation(0.5f) : StratusGUIStyles.Colors.azureTriad.second);
+			/// <summary>
+			/// The color of the function being called
+			/// </summary>
+			public Color methodLabelColor => _methodLabelColor.Value;
+			private readonly Lazy<Color> _methodLabelColor = new Lazy<Color>(() => isProSkin ? StratusGUIStyles.Colors.azureTriad.third.ScaleSaturation(0.5f) : StratusGUIStyles.Colors.azureTriad.third);
+		}
+		/// <summary>
+		/// Debug settings
+		/// </summary>
+		public static Settings settings {get; set;} = new Settings();
 		/// <summary>
 		/// Whether this is running as a player executable rather than in the editor
 		/// </summary>
@@ -74,7 +83,7 @@ namespace Stratus
 		/// <summary>
 		/// Whether to log the timestamp
 		/// </summary>
-		public static bool logTimestamp => Application.isPlaying ? timeStamp : false;
+		public static bool logTimestamp => Application.isPlaying ? settings.timeStamp : false;
 		/// <summary>
 		/// The singular string builder used for logging
 		/// </summary>
@@ -96,7 +105,7 @@ namespace Stratus
 		/// </summary>
 		public static void Log(LogType logType, object message, object source = null, int frame = 1)
 		{
-			if (!logging || isPlayer)
+			if (!settings.logging || isPlayer)
 			{
 				return;
 			}
@@ -121,7 +130,7 @@ namespace Stratus
 
 			// Now output it to the aporopiate Unity log function
 			string output = builder.ToString();
-			if (invokeLogEvent)
+			if (settings.disableIfPlayer)
 			{
 				onLog?.Invoke(output, logType);
 			}
@@ -218,8 +227,8 @@ namespace Stratus
 		{
 			string methodName = stackTrace.GetFrame(frame).GetMethod().Name;
 			string className = stackTrace.GetFrame(frame).GetMethod().ReflectedType.Name;
-			string classStr = Format(className, classLabelColor, FontStyle.Bold);
-			string methodStr = Format(methodName, methodLabelColor, FontStyle.Bold);
+			string classStr = Format(className, settings.classLabelColor, FontStyle.Bold);
+			string methodStr = Format(methodName, settings.methodLabelColor, FontStyle.Bold);
 			// Make the prefix
 			string prefix = $"{classStr}.{methodStr}: ";
 			return prefix;
@@ -232,7 +241,7 @@ namespace Stratus
 		/// <returns></returns>
 		private static string ComposeSourcePrefix(object source)
 		{
-			return $" {Format(source.ToString(), gameObjectLabelColor, FontStyle.BoldAndItalic)} ";
+			return $" {Format(source.ToString(), settings.gameObjectLabelColor, FontStyle.BoldAndItalic)} ";
 		}
 
 		/// <summary>
@@ -241,7 +250,7 @@ namespace Stratus
 		/// <returns></returns>
 		private static string ComposeTimestamp()
 		{
-			return Format("[" + Math.Round(Time.unscaledTime, 2) + "] ", timestampLabelColor);
+			return Format("[" + Math.Round(Time.unscaledTime, 2) + "] ", settings.timestampLabelColor);
 		}
 
 		/// <summary>

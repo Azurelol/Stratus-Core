@@ -100,7 +100,7 @@ namespace Stratus.Editor
 						}
 						else
 						{
-							string warningMsg = $"No drawer implementation for {name} of type {type.Name}";
+							string warningMsg = $"No drawer implementation for '{name}' of type '{type.Name}'";
 							StratusDebug.LogWarning(warningMsg);
 							EditorGUILayout.LabelField(warningMsg);
 						}

@@ -57,7 +57,7 @@ namespace Stratus.Editor
 			}
 
 			IList list = serializedProperty.asList;
-			Type baseElementType = Utilities.StratusReflection.GetIndexedType(list);
+			Type baseElementType = list.GetType().GetElementType(); // Utilities.StratusReflection.GetIndexedType(list);
 			StratusReorderableList reorderableList = new StratusReorderableList(list, baseElementType, true, true, true, true);
 			reorderableList.SetPolymorphic(serializedProperty);
 			return reorderableList;
@@ -124,12 +124,12 @@ namespace Stratus.Editor
 			};
 		}
 
-		public void SetHeaderCallback(StratusSerializedField serializedProperty)
+		public void SetHeaderCallback(StratusSerializedField serializedField)
 		{
 			this.drawHeaderCallback = (Rect rect) =>
 			{
 				Rect newRect = new Rect(rect.x + 10, rect.y, rect.width - 10, rect.height);
-				serializedProperty.isExpanded = EditorGUI.Foldout(newRect, serializedProperty.isExpanded, $"{serializedProperty.displayName} ({serializedProperty.listElementType.Name}) ");
+				serializedField.isExpanded = EditorGUI.Foldout(newRect, serializedField.isExpanded, $"{serializedField.displayName} ({serializedField.elementType.Name}) ");
 			};
 		}
 
@@ -224,7 +224,7 @@ namespace Stratus.Editor
 		{
 			this.onAddDropdownCallback = (Rect buttonRect, ReorderableList list) =>
 			{
-				Type baseType = serializedProperty.listElementType;
+				Type baseType = serializedProperty.elementType;
 				GenericMenu menu = new GenericMenu();
 				string[] typeNames = Utilities.StratusReflection.GetSubclassNames(baseType);
 				menu.AddItems(typeNames, (int index) =>

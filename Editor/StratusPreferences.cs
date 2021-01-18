@@ -16,30 +16,28 @@ namespace Stratus.Editor
 	[StratusScriptableSingleton("Assets", "Stratus Preferences")]
 	public class StratusPreferences : StratusScriptableSingleton<StratusPreferences>
 	{
-		//------------------------------------------------------------------------/
-		// Fields
-		//------------------------------------------------------------------------/
+		#region Fields
+		/// <summary>
+		/// <see cref="StratusDebug"/> settings
+		/// </summary>
+		public StratusDebug.Settings debugSettings = new StratusDebug.Settings();
 		/// <summary>
 		/// Allows scenes to be bookmarked from the project folder, used by the scene browser
 		/// </summary>
 		[SerializeField]
+		[HideInInspector]
 		public List<SceneAsset> bookmarkedScenes = new List<SceneAsset>();
-
-		/// <summary>
-		/// Allows the coloring of GameObjects with tags in the hierarchy window
-		/// </summary>
-		[SerializeField]
-		public Internal.StratusTagColors tagColors = new Internal.StratusTagColors();
-
 		/// <summary>
 		/// Allows objects in the scene and project to be bookmarked for quick access
 		/// </summary>
+		[HideInInspector]
 		public StratusObjectBookmarksEditorWindow.ObjectBookmarks objectBookmarks = new StratusObjectBookmarksEditorWindow.ObjectBookmarks();
 
 		/// <summary>
 		/// Object references to store...
 		/// </summary>
 		[OdinSerialize]
+		[HideInInspector]
 		public Dictionary<string, UnityEngine.Object> objectReferences = new Dictionary<string, Object>();
 
 		/// <summary>
@@ -55,10 +53,11 @@ namespace Stratus.Editor
 		/// <summary>
 		/// Automatically isolate Stratus Canvas Windows
 		/// </summary>
-		public bool isolateCanvases = true;
+		public bool isolateCanvases = true; 
+		#endregion
 
 		//------------------------------------------------------------------------/
-		// Methods
+		// Constants
 		//------------------------------------------------------------------------/
 		public const string projectMenuItem = "Project/" + StratusCore.menuItem;
 		private static StratusSerializedPropertyMap propertyMap;
@@ -66,14 +65,17 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		// Methods
 		//------------------------------------------------------------------------/
+		protected override void OnInitialize()
+		{
+			StratusDebug.settings = this.debugSettings;
+		}
+
 		/// <summary>
 		/// Resets all settings to their default
 		/// </summary>
 		public void Clear()
 		{
-			// @TODO: Better way would be to just delete asset then add it again?
 			this.bookmarkedScenes.Clear();
-			this.tagColors.Clear();
 		}
 
 		public static void SaveObjectReference(string name, UnityEngine.Object reference)
@@ -124,11 +126,6 @@ namespace Stratus.Editor
 			};
 
 			return provider;
-		}
-
-		protected override void OnInitialize()
-		{
-
 		}
 	}
 
