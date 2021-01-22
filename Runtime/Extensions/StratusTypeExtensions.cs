@@ -9,14 +9,14 @@ namespace Stratus
 {
 	public static partial class Extensions
 	{
+		#region Constants
 		/// <summary>
 		/// Binding flags used for a full search of members
 		/// </summary>
-		private const BindingFlags bindingFlagsFullSearch =
-			System.Reflection.BindingFlags.Public 
-			| System.Reflection.BindingFlags.NonPublic 
-			| System.Reflection.BindingFlags.Static
-			| System.Reflection.BindingFlags.Instance;
+		private const BindingFlags bindingFlagsFullSearch = BindingFlags.Public
+															| BindingFlags.NonPublic
+															| BindingFlags.Static
+															| BindingFlags.Instance;
 
 		/// <summary>
 		/// Type name alias lookup.
@@ -52,12 +52,22 @@ namespace Stratus
 			{ "String[]",   "string[]"  },
 			{ "Char[]",     "char[]"    },
 			{ "Boolean[]",  "bool[]"    },
-		};
-
-		private static readonly Dictionary<Type, string> cachedNiceNames = new Dictionary<Type, string>();
+		}; 
+		#endregion
 
 		/// <summary>
-		/// Returns true if the given type is an array or list
+		/// Searches the given type for a field with a full search
+		/// </summary>
+		/// <param name="t"></param>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public static FieldInfo GetFieldIncludePrivate(this Type t, string name)
+		{
+			return t.GetField(name, bindingFlagsFullSearch);
+		}
+
+		/// <summary>
+		/// Returns true if the given type is an <see cref="Array"/> or <see cref="List"/>
 		/// </summary>
 		/// <param name="listType"></param>
 		/// <returns></returns>
@@ -67,7 +77,7 @@ namespace Stratus
 		}
 
 		/// <summary>
-		/// If the given type is a list, returns the underlying element type
+		/// If the given type is an <see cref="Array"/> or a <see cref="List{T}"/>, returns the underlying element type
 		/// </summary>
 		/// <param name="listType"></param>
 		/// <returns></returns>
@@ -95,20 +105,7 @@ namespace Stratus
 			return t.IsValueType || t.GetConstructor(Type.EmptyTypes) != null;
 		}
 
-		public static FieldInfo GetFieldExhaustive(this Type t, string name)
-		{
-			return t.GetField(name, bindingFlagsFullSearch);
-		}
 
-		/// <summary>
-		/// Returns true if its a nullable type (not primitive, value, or enum)
-		/// </summary>
-		/// <param name="type"></param>
-		/// <returns></returns>
-		public static bool IsNullableType(this Type type)
-		{
-			return !(type.IsPrimitive || type.IsValueType || type.IsEnum);
-		}
 
 		private static readonly object CachedNiceNames_LOCK = new object();
 		private static readonly Dictionary<Type, string> CachedNiceNames = new Dictionary<Type, string>();
@@ -333,37 +330,7 @@ namespace Stratus
 			}
 
 			return allTypes;
-		}
-
-
-
-
-	}
-
-	/// <summary>
-	/// Stores reflection information about a given type
-	/// </summary>
-	public class StratusTypeReflection
-	{
-		public Type type;
-		public FieldInfo[] fields;
-		public PropertyInfo[] properties;
-		public MethodInfo[] methods;
-		public Dictionary<string, FieldInfo> fieldsByName;
-		public Dictionary<string, PropertyInfo> propertiesByName;
-		public Dictionary<string, MethodInfo> methodsByName;
-
-		public const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
-
-		public StratusTypeReflection(Type type)
-		{
-			this.fields = type.GetFields(flags);
-			this.fieldsByName = fields.ToDictionary((x) => x.Name, false);
-			this.methods = type.GetMethods(flags);
-			this.methodsByName = methods.ToDictionary((x) => x.Name, false);
-			this.properties = type.GetProperties(flags);
-			this.propertiesByName = properties.ToDictionary((x) => x.Name, false);
-		}
+		}				
 	}
 
 }

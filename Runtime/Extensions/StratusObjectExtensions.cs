@@ -70,10 +70,10 @@ namespace Stratus
 			JsonUtility.FromJsonOverwrite(otherData, self);
 		}
 
-		public static object CloneJSON(this object self)
+		public static T CloneJSON<T>(this T self)
 		{
 			string data = JsonUtility.ToJson(self);
-			return JsonUtility.FromJson(data, self.GetType());
+			return (T)JsonUtility.FromJson(data, self.GetType());
 		}
 
 		public static T GetAttribute<T>(this object obj) where T : Attribute

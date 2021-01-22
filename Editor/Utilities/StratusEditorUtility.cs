@@ -63,20 +63,20 @@ namespace Stratus.Editor
 			}
 		}
 
-		private static StratusTypeReflection _scriptAttributeReflection;
-		public static StratusTypeReflection scriptAttributeReflection
+		private static StratusTypeInfo _scriptAttributeReflection;
+		public static StratusTypeInfo scriptAttributeReflection
 		{
 			get
 			{
 				if (_scriptAttributeReflection == null)
 				{
-					_scriptAttributeReflection = new StratusTypeReflection(scriptAttributeUtility);
+					_scriptAttributeReflection = new StratusTypeInfo(scriptAttributeUtility);
 				}
 				return _scriptAttributeReflection;
 			}
 		}
 
-		private static StratusTypeReflection editorGUIReflection { get; } = new StratusTypeReflection(typeof(EditorGUI));
+		private static StratusTypeInfo editorGUIReflection { get; } = new StratusTypeInfo(typeof(EditorGUI));
 
 		private static Stack<PropertyDrawer> _propertyDrawerStack;
 		public static Stack<PropertyDrawer> propertyDrawerStack
