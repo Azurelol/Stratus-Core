@@ -11,7 +11,7 @@ namespace Stratus
 	/// </summary>
 	/// <typeparam name="BehaviourType"></typeparam>
 	public abstract class StratusBehaviourPoolBase<BehaviourType> : IStratusLogger
-		where BehaviourType : MonoBehaviour
+		where BehaviourType : Behaviour
 	{
 		//------------------------------------------------------------------------/
 		// Properties
@@ -88,7 +88,7 @@ namespace Stratus
 	/// </summary>
 	/// <typeparam name="BehaviourType"></typeparam>
 	public class StratusBehaviourPool<BehaviourType> : StratusBehaviourPoolBase<BehaviourType>
-		where BehaviourType : MonoBehaviour
+		where BehaviourType : Behaviour
 	{
 		public delegate void InstantiateFunction(BehaviourType behaviour);
 		private SortedList<int, Tuple<int, BehaviourType>> instancesById { get; set; }

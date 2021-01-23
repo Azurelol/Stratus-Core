@@ -7,6 +7,14 @@ namespace Stratus
 	/// </summary>
 	public abstract class StratusScriptable : SerializedScriptableObject, IStratusLogger
 	{
+	}
 
+	/// <summary>
+	/// Scriptable object for one data member
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public abstract class StratusScriptable<T> : StratusScriptable
+	{
+		public T data;
 	}
 }
