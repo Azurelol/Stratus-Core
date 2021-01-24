@@ -62,23 +62,24 @@ namespace Stratus
 		/// </summary>
 		/// <param name="input"></param>
 		/// <param name="enclosure"></param>
+		/// <param name="escape">Whether the enclosure should be escaped by <see cref="Regex.Escape(string)"/></param>
 		/// <returns></returns>
-		public static string Enclose(this string input, StratusStringEnclosure enclosure)
+		public static string Enclose(this string input, StratusStringEnclosure enclosure, bool escape = false)
 		{
 			switch (enclosure)
 			{
 				case StratusStringEnclosure.Parenthesis:
-					return $"({input})";
+					return escape ? $"{Regex.Escape("(")}{input}{Regex.Escape(")")}" : $"({input})";
 				case StratusStringEnclosure.Quote:
-					return $"'{input}'";
+					return escape ? $"{Regex.Escape("'")}{input}{Regex.Escape("'")}" : $"'{input}'";
 				case StratusStringEnclosure.DoubleQuote:
-					return $"\"{input}\"";
+					return escape ? $"{Regex.Escape("\"")}{input}{Regex.Escape("\"")}" : $"\"{input}\"";
 				case StratusStringEnclosure.SquareBracket:
-					return $"[{input}]";
+					return escape ? $"{Regex.Escape("[")}{input}{Regex.Escape("]")}" : $"[{input}]";
 				case StratusStringEnclosure.CurlyBracket:
-					return $"{{{input}}}";
+					return escape ? $"{Regex.Escape("{")}{input}{Regex.Escape("}")}" : $"{{{input}}}";
 				case StratusStringEnclosure.AngleBracket:
-					return $"<{input}>";
+					return escape ? $"{Regex.Escape("<")}{input}{Regex.Escape(">")}" : $"<{input}>";
 			}
 			return input;
 		}

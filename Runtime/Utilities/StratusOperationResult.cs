@@ -44,33 +44,24 @@ namespace Stratus
 	/// </summary>
 	public class StratusOperationResult<T> : StratusOperationResult
 	{
-		public T value { get; private set; }
+		public T result { get; private set; }
 
 		public StratusOperationResult(bool valid, T value) : base(valid)
 		{
-			this.value = value;
+			this.result = value;
 		}
 
 		public StratusOperationResult(bool valid, T value, string message) : base(valid, message)
 		{
-			this.value = value;
+			this.result = value;
 		}
 
 		public StratusOperationResult(Exception exception) : base(exception)
 		{
 		}
 
-		public StratusOperationResult(bool valid, string message) : base(valid, message)
-		{
-		}
-
-		public StratusOperationResult(T value, bool valid, string message) : this(valid, message)
-		{
-			this.value = value;
-		}
-
-		public static implicit operator T(StratusOperationResult<T> result) => result.value;
+		public static implicit operator T(StratusOperationResult<T> result) => result.result;
 		public static implicit operator StratusOperationResult<T>(T value) => new StratusOperationResult<T>(true, value);
-		public static implicit operator StratusOperationResult<T>(bool valid) => new StratusOperationResult<T>(valid, null);
+		public static implicit operator StratusOperationResult<T>(bool valid) => new StratusOperationResult<T>(valid, default, null);
 	}
 }

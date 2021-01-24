@@ -35,7 +35,7 @@ namespace Stratus.Editor.Tests
 			var result2 = new StratusOperationResult<int>(valid, value, message);
 			Assert.AreEqual(result2.valid, valid);
 			Assert.AreEqual(result2.message, message);
-			Assert.AreEqual(result2.value, value);
+			Assert.AreEqual(result2.result, value);
 
 		}
 
