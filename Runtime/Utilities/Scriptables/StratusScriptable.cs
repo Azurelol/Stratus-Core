@@ -1,5 +1,9 @@
 using Stratus.OdinSerializer;
 
+using System;
+
+using UnityEngine;
+
 namespace Stratus
 {
 	/// <summary>
@@ -7,6 +11,7 @@ namespace Stratus
 	/// </summary>
 	public abstract class StratusScriptable : SerializedScriptableObject, IStratusLogger
 	{
+		public const string scriptablesMenu = StratusCore.rootMenu + "Scriptables/";
 	}
 
 	/// <summary>
@@ -15,6 +20,8 @@ namespace Stratus
 	/// <typeparam name="T"></typeparam>
 	public abstract class StratusScriptable<T> : StratusScriptable
 	{
-		public T data;
+		[SerializeField]
+		private T _data;
+		public T data => data;
 	}
 }

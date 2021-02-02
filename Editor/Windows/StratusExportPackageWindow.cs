@@ -39,7 +39,7 @@ namespace Stratus.Editor
 			this.ExportControls();
 		}
 
-		[MenuItem(StratusCore.rootFolder + "Export Package")]
+		[MenuItem(StratusCore.rootMenu + "Export Package")]
 		public static void Open()
 		{
 			OpenWindow("Export Package");

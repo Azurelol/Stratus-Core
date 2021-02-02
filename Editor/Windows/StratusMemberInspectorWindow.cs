@@ -214,7 +214,7 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		// Methods: Static
 		//------------------------------------------------------------------------/
-		[MenuItem(StratusCore.rootFolder + "Member Inspector")]
+		[MenuItem(StratusCore.rootMenu + "Member Inspector")]
 		private static void Open() => OpenWindow(displayName);
 
 		[OnOpenAsset]

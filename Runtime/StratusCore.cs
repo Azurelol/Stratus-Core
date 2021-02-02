@@ -9,12 +9,12 @@ namespace Stratus
 	/// </summary>
 	public static partial class StratusCore
 	{
-        public const string menuItem = "Stratus";
-		public const string rootFolder = "Stratus/Core/";
+        public const string rootName = "Stratus";
+		public const string rootMenu = rootName + "/Core/";
 		public const string guiFolder = "GUI";
 		public const string fontFolder = "Fonts";
 
-		public static string rootPath => StratusIO.GetFolderPath(rootFolder);
+		public static string rootPath => StratusIO.GetFolderPath(rootMenu);
 		public static string resourcesFolder => rootPath + "/Resources";
 		public static string guiPath => resourcesFolder + $"/{guiFolder}";
 

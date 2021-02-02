@@ -59,7 +59,7 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		// Constants
 		//------------------------------------------------------------------------/
-		public const string projectMenuItem = "Project/" + StratusCore.menuItem;
+		public const string projectMenuItem = "Project/" + StratusCore.rootName;
 		private static StratusSerializedPropertyMap propertyMap;
 
 		//------------------------------------------------------------------------/
@@ -112,7 +112,7 @@ namespace Stratus.Editor
 			SettingsProvider provider = new SettingsProvider(projectMenuItem, SettingsScope.Project)
 			{
 				// By default the last token of the path is used as display name if no label is provided.
-				label = StratusCore.menuItem,
+				label = StratusCore.rootName,
 
 				// Create the SettingsProvider and initialize its drawing (IMGUI) function in place:
 				guiHandler = (searchContext) =>
@@ -122,7 +122,7 @@ namespace Stratus.Editor
 				},
 
 				// Populate the search keywords to enable smart search filtering and label highlighting:
-				keywords = new HashSet<string>(new[] { StratusCore.menuItem })
+				keywords = new HashSet<string>(new[] { StratusCore.rootName })
 			};
 
 			return provider;
