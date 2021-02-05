@@ -65,6 +65,11 @@ namespace Stratus
 			Remove(key);
 			return true;
 		}
+
+		public ValueType GetValueOrDefault(KeyType key)
+		{
+			return ContainsKey(key) ? this[key] : default;
+		}
 	}
 
 }

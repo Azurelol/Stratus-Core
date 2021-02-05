@@ -5,33 +5,43 @@ using System;
 
 namespace Stratus
 {
-	public abstract class StratusCollectionScriptable<T> : StratusScriptable<List<T>>
+	public interface IStratusAssetSource<T> where T : class
 	{
-		public StratusSortedList<string, T> map
+		bool HasAsset(string name);
+		StratusAssetToken<T> GetAsset(string name);
+	}
+
+	public abstract class StratusAssetCollectionScriptable<T> : StratusScriptable<List<T>>,
+		IStratusAssetSource<T>
+		where T : class
+	{
+		public StratusSortedList<string, T> dataByName
 		{
 			get
 			{
-				if (_map == null)
+				if (_dataByName == null)
 				{
-					_map = new StratusSortedList<string, T>(GetKey);
-					_map.AddRange(data);
+					_dataByName = new StratusSortedList<string, T>(GetKey);
+					_dataByName.AddRange(data);
 				}
-				return _map;
+				return _dataByName;
 			}
 		}
 
-		private StratusSortedList<string, T> _map;
-		protected abstract string GetKey(T element);
+		private StratusSortedList<string, T> _dataByName;
+		protected virtual string GetKey(T element) => element.ToString();
+		public bool HasAsset(string name) => dataByName.ContainsKey(name);
+		public StratusAssetToken<T> GetAsset(string name)
+		{
+			return new StratusAssetToken<T>(name, () => dataByName.GetValueOrDefault(name));
+		}
 	}
 
-	public abstract class StratusUnityObjectCollectionScriptable<T> 
-		: StratusCollectionScriptable<T>
-		where T : UnityEngine.Object
+	public abstract class StratusUnityAssetCollectionScriptable<T> :
+		StratusAssetCollectionScriptable<T>
+		where T: UnityEngine.Object
 	{
-		protected override string GetKey(T element)
-		{
-			return element.name;
-		}
+		protected override string GetKey(T element) => element.name;
 	}
 
 }
