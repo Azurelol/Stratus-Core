@@ -68,32 +68,52 @@ namespace Stratus
 		protected virtual string[] availableAssetNames { get; }
 	}
 
-	public abstract class StratusAssetAlias<T> : StratusAssetAlias
+	public abstract class StratusAssetAlias<AssetType> : StratusAssetAlias
 	{
-		public T asset => GetAsset(alias);
+		public AssetType asset => GetAsset(alias);
 		protected override string[] availableAssetNames => base.availableAssetNames;
-		protected abstract T GetAsset(string alias);
+		protected abstract AssetType GetAsset(string alias);
 		protected abstract string[] GetAvailableAssetNames();
 	}
 
 	[Serializable]
-	public abstract class StratusAssetReference<T> : StratusAsset
-		where T : UnityEngine.Object
+	public abstract class StratusAssetReference<AssetType> : StratusAsset
+		where AssetType : UnityEngine.Object
 	{
 		[SerializeField]
-		private T[] _references;
-		public T reference => GetAsset(_references);
-		protected virtual T GetAsset(T[] values) => values.Random();
+		private AssetType[] _references;
+		public AssetType reference => GetAsset(_references);
+		protected virtual AssetType GetAsset(AssetType[] values) => values.Random();
 
 		public StratusAssetReference()
 		{
 		}
 
-		public StratusAssetReference(string name, params T[] assets)
+		public StratusAssetReference(string name, params AssetType[] assets)
 			: base(name)
 		{
 			_references = assets;
 		}
+	}
+
+	[Serializable]
+	public abstract class StratusAssetReference<AssetType, ParameterType> : StratusAssetReference<AssetType>
+		where AssetType : UnityEngine.Object
+		where ParameterType : class, new()
+	{
+		[SerializeField]
+		private ParameterType _parameters;
+		public ParameterType parameters => _parameters;
+		public bool hasParameters => _parameters != null;
+
+		protected StratusAssetReference()
+		{
+		}
+
+		protected StratusAssetReference(string name, params AssetType[] assets) : base(name, assets)
+		{
+		}
+
 	}
 
 }

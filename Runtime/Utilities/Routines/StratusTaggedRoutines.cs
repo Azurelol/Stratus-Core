@@ -27,18 +27,20 @@ namespace Stratus
 			}
 		}
 
-		private static Dictionary<MonoBehaviour, Dictionary<string, RoutineActivity>> routinesMap = new Dictionary<MonoBehaviour, Dictionary<string, RoutineActivity>>();
+		private static Dictionary<MonoBehaviour, Dictionary<string, RoutineActivity>> monobehaviourRoutines = new Dictionary<MonoBehaviour, Dictionary<string, RoutineActivity>>();
 
 		public static void StartCoroutine(MonoBehaviour mb, IEnumerator routine, string tag, System.Action onFinished = null)
 		{
 			RoutineActivity current = null;
 
 			// Check if this monobehaviour has already been used before
-			if (!routinesMap.ContainsKey(mb))
-				routinesMap.Add(mb, new Dictionary<string, RoutineActivity>());
+			if (!monobehaviourRoutines.ContainsKey(mb))
+			{
+				monobehaviourRoutines.Add(mb, new Dictionary<string, RoutineActivity>());
+			}
 
 			// Stop an already running coroutine if present
-			bool isPresent = routinesMap[mb].TryGetValue(tag, out current);
+			bool isPresent = monobehaviourRoutines[mb].TryGetValue(tag, out current);
 			if (isPresent)
 			{
 				current.Stop();
@@ -47,7 +49,7 @@ namespace Stratus
 			else
 			{
 				current = new RoutineActivity(mb);
-				routinesMap[mb].Add(tag, current);
+				monobehaviourRoutines[mb].Add(tag, current);
 			}
 
 			// Now add/replace the current routine
@@ -70,13 +72,13 @@ namespace Stratus
 
 		public static void StopCoroutine(MonoBehaviour mb, string tag)
 		{
-			if (!routinesMap.ContainsKey(mb))
+			if (!monobehaviourRoutines.ContainsKey(mb))
 				return;
 
 			RoutineActivity current = null;
 
 			// Stop an already running coroutine if present
-			bool isPresent = routinesMap[mb].TryGetValue(tag, out current);
+			bool isPresent = monobehaviourRoutines[mb].TryGetValue(tag, out current);
 			if (isPresent)
 			{
 				//Trace.Script("Stopping " + tag);

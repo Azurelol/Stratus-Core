@@ -214,7 +214,7 @@ namespace Stratus
 		public static void Log(StratusOperationResult result, object source = null, int frame = 1)
 		{
 			LogType logType = result.valid ? LogType.Log : LogType.Error;
-			Log(logType, result.message, source, frame);
+			Log(logType, result.message.IsValid() ? result.message : result.valid.ToString(), source, frame);
 		}
 
 		/// <summary>

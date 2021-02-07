@@ -66,7 +66,6 @@ namespace Stratus
 					yield return timeScale.Yield();
 				}
 			}
-
 		}
 
 		/// <summary>
