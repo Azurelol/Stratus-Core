@@ -5,11 +5,6 @@ using System;
 
 namespace Stratus
 {
-	public interface IStratusAssetSource<T> where T : class
-	{
-		bool HasAsset(string name);
-		StratusAssetToken<T> GetAsset(string name);
-	}
 
 	public abstract class StratusAssetCollectionScriptable<T> : StratusScriptable<List<T>>,
 		IStratusAssetSource<T>
@@ -21,7 +16,7 @@ namespace Stratus
 			{
 				if (_dataByName == null)
 				{
-					_dataByName = new StratusSortedList<string, T>(GetKey);
+					_dataByName = new StratusSortedList<string, T>(GetKey, data.Count, StringComparer.InvariantCultureIgnoreCase);
 					_dataByName.AddRange(data);
 				}
 				return _dataByName;

@@ -22,6 +22,6 @@ namespace Stratus
 	{
 		[SerializeField]
 		private T _data;
-		public T data => data;
+		public T data => _data;
 	}
 }
