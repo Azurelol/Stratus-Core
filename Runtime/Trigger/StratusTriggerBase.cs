@@ -74,6 +74,12 @@ namespace Stratus
 		/// </summary>
 		public virtual string automaticDescription => string.Empty;
 
+		bool IStratusDebuggable.debug
+		{
+			get => debug;
+			set => debug = value;
+		}
+
 		public virtual StratusObjectValidation Validate() => null;
 
 		//------------------------------------------------------------------------/
@@ -85,11 +91,6 @@ namespace Stratus
 			CheckForTriggerSystem();
 			// Call subclass reset
 			OnReset();
-		}
-
-		void IStratusDebuggable.Toggle(bool toggle)
-		{
-			debug = toggle;
 		}
 
 		//------------------------------------------------------------------------/

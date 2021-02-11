@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
 
 namespace Stratus
 {
@@ -17,6 +15,12 @@ namespace Stratus
 		public static void Log(this IStratusLogger logger, object value) => StratusDebug.Log(value, logger, 2);
 
 		/// <summary>
+		/// Prints the given message to the console
+		/// </summary>
+		/// <param name="value"></param>
+		public static void LogIf(this IStratusLogger logger, bool condition, object value) => StratusDebug.LogIf(condition, value, logger, 2);
+
+		/// <summary>
 		/// Prints the given warning message to the console
 		/// </summary>
 		/// <param name="value"></param>
@@ -27,6 +31,12 @@ namespace Stratus
 		/// </summary>
 		/// <param name="value"></param>
 		public static void LogError(this IStratusLogger logger, object value) => StratusDebug.LogError(value, logger, 2);
+
+		/// <summary>
+		/// Prints the given exception to the console
+		/// </summary>
+		/// <param name="value"></param>
+		public static void LogException(this IStratusLogger logger, Exception e) => StratusDebug.LogException(e);
 
 		/// <summary>
 		/// Prints the given operation result to the console

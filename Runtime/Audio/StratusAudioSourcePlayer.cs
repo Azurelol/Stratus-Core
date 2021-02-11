@@ -39,17 +39,17 @@ namespace Stratus
 
 		public override StratusOperationResult Pause(bool pause)
 		{
-			if (audioSource.isPlaying)
+			if (audioSource.isPlaying && pause)
 			{
 				if (pause)
 				{
 					audioSource.Pause();
 				}
-				else
-				{
-					audioSource.UnPause();
-				}
 				return true;
+			}
+			else if (audioSource.clip != null && !pause)
+			{
+				audioSource.UnPause();
 			}
 			return false;
 		}

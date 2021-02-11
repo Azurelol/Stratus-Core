@@ -15,11 +15,19 @@ namespace Stratus
 		StratusOperationResult Mute(bool mute);
 	}
 
-	public abstract class StratusAudioPlayer : StratusBehaviour, IStratusAudioPlayer
+	public abstract class StratusAudioPlayer : StratusBehaviour, IStratusAudioPlayer, IStratusDebuggable
 	{
+		[SerializeField]
+		private bool _debug;
 		[SerializeField]
 		private StratusAudioParameters _parameters = new StratusAudioParameters();
 		public StratusAudioParameters defaultParameters => _parameters;
+
+		public bool debug 
+		{
+			get => _debug;
+			set => _debug = value;
+		}
 
 		protected abstract void SetParameters(StratusAudioParameters parameters);
 		public abstract StratusOperationResult Play(string name);
@@ -33,6 +41,11 @@ namespace Stratus
 		private void Awake()
 		{
 			SetParameters(_parameters);
+		}
+
+		public void Toggle(bool toggle)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

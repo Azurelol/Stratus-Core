@@ -20,7 +20,9 @@ namespace Stratus.Interfaces
 		{
 			IStratusDebuggable[] toggles = FindInterfaces<IStratusDebuggable>();
 			foreach (var t in toggles)
-				t.Toggle(toggle);
+			{
+				t.debug = toggle;
+			}
 
 			StratusDebug.Log($"Debug = {toggle} on {toggles.Length} behaviours.");
 		}
@@ -33,7 +35,9 @@ namespace Stratus.Interfaces
 		{
 			T[] toggles = FindInterfaces<IStratusDebuggable>().OfType<T>().ToArray();
 			foreach (var t in toggles)
-				t.Toggle(toggle);
+			{
+				t.debug = toggle;
+			}
 
 			StratusDebug.Log($"Debug = {toggle} on {toggles.Length} behaviours.");
 		}

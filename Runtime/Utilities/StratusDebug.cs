@@ -61,7 +61,7 @@ namespace Stratus
 		/// <summary>
 		/// Debug settings
 		/// </summary>
-		public static Settings settings {get; set;} = new Settings();
+		public static Settings settings { get; set; } = new Settings();
 		/// <summary>
 		/// Whether this is running as a player executable rather than in the editor
 		/// </summary>
@@ -163,6 +163,15 @@ namespace Stratus
 		public static void Log(object message, object source = null, int frame = 1)
 		{
 			Log(LogType.Log, message, source, frame + 1);
+		}
+
+		/// <summary>
+		/// Logs an exception to the Unity console directly
+		/// </summary>
+		/// <param name="e"></param>
+		public static void LogException(Exception e)
+		{
+			UnityEngine.Debug.LogException(e);
 		}
 
 		/// <summary>
