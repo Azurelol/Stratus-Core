@@ -1,26 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using System;
 
 namespace Stratus
 {
-	public class StratusDictionary<KeyType, ValueType> : Dictionary<KeyType, ValueType>
+	public class StratusSortedList<KeyType, ValueType> : SortedList<KeyType, ValueType>
 	{
 		private Func<ValueType, KeyType> keyFunction;
 
-		public StratusDictionary(Func<ValueType, KeyType> keyFunction,
+		public StratusSortedList(Func<ValueType, KeyType> keyFunction,
 			int capacity = 0,
-			IEqualityComparer<KeyType> comparer = null)
+			IComparer<KeyType> comparer = null)
 			: base(capacity, comparer)
 		{
 			this.keyFunction = keyFunction;
 		}
 
-		public StratusDictionary(Func<ValueType, KeyType> keyFunction, IEnumerable<ValueType> values,
-				int capacity = 0,
-				IEqualityComparer<KeyType> comparer = null)
-				: this(keyFunction, capacity, comparer)
+		public StratusSortedList(Func<ValueType, KeyType> keyFunction, IEnumerable<ValueType> values,
+			int capacity = 0,
+			IComparer<KeyType> comparer = null)
+			: this(keyFunction, capacity, comparer)
 		{
 			AddRange(values);
 		}
@@ -71,4 +69,5 @@ namespace Stratus
 			return ContainsKey(key) ? this[key] : default;
 		}
 	}
+
 }

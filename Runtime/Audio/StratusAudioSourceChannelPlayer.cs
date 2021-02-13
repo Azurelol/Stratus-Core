@@ -70,6 +70,5 @@ namespace Stratus
 			this.Log(result);
 			return result;
 		}
-
 	}
 }

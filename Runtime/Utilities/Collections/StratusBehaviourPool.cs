@@ -99,7 +99,7 @@ namespace Stratus
 		public StratusBehaviourPool(Transform parent,
 				BehaviourType prefab,
 				InstantiateFunction instantiateFunction) : base(parent, prefab)
-		{	
+		{
 			this.instantiateFunction = instantiateFunction;
 			this.instancesById = new SortedList<int, Tuple<int, BehaviourType>>();
 		}
@@ -140,22 +140,31 @@ namespace Stratus
 	/// </summary>
 	/// <typeparam name="BehaviourType"></typeparam>
 	/// <typeparam name="DataType"></typeparam>
-	public class StratusBehaviourPool<BehaviourType, DataType> 
+	public class StratusBehaviourPool<BehaviourType, DataType>
 		: StratusBehaviourPoolBase<BehaviourType>
 		where BehaviourType : MonoBehaviour
 		where DataType : class
 	{
 		public delegate void InstantiateFunction(BehaviourType behaviour, DataType parameters);
 		public InstantiateFunction instantiateFunction { get; private set; }
-		private SortedList<DataType, Tuple<DataType, BehaviourType>> instancesByData { get; set; }
-		public override int activeInstanceCount => instancesByData.Count;		
+		protected Dictionary<DataType, Tuple<DataType, BehaviourType>> instancesByData { get; private set; }
 
-		public StratusBehaviourPool(Transform parent, 
-			BehaviourType prefab, 
+		public override int activeInstanceCount => instancesByData.Count;
+
+		public StratusBehaviourPool(Transform parent,
+			BehaviourType prefab,
 			InstantiateFunction instantiateFunction) : base(parent, prefab)
 		{
 			this.instantiateFunction = instantiateFunction;
-			this.instancesByData = new SortedList<DataType, Tuple<DataType, BehaviourType>>();
+			this.instancesByData = new Dictionary<DataType, Tuple<DataType, BehaviourType>>();
+		}
+
+		protected virtual void OnInstanceAdded(DataType data, BehaviourType instance)
+		{
+		}
+
+		protected virtual void OnInstanceRemoved(DataType data)
+		{
 		}
 
 		public BehaviourType Instantiate(DataType data)
@@ -177,7 +186,18 @@ namespace Stratus
 			instantiateFunction(instance, data);
 			instancesByData.Add(data, new Tuple<DataType, BehaviourType>(data, instance));
 			instance.gameObject.SetActive(true);
+			OnInstanceAdded(data, instance);
 			return instance;
+		}
+
+		public bool Contains(DataType data)
+		{
+			if (data == null)
+			{
+				this.LogError($"Null data given");
+				return false;
+			}
+			return instancesByData.ContainsKey(data);
 		}
 
 		public bool Remove(DataType data)
@@ -194,14 +214,15 @@ namespace Stratus
 			behaviour.gameObject.SetActive(false);
 			instancesByData.Remove(data);
 			recycledInstances.Push(behaviour);
+			OnInstanceRemoved(data);
 			return true;
 		}
 
 		public void Update(Action<BehaviourType, DataType> updateFunction)
 		{
-			for (int i = 0; i < instancesByData.Values.Count; ++i)
+			foreach (var kp in instancesByData)
 			{
-				var instance = instancesByData.Values[i];
+				var instance = kp.Value;
 				updateFunction(instance.Item2, instance.Item1);
 			}
 		}
@@ -219,6 +240,53 @@ namespace Stratus
 			BehaviourType behaviour = instancesByData[data].Item2;
 			instantiateFunction(behaviour, data);
 			return true;
+		}
+
+		public void ForEach(Action<DataType, BehaviourType> action)
+		{
+			foreach (var kp in instancesByData.Values)
+			{
+				action(kp.Item1, kp.Item2);
+			}
+		}
+	}
+
+	public class StratusBehaviourPool<BehaviourType, DataType, KeyType>
+		: StratusBehaviourPool<BehaviourType, DataType>
+			where BehaviourType : MonoBehaviour
+			where DataType : class
+	{
+		private StratusDictionary<KeyType, DataType> keytoData;
+
+		public StratusBehaviourPool(Transform parent,
+			BehaviourType prefab,
+			InstantiateFunction instantiateFunction,
+			 Func<DataType, KeyType> keySelector)
+			: base(parent, prefab, instantiateFunction)
+		{
+			this.keytoData = new StratusDictionary<KeyType, DataType>(keySelector);
+		}
+
+		protected override void OnInstanceAdded(DataType data, BehaviourType instance)
+		{
+			base.OnInstanceAdded(data, instance);
+			keytoData.Add(data);
+		}
+
+		protected override void OnInstanceRemoved(DataType data)
+		{
+			base.OnInstanceRemoved(data);
+			keytoData.Remove(data);
+		}
+
+		public bool Contains(KeyType key)
+		{
+			return keytoData.ContainsKey(key);
+		}
+
+		public BehaviourType GetInstance(DataType data)
+		{
+			return instancesByData[data].Item2;
 		}
 	}
 
