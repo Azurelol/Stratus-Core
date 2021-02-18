@@ -83,7 +83,7 @@ namespace Stratus
 		/// <returns></returns>
 		public static T FirstOrDefault<T>(this IList<T> list)
 		{
-			return list.NotEmpty() ? list[0] : default;
+			return list.IsValid() ? list[0] : default;
 		}
 
 		/// <summary>
@@ -93,7 +93,7 @@ namespace Stratus
 		/// <param name="list"></param>
 		public static void RemoveFirst<T>(this IList<T> list)
 		{
-			if (list.NotEmpty())
+			if (list.IsValid())
 			{
 				list.RemoveAt(0);
 			}
@@ -106,7 +106,7 @@ namespace Stratus
 		/// <param name="list"></param>
 		public static void RemoveLast<T>(this IList<T> list)
 		{
-			if (list.NotEmpty())
+			if (list.IsValid())
 			{
 				list.RemoveAt(list.Count - 1);
 			}
@@ -129,15 +129,7 @@ namespace Stratus
 		}
 
 		/// <summary>
-		/// Inverts the order of the elements in a sequence.
-		/// </summary>
-		public static IEnumerable<T> Reverse<T>(this IList<T> source)
-		{
-			return Enumerable.Reverse(source);
-		}
-
-		/// <summary>
-		/// Determines whether a sequence contains a specified element by using a specified IEqualityComparer<T>.
+		/// Determines whether a sequence contains a specified element
 		/// </summary>
 		/// <param name="comparer"></param>
 		/// <returns></returns>
@@ -146,6 +138,22 @@ namespace Stratus
 			return source.IsValid() && source.Contains(value);
 		}
 
+		/// <summary>
+		/// Returns true if the <see cref="IList"/> contains the given element
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="source"></param>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		public static bool ContainsIndex<T>(this IList<T> source, int index)
+		{
+			if (source == null || source.Count == 0 || index < 0)
+			{
+				return false;
+			}
+
+			return index <= source.Count - 1;
+		}
 
 	}
 }

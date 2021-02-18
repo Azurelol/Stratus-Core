@@ -96,7 +96,7 @@ namespace Stratus.Editor
 				instance.objectReferences = new Dictionary<string, Object>();
 			}
 
-			return (T)instance.objectReferences.GetValueOrNull(name);
+			return (T)instance.objectReferences.GetValueOrDefault(name);
 		}
 
 		[SettingsProvider]

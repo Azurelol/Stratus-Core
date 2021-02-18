@@ -99,7 +99,7 @@ namespace Stratus.Editor
 			{
 				if (_propertyDrawerTypeForType == null)
 				{
-					_propertyDrawerTypeForType = (IDictionary)scriptAttributeReflection.fieldsByName.GetValueOrNull("s_DrawerTypeForType").GetValue(null);
+					_propertyDrawerTypeForType = (IDictionary)scriptAttributeReflection.fieldsByName.GetValueOrDefault("s_DrawerTypeForType").GetValue(null);
 				}
 
 				return _propertyDrawerTypeForType;

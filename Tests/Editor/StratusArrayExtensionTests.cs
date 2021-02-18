@@ -97,16 +97,16 @@ namespace Stratus.Editor.Tests
 		}
 
 		[Test]
-		public void TestLenghOrZero()
+		public void ReverseInPlace()
 		{
-			string[] values;
-			values = null;
-			Assert.AreEqual(0, values.LengthOrZero());
-			values = new string[] { };
-			Assert.AreEqual(0, values.LengthOrZero());
-			values = new string[] { "a" };
-			Assert.AreEqual(1, values.LengthOrZero());
+			int a = 1, b = 2, c = 3;
+			int[] values = new int[] { a, b, c };
+			values.ReverseInPlace();
+			Assert.AreEqual(c, values[0]);
+			Assert.AreEqual(b, values[1]);
+			Assert.AreEqual(a, values[2]);
 		}
+
 	}
 
 }

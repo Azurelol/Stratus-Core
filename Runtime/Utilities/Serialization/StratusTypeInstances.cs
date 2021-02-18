@@ -24,12 +24,12 @@ namespace Stratus
 
 		public U Get<U>() where U : T
 		{
-			return (U)instances.GetValueOrNull(typeof(U));
+			return (U)instances.GetValueOrDefault(typeof(U));
 		}
 
 		public T Get(Type type)
 		{
-			return instances.GetValueOrNull(type);
+			return instances.GetValueOrDefault(type);
 		}
 
 	}

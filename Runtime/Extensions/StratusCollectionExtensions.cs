@@ -2,88 +2,67 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Collections;
 
 namespace Stratus
 {
 	public static partial class Extensions
 	{
 		/// <summary>
-		/// Returns true if the list is empty
+		/// Returns true if the collection is empty
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="collection">The list.</param>
 		/// <returns>True if the list is empty, false otherwise</returns>
-		public static bool Empty<T>(this ICollection<T> collection)
+		public static bool Empty(this ICollection collection)
 		{
 			return collection.Count == 0;
 		}
 
 		/// <summary>
-		/// Returns true if the list not null or empty
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="collection"></param>
-		/// <returns></returns>
-		public static bool NotNullOrEmpty<T>(this ICollection<T> collection)
-			where T : class
-		{
-			return collection != null && collection.Count > 0;
-		}
-
-		/// <summary>
-		/// Returns true if the array is not empty
+		/// Returns true if the collection is not empty
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="collection">The array.</param>
 		/// <returns>True if the array is not empty, false otherwise</returns>
-		public static bool NotEmpty<T>(this ICollection<T> collection)
+		public static bool NotEmpty(this ICollection collection)
 		{
 			return collection != null && collection.Count > 0;
 		}
 
 		/// <summary>
-		/// Returns true if the list is empty
+		/// Returns true if the given collection is either null nor empty
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		/// <param name="collection">The list.</param>
-		/// <returns>True if the list is empty, false otherwise</returns>
-		public static bool Empty<T>(this Stack<T> collection)
-		{
-			return collection.Count == 0;
-		}
+		/// <param name="collection"></param>
+		/// <returns></returns>
+		public static bool IsNullOrEmpty<T>(this ICollection<T> collection) 
+			=> collection == null || collection.Count == 0;
 
 		/// <summary>
-		/// Returns true if the array is not empty
+		/// Returns true if the given collection is valid (not null or empty)
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		/// <param name="stack">The array.</param>
-		/// <returns>True if the array is not empty, false otherwise</returns>
-		public static bool NotEmpty<T>(this Stack<T> stack)
-		{
-			return stack.Count > 0;
-		}
+		/// <param name="collection"></param>
+		/// <returns></returns>
+		public static bool IsValid<T>(this ICollection<T> collection) 
+			=> collection != null && collection.Count > 0;
 
 		/// <summary>
-		/// Returns true if the list is empty
+		/// Returns the length of the collection; if it's null it will return 0
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="collection">The list.</param>
-		/// <returns>True if the list is empty, false otherwise</returns>
-		public static bool Empty<T>(this Queue<T> collection)
-		{
-			return collection.Count == 0;
-		}
+		/// <returns>The length of the collection, 0 if null</returns>
+		public static int LengthOrZero(this ICollection collection) => collection != null ? collection.Count : 0;
 
 		/// <summary>
-		/// Returns true if the array is not empty
+		/// Returns true if the collection is valid and contains the given value. 
+		/// False otherwise.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		/// <param name="stack">The array.</param>
-		/// <returns>True if the array is not empty, false otherwise</returns>
-		public static bool NotEmpty<T>(this Queue<T> stack)
-		{
-			return stack.Count > 0;
-		}
+		/// <param name="source"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static bool TryContains<T>(this ICollection<T> source, T value) => source.IsValid() && source.Contains(value);
 
 		/// <summary>
 		/// Pushes all the given elements onto the stack
@@ -138,22 +117,6 @@ namespace Stratus
 		public static T PopOrDefault<T>(this Stack<T> stack)
 		{
 			return stack.Count > 0 ? stack.Pop() : default;
-		}
-
-		public static bool IsNullOrEmpty<T>(this ICollection<T> collection) => collection == null || collection.Count == 0;
-
-		public static bool IsValid<T>(this ICollection<T> source) => source != null && source.Count > 0;
-		public static int LengthOrZero<T>(this ICollection<T> array) => array != null ? array.Count : 0;
-
-		public static bool TryContains<T>(this ICollection<T> source, T value) => source.IsValid() && source.Contains(value);
-		public static bool ContainsIndex<T>(this IList<T> source, int index)
-		{
-			if (source == null || source.Count == 0 || index < 0)
-			{
-				return false;
-			}
-
-			return index <= source.Count - 1;
 		}
 	}
 }

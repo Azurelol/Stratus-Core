@@ -144,7 +144,7 @@ namespace Stratus
 			{
 				commandName = commandSplit.Take(i).Join(delimiterStr);
 				StratusDebug.Log($"Searching command: {commandName}");
-				commandAction = commandActions.GetValueOrNull(commandName);
+				commandAction = commandActions.GetValueOrDefault(commandName);
 				if (commandAction != null)
 				{
 					StratusDebug.Log($"Found command: {commandName}");

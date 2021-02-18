@@ -259,26 +259,12 @@ namespace Stratus
 			return newArray;
 		}
 
-		public static bool IsNullOrEmpty<T>(this T[] array) => array == null || array.Length == 0;
-		public static bool IsValid<T>(this T[] array) => array != null && array.Length > 0;
-
 		/// <summary>
-		///  Inverts the order of the elements in a sequence from the given index for a given length
+		///  Inverts the order of the elements in the array
 		/// </summary>
-		public static void Reverse<T>(this T[] array, int index, int length)
+		public static void ReverseInPlace<T>(this T[] array)
 		{
-			Array.Reverse(array, index, length);
-		}
-
-		/// <summary>
-		/// Converts to an array
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="array"></param>
-		/// <returns></returns>
-		public static T[] ToArrayByCast<T>(this Array array)
-		{
-			return array.Cast<T>().ToArray();
+			Array.Reverse(array);
 		}
 	}
 }

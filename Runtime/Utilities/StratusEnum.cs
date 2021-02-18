@@ -18,7 +18,7 @@ namespace Stratus
 
 		public static Array Values(Type enumType)
 		{
-			return enumValues.GetValueOrAdd(enumType, Enum.GetValues);
+			return enumValues.GetValueOrGenerate(enumType, Enum.GetValues);
 		}
 
 		public static T Value<T>(int index) where T : Enum
@@ -38,7 +38,7 @@ namespace Stratus
 
 		public static string[] Names(Type enumType)
 		{
-			return enumDisplayNames.GetValueOrAdd(enumType, Enum.GetNames);
+			return enumDisplayNames.GetValueOrGenerate(enumType, Enum.GetNames);
 		}
 
 	}

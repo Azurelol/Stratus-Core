@@ -89,5 +89,32 @@ namespace Stratus.Editor.Tests
 			Assert.NotNull(values.FirstOrDefault());
 		}
 
+		[Test]
+		public void ContainsIndex()
+		{
+			TestDataObject a = new TestDataObject("A", 1);
+			TestDataObject[] values = new TestDataObject[]
+			{
+				a
+			};
+
+			Assert.False(values.ContainsIndex(-1));
+			Assert.True(values.ContainsIndex(0));
+			Assert.False(values.ContainsIndex(1));
+
+			Assert.AreEqual(a, values.AtIndexOrDefault(0));
+			Assert.AreEqual(a, values.AtIndexOrDefault(5, a));
+		}
+
+		[Test]
+		public void Contains()
+		{
+			int a = 7;
+			int b = 5;
+			List<int> values = new List<int>();
+			values.AddRange(a);
+			Assert.True(values.Contains(a));
+			Assert.False(values.Contains(b));
+		}
 	}
 }

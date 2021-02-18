@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -243,6 +241,14 @@ namespace Stratus
 					yield return func(item);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Inverts the order of the elements in a sequence.
+		/// </summary>
+		public static IEnumerable<T> Reverse<T>(this IList<T> source)
+		{
+			return Enumerable.Reverse(source);
 		}
 
 		/// <summary>
@@ -504,7 +510,7 @@ namespace Stratus
 			Dictionary<Key, Value> dictionary = new Dictionary<Key, Value>();
 			if (predicate != null)
 			{
-				dictionary.AddRangeWhere(valueFunction, predicate, source);
+				dictionary.AddRangeByKey(valueFunction, predicate, source);
 			}
 			else
 			{
@@ -513,7 +519,5 @@ namespace Stratus
 
 			return dictionary;
 		}
-
-
 	}
 }

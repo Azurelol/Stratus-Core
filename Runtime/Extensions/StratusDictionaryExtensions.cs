@@ -7,7 +7,8 @@ namespace Stratus
 	public static partial class Extensions
 	{
 		/// <summary>
-		/// Adds the given key-value pair if the key has not already been used
+		/// Adds the given key-value pair if the key if not already present.
+		/// Returns false if element was present (and not added).
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <typeparam name="U"></typeparam>
@@ -45,6 +46,27 @@ namespace Stratus
 		}
 
 		/// <summary>
+		/// Increments the value to the dictionary element if present, 
+		/// adds it otherwise
+		/// </summary>
+		/// <typeparam name="Key"></typeparam>
+		/// <typeparam name="Value"></typeparam>
+		/// <param name="dictionary"></param>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+		public static void AddOrIncrement<Key>(this Dictionary<Key, int> dictionary, Key key, int value)
+		{
+			if (dictionary.ContainsKey(key))
+			{
+				dictionary[key] += value;
+			}
+			else
+			{
+				dictionary.Add(key, value);
+			}
+		}
+
+		/// <summary>
 		/// Adds the given list to the dictionary, provided a function that will extract the key for each value
 		/// </summary>
 		/// <typeparam name="Key"></typeparam>
@@ -61,7 +83,7 @@ namespace Stratus
 		}
 
 		/// <summary>
-		/// Adds the given list to the dictionary, provided a function that will extract the key for each value
+		/// Adds the given list to the dictionary, provided a function that will extract the value for each key
 		/// </summary>
 		/// <typeparam name="Key"></typeparam>
 		/// <typeparam name="Value"></typeparam>
@@ -92,13 +114,17 @@ namespace Stratus
 		/// <summary>
 		/// Adds the given list to the dictionary, provided a function that will extract the key for each value. and predicate
 		/// </summary>
-		public static void AddRangeWhere<Key, Value>(this Dictionary<Key, Value> dictionary, Func<Key, Value> valueFunction, Predicate<Key> predicate, IEnumerable<Key> keys)
+		public static void AddRangeByKey<Key, Value>(this Dictionary<Key, Value> dictionary,
+			Func<Key, Value> valueFunction,
+			Predicate<Key> predicate,
+			IEnumerable<Key> keys)
 		{
 			foreach (Key key in keys)
 			{
 				if (predicate(key))
 				{
-					dictionary.Add(key, valueFunction(key));
+					Value value = valueFunction(key);
+					dictionary.Add(key, value);
 				}
 			}
 		}
@@ -106,7 +132,10 @@ namespace Stratus
 		/// <summary>
 		/// Adds the given list to the dictionary, provided a function that will extract the key for each value. and predicate
 		/// </summary>
-		public static void AddRangeWhere<Key, Value>(this Dictionary<Key, Value> dictionary, Func<Value, Key> keyFunction, Predicate<Value> predicate, IEnumerable<Value> values)
+		public static void AddRangeByValue<Key, Value>(this Dictionary<Key, Value> dictionary,
+			Func<Value, Key> keyFunction,
+			Predicate<Value> predicate,
+			IEnumerable<Value> values)
 		{
 			foreach (Value element in values)
 			{
@@ -159,7 +188,9 @@ namespace Stratus
 		/// <summary>
 		/// Invokes the given action on every element of the list if the key is present within the dictionary
 		/// </summary>
-		public static void TryInvoke<Key, Value>(this Dictionary<Key, List<Value>> dictionary, Key key, Action<Value> action)
+		public static void TryInvoke<Key, Value>(this Dictionary<Key, List<Value>> dictionary,
+			Key key,
+			Action<Value> action)
 		{
 			if (dictionary.ContainsKey(key))
 			{
@@ -173,7 +204,9 @@ namespace Stratus
 		/// <summary>
 		/// Invokes the given action on the value within the dictionary if present
 		/// </summary>
-		public static void TryInvoke<Key, Value>(this Dictionary<Key, Value> dictionary, Key key, Action<Value> action)
+		public static void TryInvoke<Key, Value>(this Dictionary<Key, Value> dictionary,
+			Key key,
+			Action<Value> action)
 		{
 			if (dictionary.ContainsKey(key))
 			{
@@ -182,9 +215,12 @@ namespace Stratus
 		}
 
 		/// <summary>
-		/// Invokes the given function on the value within the dictionary if present
+		/// Invokes the given function on the value within the dictionary if present.
+		/// If not, will return the default value.
 		/// </summary>
-		public static ReturnValue TryInvoke<Key, Value, ReturnValue>(this Dictionary<Key, Value> dictionary, Key key, Func<Value, ReturnValue> func)
+		public static ReturnValue TryInvoke<Key, Value, ReturnValue>(this Dictionary<Key, Value> dictionary,
+			Key key,
+			Func<Value, ReturnValue> func)
 		{
 			if (dictionary.ContainsKey(key))
 			{
@@ -197,19 +233,7 @@ namespace Stratus
 		/// <summary>
 		/// Returns the value from the dictionary if present, otherwise adds it (from a value function)
 		/// </summary>
-		public static Value GetValueOrAdd<Key, Value>(this Dictionary<Key, Value> dictionary, Key key, Func<Key, Value> valueFunction)
-		{
-			if (!dictionary.ContainsKey(key))
-			{
-				dictionary.Add(key, valueFunction(key));
-			}
-			return dictionary[key];
-		}
-
-		/// <summary>
-		/// Returns the value from the dictionary if present, otherwise adds it (from a value function)
-		/// </summary>
-		public static Value GetValueOrDefault<Key, Value>(this Dictionary<Key, Value> dictionary, Key key, Value defaultValue)
+		public static Value GetValueOrDefault<Key, Value>(this Dictionary<Key, Value> dictionary, Key key, Value defaultValue = default)
 		{
 			if (!dictionary.ContainsKey(key))
 			{
@@ -219,40 +243,39 @@ namespace Stratus
 		}
 
 		/// <summary>
-		/// Returns the value from the dictionary if present, otherwise returns null
+		/// Returns the value from the dictionary if present, otherwise generates it (from a value function)
 		/// </summary>
-		public static Value GetValueOrNull<Key, Value>(this Dictionary<Key, Value> dictionary, Key key)
-			where Value : class
+		public static Value GetValueOrGenerate<Key, Value>(this Dictionary<Key, Value> dictionary, Key key, Func<Key, Value> valueFunction)
 		{
 			if (!dictionary.ContainsKey(key))
 			{
-				return null;
+				dictionary.Add(key, valueFunction(key));
 			}
-
 			return dictionary[key];
 		}
 
 		/// <summary>
-		/// Returns the value from the dictionary if present, otherwise throws a custom error message
+		/// Returns a string of stringified Key-Value pair lines
 		/// </summary>
-		public static Value GetValueOrError<Key, Value>(this Dictionary<Key, Value> dictionary, Key key, string errorMessage = null)
-		{
-			if (!dictionary.ContainsKey(key))
-			{
-				throw new ArgumentNullException(errorMessage != null ? errorMessage : $"The key {key} could not be found!");
-			}
-
-			return dictionary[key];
-		}
-
-		public static string ToKeyValueString<Key, Value>(this Dictionary<Key, Value> dictionary, char separator = ':', int padding = 1)
+		/// <typeparam name="Key"></typeparam>
+		/// <typeparam name="Value"></typeparam>
+		/// <param name="dictionary"></param>
+		/// <param name="separator"></param>
+		/// <returns></returns>
+		public static string ToString<Key, Value>(this Dictionary<Key, Value> dictionary, string separator,
+			Func<Key, string> keyToStringFunction = null,
+			Func<Value, string> valueToStringFunction = null)
 		{
 			StringBuilder sb = new StringBuilder();
-			foreach(var kp in dictionary)
+			bool hasKeyFunction = keyToStringFunction != null;
+			bool hasValueFunction = valueToStringFunction != null;
+			foreach (var kp in dictionary)
 			{
-				sb.AppendLine($"{kp.Key} {separator} {kp.Value}");
+				sb.AppendLine($"{(hasKeyFunction ? keyToStringFunction(kp.Key) : kp.Key.ToString())}{separator}{(hasValueFunction ? valueToStringFunction(kp.Value) : kp.Value.ToString())}");
 			}
 			return sb.ToString();
 		}
+
+
 	}
 }
