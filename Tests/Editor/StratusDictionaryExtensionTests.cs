@@ -195,7 +195,7 @@ namespace Stratus.Editor.Tests
 			Dictionary<int, int> dict = new Dictionary<int, int>();
 			dict.Add(3, 7);
 			dict.Add(5, 5);
-			string expected = $"3{separator}7{Environment.NewLine}5{separator}5";
+			string expected = $"3{separator}7{Environment.NewLine}5{separator}5{Environment.NewLine}";
 			string actual = dict.ToString(separator);
 			Assert.AreEqual(expected, actual);
 		}

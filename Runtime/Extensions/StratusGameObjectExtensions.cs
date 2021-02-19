@@ -7,8 +7,6 @@ namespace Stratus
 {
 	public static partial class Extensions
 	{
-
-
 		/// <summary>
 		/// Returns a container of all the children of this GameObject.
 		/// </summary>
@@ -16,9 +14,29 @@ namespace Stratus
 		/// <returns>A container of all the children of this GameObject.</returns>
 		public static List<GameObject> Children(this GameObject gameObj)
 		{
-			List<GameObject> children = new List<GameObject>();
-			ListChildren(gameObj, children);
-			return children;
+			 void listChildren(GameObject obj, List<GameObject> children)
+			{
+				foreach (Transform child in obj.transform)
+				{
+					children.Add(child.gameObject);
+					listChildren(child.gameObject, children);
+				}
+			}
+
+			List<GameObject> _children = new List<GameObject>();
+			listChildren(gameObj, _children);
+			return _children;
+		}
+
+		/// <summary>
+		/// Finds the child of this GameObject with a given name
+		/// </summary>
+		/// <param name="gameObj"></param>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public static GameObject FindChild(this GameObject gameObj, string name)
+		{
+			return FindChildBFS(gameObj.transform, name).gameObject;
 		}
 
 		/// <summary>
@@ -51,24 +69,10 @@ namespace Stratus
 		/// <returns>True if the component was present, false otherwise.</returns>
 		public static bool HasComponent<T>(this GameObject gameObj) where T : Component
 		{
-			if (gameObj.GetComponent<T>())
-			{
-				return true;
-			}
-
-			return false;
+			return gameObj.GetComponent<T>() != null;
 		}
 
-		/// <summary>
-		/// Finds the child of this GameObject with a given name
-		/// </summary>
-		/// <param name="gameObj"></param>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		public static GameObject FindChild(this GameObject gameObj, string name)
-		{
-			return FindChildBFS(gameObj.transform, name).gameObject;
-		}
+
 
 
 		/// <summary>
@@ -176,15 +180,6 @@ namespace Stratus
 			return newComponent;
 		}
 
-		///// <summary>
-		///// Returns true if the GameObject has been properly destroyed by the engine
-		///// </summary>
-		///// <param name="go"></param>
-		//public static bool IsDestroyed(this GameObject go)
-		//{
-		//	return go == null && !ReferenceEquals(go, null);
-		//}
-
 		/// <summary>
 		/// Finds and invokes the method with the given name among all components
 		/// attached to this GameObject
@@ -199,15 +194,6 @@ namespace Stratus
 			if (mInfo != null)
 			{
 				mInfo.Invoke(components, null);
-			}
-		}
-
-		private static void ListChildren(GameObject obj, List<GameObject> children)
-		{
-			foreach (Transform child in obj.transform)
-			{
-				children.Add(child.gameObject);
-				ListChildren(child.gameObject, children);
 			}
 		}
 

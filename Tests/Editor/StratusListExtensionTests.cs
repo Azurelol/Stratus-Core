@@ -10,7 +10,7 @@ namespace Stratus.Editor.Tests
 	public partial class StratusListExtensionsTests
 	{
 		[Test]
-		public void TestRemoveNull()
+		public void RemoveNull()
 		{
 			List<string> values = new List<string>
 				{
@@ -20,7 +20,7 @@ namespace Stratus.Editor.Tests
 		}
 
 		[Test]
-		public void TestAddRange()
+		public void AddRange()
 		{
 			string a = "12", b = "34", c = "56";
 			List<string> values = new List<string>();
@@ -29,7 +29,7 @@ namespace Stratus.Editor.Tests
 		}
 
 		[Test]
-		public void TestForEachRemoveInvalid()
+		public void ForEachRemoveInvalid()
 		{
 			List<TestDataObject> values = new List<TestDataObject>
 				{
@@ -44,7 +44,7 @@ namespace Stratus.Editor.Tests
 		}
 
 		[Test]
-		public void TestRemoveInvalid()
+		public void RemoveInvalid()
 		{
 			List<TestDataObject> values = new List<TestDataObject>
 				{
@@ -57,7 +57,7 @@ namespace Stratus.Editor.Tests
 		}
 
 		[Test]
-		public void TestClone()
+		public void Clone()
 		{
 			List<int> original = new List<int>() { 1, 2, 3, 4, 5 };
 			List<int> copy = original.Clone();
@@ -65,7 +65,7 @@ namespace Stratus.Editor.Tests
 		}
 
 		[Test]
-		public void TestAddRangeWhere()
+		public void AddRangeWhere()
 		{
 			TestDataObject a = new TestDataObject("A", 1);
 			TestDataObject b = new TestDataObject("B", 2);
@@ -77,7 +77,7 @@ namespace Stratus.Editor.Tests
 		}
 
 		[Test]
-		public void TestAddRangeUnique()
+		public void AddRangeUnique()
 		{
 			TestDataObject a = new TestDataObject("A", 1);
 
@@ -89,5 +89,24 @@ namespace Stratus.Editor.Tests
 			Assert.AreEqual(a, values.First());
 			Assert.AreEqual(1, values.Count);
 		}
+
+		[TestCase(0, new string[] { null, null } )]
+		[TestCase(1, "foo")]
+		[TestCase(2, new string[] { null, "foo", null, "bar" })]
+		public void AddRangeNotNull(int count, params string[] values)
+		{
+			List<string> a = new List<string>();
+			a.AddRangeNotNull(values);
+			Assert.AreEqual(count, a.Count);
+		}
+
+		[Test]
+		public void AddIfNotNull()
+		{
+			List<string> values = new List<string>();
+			Assert.False(values.AddIfNotNull(null));
+			Assert.True(values.AddIfNotNull("foo"));
+		}
+
 	}
 }

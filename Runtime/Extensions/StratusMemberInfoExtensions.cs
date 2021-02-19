@@ -218,22 +218,10 @@ namespace Stratus
 			return GetFullName(method, "[ext] ");
 		}
 
-
-		/// <summary>
-		/// Determines if an enum has the given flag defined bitwise.
-		/// Fallback equivalent to .NET's Enum.HasFlag().
-		/// </summary>
-		public static bool HasFlag(this Enum value, Enum flag)
-		{
-			long lValue = System.Convert.ToInt64(value);
-			long lFlag = System.Convert.ToInt64(flag);
-			return (lValue & lFlag) != 0;
-		}
-
-		private static MethodInfo[] extensionMethodsCache;
-
 		/// <summary>
 		/// Searches all assemblies for extension methods for a given type.
+		/// By default, the <see cref="Type.GetMethods"/> method does not return the extension methods for a class,
+		/// as they are defined in external static classes.
 		/// </summary>
 		public static IEnumerable<MethodInfo> GetExtensionMethods(this Type type, bool inherited = true)
 		{
@@ -245,7 +233,7 @@ namespace Stratus
 					.SelectMany(assembly => assembly.GetTypes())
 					.Where(potentialType => potentialType.IsSealed && !potentialType.IsGenericType && !potentialType.IsNested)
 					.SelectMany(extensionType => extensionType.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
-					.Where(method => method.IsExtension())
+					.Where(method => method.IsExtensionMethod())
 					.ToArray();
 			}
 
@@ -258,12 +246,7 @@ namespace Stratus
 				return extensionMethodsCache.Where(method => method.GetParameters()[0].ParameterType == type);
 			}
 		}
-
-		public static bool IsExtension(this MethodInfo methodInfo)
-		{
-			return methodInfo.IsDefined(typeof(ExtensionAttribute), false);
-		}
-
+		private static MethodInfo[] extensionMethodsCache;
 
 	}
 }

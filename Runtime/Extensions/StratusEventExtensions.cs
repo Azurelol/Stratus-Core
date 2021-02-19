@@ -10,7 +10,7 @@ namespace Stratus
 {
 	public static partial class Extensions
 	{
-		public static void AddListener(this UnityEvent unityEvent, System.Action action)
+		public static void AddListener(this UnityEvent unityEvent, Action action)
 		{
 			unityEvent.AddListener(() => action());
 		}

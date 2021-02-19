@@ -9,9 +9,6 @@ namespace Stratus
 	/// </summary>
 	public static partial class Extensions
 	{
-		//------------------------------------------------------------------------/
-		// Methods: Menu Items
-		//------------------------------------------------------------------------/
 		[MenuItem("GameObject/Transform/Reset Selected", false, 0)]
 		private static void Reset(MenuCommand command)
 		{

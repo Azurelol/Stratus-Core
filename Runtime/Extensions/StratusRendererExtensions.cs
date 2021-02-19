@@ -24,8 +24,6 @@ namespace Stratus
 			return GeometryUtility.TestPlanesAABB(planes, renderer.bounds);
 		}
 
-
-
 		public static IEnumerator GetToTexture2DRoutine(this RenderTexture renderTexture, Action<Texture2D> callback, TextureFormat format = TextureFormat.RGB24)
 		{
 			yield return new WaitForEndOfFrame();

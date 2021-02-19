@@ -156,7 +156,7 @@ namespace Stratus
 		}
 
 		/// <summary>
-		/// Adds the items from another list, except null ones
+		/// Adds the items from another sequence, except those that are null
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="list"></param>
@@ -189,6 +189,7 @@ namespace Stratus
 		/// <param name="item"></param>
 		/// <returns></returns>
 		public static bool AddIfNotNull<T>(this List<T> list, T item)
+			where T : class
 		{
 			if (item != null)
 			{
