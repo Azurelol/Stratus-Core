@@ -5,7 +5,6 @@ using System;
 
 namespace Stratus
 {
-
 	public abstract class StratusAssetCollectionScriptable<T> : StratusScriptable<List<T>>,
 		IStratusAssetSource<T>
 		where T : class

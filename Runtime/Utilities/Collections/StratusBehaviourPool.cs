@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 namespace Stratus
 {
@@ -247,6 +248,14 @@ namespace Stratus
 			foreach (var kp in instancesByData.Values)
 			{
 				action(kp.Item1, kp.Item2);
+			}
+		}
+
+		public void Clear()
+		{
+			foreach(var data in instancesByData.Keys.ToArray())
+			{
+				Remove(data);
 			}
 		}
 	}

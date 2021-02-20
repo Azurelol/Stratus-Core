@@ -43,6 +43,17 @@ namespace Stratus
 			return InvokeAudioChannel(channel, (player) => player.Stop());
 		}
 
+		/// <summary>
+		/// Stops playback on all channels
+		/// </summary>
+		public void Stop()
+		{
+			foreach(var channel in _channels)
+			{
+				channel.player.Stop();
+			}
+		}
+
 		public StratusOperationResult Pause(string channel, bool pause)
 		{
 			return InvokeAudioChannel(channel, (player) => player.Pause(pause));

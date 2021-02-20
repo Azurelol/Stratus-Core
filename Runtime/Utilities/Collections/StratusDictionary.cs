@@ -10,20 +10,22 @@ namespace Stratus
 		private Func<ValueType, KeyType> keyFunction;
 
 		public StratusDictionary(Func<ValueType, KeyType> keyFunction,
-			int capacity = 0,
-			IEqualityComparer<KeyType> comparer = null)
-			: base(capacity, comparer)
+								 int capacity = 0,
+								 IEqualityComparer<KeyType> comparer = null)
+								 : base(capacity, comparer)
 		{
 			this.keyFunction = keyFunction;
 		}
 
-		public StratusDictionary(Func<ValueType, KeyType> keyFunction, IEnumerable<ValueType> values,
-				int capacity = 0,
-				IEqualityComparer<KeyType> comparer = null)
-				: this(keyFunction, capacity, comparer)
+		public StratusDictionary(Func<ValueType, KeyType> keyFunction, 
+								IEnumerable<ValueType> values,
+								 int capacity = 0,
+								 IEqualityComparer<KeyType> comparer = null)
+								 : this(keyFunction, capacity, comparer)
 		{
 			AddRange(values);
 		}
+
 
 		public bool Add(ValueType value)
 		{
