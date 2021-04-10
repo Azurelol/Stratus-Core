@@ -88,8 +88,6 @@ namespace Stratus
 			OnInitialize();
 			initialized = true;
 		}
-
 		protected abstract void OnInitialize();
 	}
-
 }

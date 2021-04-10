@@ -11,8 +11,8 @@ using UnityEngine.Assertions;
 namespace Stratus.Editor
 {
 	public abstract class StratusMultiColumnTreeView<TreeElementType, ColumnType> : StratusTreeViewWithTreeModel<TreeElementType>
-	where TreeElementType : StratusTreeElement
-	where ColumnType : struct, IConvertible
+		where TreeElementType : StratusTreeElement
+		where ColumnType : struct, IConvertible
 	{
 		//------------------------------------------------------------------------/
 		// Declarations
@@ -39,7 +39,6 @@ namespace Stratus.Editor
 			public TreeViewColumn()
 			{
 			}
-
 		}
 
 
@@ -60,8 +59,7 @@ namespace Stratus.Editor
 
 		//------------------------------------------------------------------------/
 		// Virtual
-		//------------------------------------------------------------------------/    
-		//protected abstract TreeViewColumn[] BuildColumns();
+		//------------------------------------------------------------------------/ 
 		protected abstract TreeViewColumn BuildColumn(ColumnType columnType);
 		protected abstract void DrawColumn(Rect cellRect, StratusTreeViewItem<TreeElementType> item, ColumnType column, ref RowGUIArgs args);
 		protected abstract ColumnType GetColumn(int index);
@@ -71,13 +69,17 @@ namespace Stratus.Editor
 		// CTOR
 		//------------------------------------------------------------------------/
 		public StratusMultiColumnTreeView(TreeViewState state, IList<TreeElementType> data)
-		: base(state, new StratusTreeModel<TreeElementType>(data))
+			: base(state, new StratusTreeModel<TreeElementType>(data))
 		{
 			this.columns = this.BuildColumns();
 			MultiColumnHeaderState headerState = BuildMultiColumnHeaderState(this.columns);
 			this.multiColumnHeader = this.stratusMultiColumnHeader = new StratusMultiColumnHeader(headerState);
 			this.InitializeMultiColumnTreeView();
-			//this.Reload();
+		}
+
+		public StratusMultiColumnTreeView(TreeViewState state, IEnumerable<TreeElementType> data)
+			: this(state, data.ToList())
+		{
 		}
 
 		public StratusMultiColumnTreeView(TreeViewState state, StratusTreeModel<TreeElementType> model)
@@ -87,13 +89,11 @@ namespace Stratus.Editor
 			MultiColumnHeaderState headerState = BuildMultiColumnHeaderState(this.columns);
 			this.multiColumnHeader = new StratusMultiColumnHeader(headerState);
 			this.InitializeMultiColumnTreeView();
-			//this.Reload();
 		}
-
 
 		protected void InitializeMultiColumnTreeView()
 		{
-			this.columnIndexForTreeFoldouts = 2;
+			this.columnIndexForTreeFoldouts = 0;
 			this.showAlternatingRowBackgrounds = true;
 			this.showBorder = true;
 
@@ -139,8 +139,6 @@ namespace Stratus.Editor
 			}
 		}
 
-
-
 		protected override bool CanRename(TreeViewItem item)
 		{
 			// Only allow rename if we can showw the rename overlay with a certain width 
@@ -175,7 +173,6 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		// Methods
 		//------------------------------------------------------------------------/
-
 		protected static MultiColumnHeaderState BuildMultiColumnHeaderState(TreeViewColumn[] columns)
 		{
 			Assert.AreEqual(columns.Length, Enum.GetValues(typeof(ColumnType)).Length, "Number of columns should match number of enum values: You probably forgot to update one of them.");
@@ -221,15 +218,9 @@ namespace Stratus.Editor
 			return false;
 		}
 
-
-
 		//------------------------------------------------------------------------/
 		// Methods: GUI
 		//------------------------------------------------------------------------/
-		//private float xOffset = 20f, yOffset = 30;
-
-
-
 		/// <summary>
 		/// Toggles the column
 		/// </summary>
@@ -350,8 +341,6 @@ namespace Stratus.Editor
 		{
 			DefaultGUI.Label(cellRect, value, selected, focused);
 		}
-
-
 	}
 
 }

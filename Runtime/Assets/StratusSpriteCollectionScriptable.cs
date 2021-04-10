@@ -10,7 +10,7 @@ namespace Stratus
 	{
 	}
 
-	[CreateAssetMenu(menuName = scriptablesMenu + "Sprite Scriptable")]
+	[CreateAssetMenu(menuName = scriptablesMenu + "Sprites")]
 	public class StratusSpriteCollectionScriptable : StratusAssetCollectionScriptable<StratusSprite>
 	{
 	}

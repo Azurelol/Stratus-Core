@@ -6,8 +6,9 @@ namespace Stratus
 	/// <summary>
 	/// Base class for all trigger-related components in the Stratus Trigger framework
 	/// </summary>
-	public abstract class StratusTriggerBase : StratusBehaviour, IStratusDebuggable, IStratusValidator
+	public abstract class StratusTriggerBase : StratusBehaviour, IStratusDebugLogger, IStratusValidator
 	{
+		#region Declarations
 		/// <summary>
 		/// Whether this component has specific restart behaviour
 		/// </summary>
@@ -21,21 +22,9 @@ namespace Stratus
 			Automatic,
 			Manual
 		}
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Events
-		//------------------------------------------------------------------------/
-		/// <summary>
-		/// Signals the GameObject it's on that this basetrigger has been active
-		/// </summary>
-		public class ActivityEvent : Stratus.StratusEvent
-		{
-			public StratusTriggerBase triggerBase;
-		}
-
-		//------------------------------------------------------------------------/
-		// Fields
-		//------------------------------------------------------------------------/
+		#region Fields
 		/// <summary>
 		/// How descriptions are set
 		/// </summary>
@@ -52,10 +41,9 @@ namespace Stratus
 		/// </summary>
 		[Tooltip("Whether we are printing debug output")]
 		public bool debug = false;
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Properties
-		//------------------------------------------------------------------------/
+		#region Properties
 		/// <summary>
 		/// Whether this component has triggered
 		/// </summary>
@@ -65,37 +53,31 @@ namespace Stratus
 		/// </summary>
 		public bool awoke { get; protected set; }
 
-		//------------------------------------------------------------------------/
-		// Virtual
-		//------------------------------------------------------------------------/
-		protected abstract void OnReset();
-		/// <summary>
-		/// An automatically generated description of what the trigger does
-		/// </summary>
-		public virtual string automaticDescription => string.Empty;
-
 		bool IStratusDebuggable.debug
 		{
 			get => debug;
 			set => debug = value;
 		}
+		/// <summary>
+		/// An automatically generated description of what the trigger does
+		/// </summary>
+		public virtual string automaticDescription => string.Empty;
+		#endregion
 
+		#region Virtual
+		protected abstract void OnReset();
 		public virtual StratusObjectValidation Validate() => null;
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Messages
-		//------------------------------------------------------------------------/
+		#region Messages
 		private void Reset()
 		{
-			// If a trigger system is present, hide this component and set its default
 			CheckForTriggerSystem();
-			// Call subclass reset
 			OnReset();
 		}
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Methods: Public
-		//------------------------------------------------------------------------/
+		#region Methods
 		/// <summary>
 		/// Restarts this trigger to its initial state
 		/// </summary>
@@ -105,12 +87,10 @@ namespace Stratus
 			enabled = enable;
 			var restartable = this as Restartable;
 			restartable?.OnRestart();
-			//OnRestart();
 		}
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Methods
-		//------------------------------------------------------------------------/
+		#region Procedures
 		private void CheckForTriggerSystem()
 		{
 			var triggerSystem = gameObject.GetComponent<StratusTriggerSystem>();
@@ -130,17 +110,11 @@ namespace Stratus
 			StratusDebug.LogError(ComposeLog(msg), trigger);
 		}
 
-		protected void Log(string msg, Behaviour trigger)
-		{
-			StratusDebug.Log(ComposeLog(msg), trigger);
-		}
-
 		protected string ComposeLog(string msg)
 		{
 			return $"<i>{description}</i> : {msg}";
-		}
-
-
+		} 
+		#endregion
 	}
 
 }

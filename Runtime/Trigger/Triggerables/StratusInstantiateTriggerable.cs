@@ -43,7 +43,7 @@ namespace Stratus
 		{
 		}
 
-		protected override void OnTrigger()
+		protected override void OnTrigger(object data = null)
 		{
 			if (debug)
 			{

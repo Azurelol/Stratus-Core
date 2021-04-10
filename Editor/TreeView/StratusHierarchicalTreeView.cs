@@ -12,11 +12,6 @@ namespace Stratus
 	  where TreeElementType : StratusTreeElement
 	{
 		//------------------------------------------------------------------------/
-		// Properties
-		//------------------------------------------------------------------------/
-
-
-		//------------------------------------------------------------------------/
 		// CTOR
 		//------------------------------------------------------------------------/
 		public StratusHierarchicalTreeView(TreeViewState state, StratusTreeModel<TreeElementType> model) : base(state, model)

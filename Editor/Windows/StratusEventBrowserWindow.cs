@@ -42,7 +42,7 @@ namespace Stratus.Editor
 
 		}
 
-		public class EventTreeElement : TreeElement<EventInformation>
+		public class EventTreeElement : StratusTreeElement<EventInformation>
 		{
 		}
 
@@ -191,7 +191,7 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		// Data
 		//------------------------------------------------------------------------/
-		private List<EventTreeElement> BuildEventTree()
+		private IList<EventTreeElement> BuildEventTree()
 		{
 			this.events = StratusReflection.GetSubclass<Stratus.StratusEvent>();
 			EventInformation[] eventsInformation = new EventInformation[this.events.Length];

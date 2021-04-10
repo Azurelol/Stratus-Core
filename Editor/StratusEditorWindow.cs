@@ -9,7 +9,7 @@ namespace Stratus.Editor
 	/// <summary>
 	/// Base class for editor windows used by the Stratus Framework
 	/// </summary>
-	public abstract class StratusEditorWindow : EditorWindow
+	public abstract class StratusEditorWindow : EditorWindow, IStratusLogger
 	{
 		//------------------------------------------------------------------------/
 		// Properties
@@ -123,9 +123,11 @@ namespace Stratus.Editor
 		{
 		}
 
-		//------------------------------------------------------------------------/
-		// Methods: Static
-		//------------------------------------------------------------------------/    
+		/// <summary>
+		/// Opens the editor window, such as from a <see cref="MenuItem"/>
+		/// </summary>
+		/// <param name="title"></param>
+		/// <param name="utility"></param>
 		protected static void OpenWindow(string title = null, bool utility = false)
 		{
 			Type type = typeof(T);

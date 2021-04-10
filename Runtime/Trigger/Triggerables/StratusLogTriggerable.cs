@@ -18,7 +18,7 @@ namespace Stratus
 			descriptionMode = DescriptionMode.Manual;
 		}
 
-		protected override void OnTrigger()
+		protected override void OnTrigger(object data = null)
 		{
 			StratusDebug.Log(type, description, this); 
 		}

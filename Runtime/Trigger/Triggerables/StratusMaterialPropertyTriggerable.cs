@@ -62,7 +62,7 @@ namespace Stratus
 			restoredMaterials.Add(material.name, material);
 		}
 
-		protected override void OnTrigger()
+		protected override void OnTrigger(object data = null)
 		{
 			IEnumerator routine = null;
 			switch (type)

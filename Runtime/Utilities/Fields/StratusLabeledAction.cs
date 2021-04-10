@@ -17,6 +17,14 @@ namespace Stratus
 		}
 
 		public static implicit operator Action(StratusLabeledAction action) => action.action;
+
+		/// <summary>
+		/// Constructs an action that will reveal the given file/directory path
+		/// </summary>
+		public static StratusLabeledAction RevealPath(string path)
+		{
+			return new StratusLabeledAction("Reveal", () => StratusIO.Open(path));
+		}
 	}
 
 	public struct StratusLabeledContextAction<T> where T : class

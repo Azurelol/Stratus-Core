@@ -30,7 +30,7 @@ namespace Stratus
 		// Properties
 		//------------------------------------------------------------------------/
 		public static bool IsInMacOS => SystemInfo.operatingSystem.IndexOf("Mac OS") != -1;
-		public static bool IsInWinOS => SystemInfo.operatingSystem.IndexOf("Windows") != -1;		
+		public static bool IsInWinOS => SystemInfo.operatingSystem.IndexOf("Windows") != -1;
 
 		//------------------------------------------------------------------------/
 		// Methods
@@ -60,6 +60,27 @@ namespace Stratus
 			}
 
 			File.Delete(filePath);
+			return true;
+		}
+
+		public static bool DeleteFileOrDirectory(string path)
+		{
+			return DeleteFile(path) || DeleteDirectory(path);
+		}
+
+		/// <summary>
+		/// Deletes the file at the given file path.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <returns></returns>
+		public static bool DeleteDirectory(string path)
+		{
+			if (!Directory.Exists(path))
+			{
+				return false;
+			}
+
+			Directory.Delete(path);
 			return true;
 		}
 
@@ -100,6 +121,14 @@ namespace Stratus
 		public static string ChangeExtension(string fileName, string extension) => Path.ChangeExtension(fileName, extension);
 
 		/// <summary>
+		/// Given a filename, changes its extension
+		/// </summary>
+		/// <param name="fileName"></param>
+		/// <param name="extension"></param>
+		/// <returns></returns>
+		public static string RemoveExtension(string fileName) => Path.GetFileNameWithoutExtension(fileName);
+
+		/// <summary>
 		/// Combines multiple paths together
 		/// </summary>
 		/// <param name="paths"></param>
@@ -138,16 +167,29 @@ namespace Stratus
 		{
 			List<string> values = new List<string>();
 
-			if (parameters.year)   values.Add("yyyy");
-			if (parameters.month)  values.Add("MM");
-			if (parameters.day)    values.Add("dd");
-			if (parameters.hour)   values.Add("HH");
+			if (parameters.year) values.Add("yyyy");
+			if (parameters.month) values.Add("MM");
+			if (parameters.day) values.Add("dd");
+			if (parameters.hour) values.Add("HH");
 			if (parameters.minute) values.Add("mm");
 			if (parameters.second) values.Add("ss");
 
 			string format = values.Join(parameters.separator);
 
 			return DateTime.Now.ToString(format);
+		}
+
+		/// <summary>
+		/// Given a file or directory path, ensures the directories to it exist by creating them
+		/// when needed
+		/// </summary>
+		/// <param name="path"></param>
+		/// <returns></returns>
+		public static bool EnsureDirectoryAt(string path, bool clean = false)
+		{
+			var dir = new FileInfo(path).Directory;
+			dir = Directory.CreateDirectory(dir.FullName);
+			return true;
 		}
 
 		/// <summary>

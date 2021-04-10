@@ -10,7 +10,7 @@ namespace Stratus
   /// <summary>
   /// Utility class for managing assets at runtime
   /// </summary>
-  public static partial class StratusAssets
+  public static partial class StratusAssetUtility
   {
 
     /// <summary>

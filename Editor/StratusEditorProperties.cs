@@ -21,11 +21,11 @@ namespace Stratus.Editor
 		/// <summary>
 		/// Provided callbacks for when specific properties are changed
 		/// </summary>
-		public Dictionary<SerializedProperty, System.Action> propertyChangeCallbacks { get; set; } = new Dictionary<SerializedProperty, System.Action>();
+		public Dictionary<SerializedProperty, Action> propertyChangeCallbacks { get; set; } = new Dictionary<SerializedProperty, System.Action>();
 		/// <summary>
 		/// Overrides for drawing specific properties from specific types
 		/// </summary>
-		public Dictionary<SerializedProperty, System.Action<SerializedProperty>> propertyDrawOverrides { get; set; } = new Dictionary<SerializedProperty, Action<SerializedProperty>>();
+		public Dictionary<SerializedProperty, Action<SerializedProperty>> propertyDrawOverrides { get; set; } = new Dictionary<SerializedProperty, Action<SerializedProperty>>();
 		/// <summary>
 		/// A map of all available properties by name
 		/// </summary>
@@ -143,8 +143,7 @@ namespace Stratus.Editor
 				}
 				else
 				{
-					//changed |= StratusEditorGUILayout.Property(property.p);
-					changed |= StratusEditorGUILayout.Field(property.field, this.target);
+					//changed |= StratusEditorGUILayout.Field(property.field, this.target);
 				}
 			}
 			if (EditorGUI.EndChangeCheck())
@@ -186,6 +185,7 @@ namespace Stratus.Editor
 						break;
 
 					case StratusSerializedPropertyModel.SerializationType.Custom:
+						//propertiesChanged |= this.DrawSerializedProperty(property.unitySerialization, this.serializedObject);
 						propertiesChanged |= this.DrawSerializedProperty(property.customSerialization);
 						break;
 				}

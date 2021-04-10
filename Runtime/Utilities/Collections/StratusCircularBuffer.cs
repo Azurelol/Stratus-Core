@@ -27,9 +27,7 @@ namespace Stratus
 	/// </summary>
 	public class StratusCircularBuffer<T> : IEnumerable<T>
 	{
-		//-------------------------------------------------------------------------/
-		// Fields
-		//-------------------------------------------------------------------------/
+		#region Fields
 		private readonly T[] _buffer;
 
 		/// <summary>
@@ -46,18 +44,15 @@ namespace Stratus
 		/// The _size. Buffer size.
 		/// </summary>
 		private int _size;
+		#endregion
 
-		//-------------------------------------------------------------------------/
-		// CTOR
-		//-------------------------------------------------------------------------/
-		public StratusCircularBuffer(int capacity)
-			: this(capacity, new T[] { })
+		#region Constructors
+		public StratusCircularBuffer(int capacity) : this(capacity, new T[] { })
 		{
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="StratusCircularBuffer{T}"/> class.
-		/// 
 		/// </summary>
 		/// <param name='capacity'>
 		/// Buffer capacity. Must be positive.
@@ -92,10 +87,9 @@ namespace Stratus
 			_start = 0;
 			_end = _size == capacity ? 0 : _size;
 		}
+		#endregion
 
-		//-------------------------------------------------------------------------/
-		// Properties
-		//-------------------------------------------------------------------------/
+		#region Properties
 		/// <summary>
 		/// Maximum capacity of the buffer. Elements pushed into the buffer after
 		/// maximum capacity is reached (IsFull = true), will remove an element.
@@ -122,10 +116,9 @@ namespace Stratus
 		/// Current buffer size (the number of elements that the buffer has).
 		/// </summary>
 		public int Size { get { return _size; } }
+		#endregion
 
-		//-------------------------------------------------------------------------/
-		// Methods
-		//-------------------------------------------------------------------------/
+		#region Methods
 		/// <summary>
 		/// Element at the front of the buffer - this[0].
 		/// </summary>
@@ -179,7 +172,6 @@ namespace Stratus
 		/// <summary>
 		/// Pushes a new element to the back of the buffer. Back()/this[Size-1]
 		/// will now return this element.
-		/// 
 		/// When the buffer is full, the element at Front()/this[0] will be 
 		/// popped to allow for this new element to fit.
 		/// </summary>
@@ -203,7 +195,6 @@ namespace Stratus
 		/// <summary>
 		/// Pushes a new element to the front of the buffer. Front()/this[0]
 		/// will now return this element.
-		/// 
 		/// When the buffer is full, the element at Back()/this[Size-1] will be 
 		/// popped to allow for this new element to fit.
 		/// </summary>
@@ -266,6 +257,7 @@ namespace Stratus
 			}
 			return newArray;
 		}
+		#endregion
 
 		//-------------------------------------------------------------------------/
 		// Interfaces

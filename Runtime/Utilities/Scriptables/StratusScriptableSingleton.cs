@@ -145,7 +145,7 @@ namespace Stratus
 			string fullPath = folderPath + "/" + name + ".asset";
 
 			// Now create the proper instance
-			_instance = StratusAssets.LoadOrCreateScriptableObject<T>(fullPath);
+			_instance = StratusAssetUtility.LoadOrCreateScriptableObject<T>(fullPath);
 			_instance.Initialize(true);
 
 #if UNITY_EDITOR

@@ -6,7 +6,10 @@ using Stratus.Utilities;
 
 namespace Stratus
 {
-	public partial class StratusAssets
+	/// <summary>
+	/// Provides utility methods for dealing with Unity assets at runtime
+	/// </summary>
+	public partial class StratusAssetUtility
 	{
 		/// <summary>
 		/// The symbol used to separate folders by Unity's API
@@ -36,7 +39,6 @@ namespace Stratus
 #else
       return string.Empty;
 #endif
-
 		}
 
 		/// <summary>

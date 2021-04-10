@@ -71,7 +71,7 @@ namespace Stratus
 	/// Generic class for a tree element with one primary data member
 	/// </summary>
 	/// <typeparam name="DataType"></typeparam>
-	public abstract class TreeElement<DataType> : StratusTreeElement, ISerializationCallbackReceiver
+	public abstract class StratusTreeElement<DataType> : StratusTreeElement, ISerializationCallbackReceiver
 	  where DataType : class, IStratusLabeled
 	{
 		//----------------------------------------------------------------------/
@@ -131,15 +131,12 @@ namespace Stratus
 
 			List<DataType> children = new List<DataType>();
 			foreach (var child in this.children)
-				children.Add(((TreeElement<DataType>)child).data);
+				children.Add(((StratusTreeElement<DataType>)child).data);
 			return children.ToArray();
 		}
 
-		public TreeElement<DataType> GetChild(int index) => (TreeElement<DataType>)children[index];
+		public StratusTreeElement<DataType> GetChild(int index) => (StratusTreeElement<DataType>)children[index];
 		public T GetParent<T>() where T : StratusTreeElement => (T)parent;
-
-
-
 
 
 	}

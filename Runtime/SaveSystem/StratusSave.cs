@@ -10,16 +10,14 @@ namespace Stratus
 	/// </summary>
 	public abstract class StratusSave : ISerializationCallbackReceiver, IStratusLogger, IDisposable
 	{
-		//------------------------------------------------------------------------/
-		// Fields
-		//------------------------------------------------------------------------/
+		#region Fields
 		/// <summary>
 		/// The user-given name for this save
 		/// </summary>
 		public string name;
 
 		/// <summary>
-		/// The date at which this save was made
+		/// The date at which this save was made (possibly overwritten)
 		/// </summary>
 		public string date;
 
@@ -32,41 +30,43 @@ namespace Stratus
 		/// An optional description for the state of the game at this save
 		/// </summary>
 		public string description;
+		#endregion
+
+		#region Properties
+		/// <summary>
+		/// File information about this save
+		/// </summary>
+		public StratusSaveFileInfo file { get; private set; }
+
+		///// <summary>
+		///// The filename this data uses
+		///// </summary>
+		//public string fileName { get; private set; }
+
+		///// <summary>
+		///// The file path where this save is saved to
+		///// </summary>
+		//public string filePath { get; private set; }
 
 		/// <summary>
-		/// The index of this save. For save systems with a limited amount of slots,
-		/// this is its slot.
-		/// This must be assigned by the client before calling save.
+		/// The extension used for save data
 		/// </summary>
-		public int index = -1;
-
-		//------------------------------------------------------------------------/
-		// Properties
-		//------------------------------------------------------------------------/
-		/// <summary>
-		/// The filename this data uses
-		/// </summary>
-		public string fileName { get; private set; }
+		public virtual string extension => defaultExtension;
 
 		/// <summary>
-		/// The file path where this save is saved to
+		/// The default save extension
 		/// </summary>
-		public string filePath { get; private set; }
+		public const string defaultExtension = ".save";
 
 		/// <summary>
 		/// Whether this data  has been saved to disk
 		/// </summary>
-		public bool serialized => filePath.IsValid();
+		public bool serialized => file != null && file.valid;
 
 		/// <summary>
 		/// A saved snapshot
 		/// </summary>
 		public Texture2D snapshot { get; private set; }
-
-		/// <summary>
-		/// Whether this save has a valid index assigned
-		/// </summary>
-		public bool hasValidIndex => index >= 0;
 
 		/// <summary>
 		/// The path for the snapshot image file taken for this save
@@ -77,7 +77,7 @@ namespace Stratus
 			{
 				if (_snapshotFilePath == null)
 				{
-					_snapshotFilePath = StratusIO.ChangeExtension(filePath, snapshotEncoding.ToExtension());
+					_snapshotFilePath = StratusIO.ChangeExtension(file.path, snapshotEncoding.ToExtension());
 				}
 				return _snapshotFilePath;
 			}
@@ -103,21 +103,20 @@ namespace Stratus
 		/// Whether this save has been fully loaded
 		/// </summary>
 		public virtual bool loaded => true;
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Abstract
-		//------------------------------------------------------------------------/
+		#region Virtual
 		public abstract void OnAfterDeserialize();
 		public abstract void OnBeforeSerialize();
 		protected abstract void OnDelete();
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Virtual
-		//------------------------------------------------------------------------/
+		#region Overrides
 		public override string ToString()
 		{
-			return $"{name}{(serialized ? $" ({filePath})" : string.Empty)}";
-		}
+			return $"{name}{(serialized ? $" ({file})" : string.Empty)}";
+		} 
+		#endregion
 
 		public virtual Dictionary<string, string> ComposeDetailedStringMap()
 		{
@@ -131,7 +130,7 @@ namespace Stratus
 			{
 				details.Add(nameof(description), description);
 			}
-			details.Add(nameof(playtime), $"{playtime.ToString()}m");
+			details.Add(nameof(playtime), $"{playtime}m"); // 'm' for minutes
 			return details;
 		}
 
@@ -152,17 +151,13 @@ namespace Stratus
 			}
 		}
 
-		//------------------------------------------------------------------------/
-		// Methods
-		//------------------------------------------------------------------------/
 		/// <summary>
 		/// Invoked whenever this save is serialized/deserialized
 		/// </summary>
 		/// <param name="filePath"></param>
 		public void OnAnySerialization(string filePath)
 		{
-			this.filePath = filePath;
-			this.fileName = StratusIO.GetFileName(filePath);
+			this.file = new StratusSaveFileInfo(filePath);
 
 			if (Application.isPlaying)
 			{
@@ -181,9 +176,9 @@ namespace Stratus
 				return false;
 			}
 
-			if (!StratusIO.DeleteFile(filePath))
+			if (!file.Delete())
 			{
-				this.LogError($"Failed to delete save file at {filePath}");
+				this.LogError($"Failed to delete save file at {file}");
 				return false;
 			}
 
@@ -194,12 +189,13 @@ namespace Stratus
 
 			OnDelete();
 
-			filePath = null;
+			file = null;
 			_snapshotFilePath = null;
 
 			return true;
 		}
 
+		#region Interface
 		/// <summary>
 		/// Loads this save, invoking the given action afterwards.
 		/// </summary>
@@ -291,11 +287,9 @@ namespace Stratus
 		public virtual void Unload()
 		{
 			UnloadSnapshot();
-		}
+		} 
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Disposable
-		//------------------------------------------------------------------------/
 		#region IDisposable Support
 		public bool disposed { get; private set; }
 		protected virtual void Dispose(bool disposing)
@@ -326,7 +320,8 @@ namespace Stratus
 	/// This is due to the save itself being a manifest of sorts for the much larger data file.
 	/// </summary>
 	/// <typeparam name="DataType"></typeparam>
-	public abstract class StratusSave<DataType> : StratusSave
+	[Serializable]
+	public class StratusSave<DataType> : StratusSave
 		where DataType : class, new()
 	{
 		//------------------------------------------------------------------------/
@@ -351,7 +346,7 @@ namespace Stratus
 			{
 				if (_dataFilePath == null)
 				{
-					_dataFilePath = StratusIO.ChangeExtension(filePath, dataExtension);
+					_dataFilePath = StratusIO.ChangeExtension(file.path, dataExtension);
 				}
 				return _dataFilePath;
 			}
@@ -500,6 +495,14 @@ namespace Stratus
 			this.Log($"Saving data to {dataFilePath}");
 			dataSerializer.Serialize(data, dataFilePath);
 			return true;
+		}
+
+		public override void OnAfterDeserialize()
+		{
+		}
+
+		public override void OnBeforeSerialize()
+		{
 		}
 	}
 }

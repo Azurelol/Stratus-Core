@@ -36,6 +36,8 @@ namespace Stratus
 		/// </summary>
 		public int assetCount => _assetNames.LengthOrZero();
 
+		public bool valid => assetCount > 0;
+
 		/// <summary>
 		/// Whether this query is up to date
 		/// </summary>
@@ -54,67 +56,82 @@ namespace Stratus
 			this.updated = true;
 		}
 
+		public void Add(string name)
+		{
+			_assetNames = assetNames.Append(name);
+		}
+
 		protected virtual string[] GetAssetNames()
 		{
 			return queryAssetNamesFunction();
 		}
 
+		/// <summary>
+		/// Marks this query as outdated,
+		/// meaning it will be updated on the next access
+		/// </summary>
 		public void SetDirty() => updated = false;
-
-
 	}
 
 	public class StratusAssetQuery<AssetType> : StratusAssetQuery
 		where AssetType : class
 	{
-		private StratusSortedList<string, AssetType> _assets;
-		private Func<AssetType[]> getAssetsFunction;
+		private StratusSortedList<string, AssetType> _assetsByName;
+		private Func<IList<AssetType>> getAssetsFunction;
 		private Func<AssetType, string> keyFunction;
 
-		/// <summary>
-		/// The references to the assets found by the query
-		/// </summary>
-		private StratusSortedList<string, AssetType> assets
+		private StratusSortedList<string, AssetType> assetsByName
 		{
 			get
 			{
-				if (_assets == null || !updated)
+				if (_assetsByName == null || !updated)
 				{
 					Update();
 				}
-				return _assets;
+				return _assetsByName;
 			}
 		}
 
-		public StratusAssetQuery(Func<AssetType[]> getAssetsFunction, Func<AssetType, string> keyFunction)
+		public IList<AssetType> assets => assetsByName.Values;
+
+		public StratusAssetQuery(Func<IList<AssetType>> getAssetsFunction, Func<AssetType, string> keyFunction)
 			: base(null)
 		{
 			this.getAssetsFunction = getAssetsFunction;
 			this.keyFunction = keyFunction;
 		}
 
+		public bool HasAsset(string name) => assetsByName.ContainsKey(name);
+
+		public AssetType this[string key] => this.assetsByName[key];
+
 		public AssetType GetAsset(string label)
 		{
-			if (!assets.ContainsKey(label))
+			if (!assetsByName.ContainsKey(label))
 			{
 				this.LogError($"Could not find asset named {label}");
 				this.LogError($"Available assets: {assetNames.ToStringJoin()}");
 				return null;
 			}
-			return assets[label]; ;
+			return assetsByName[label];
+		}
+
+		public void Add(AssetType asset)
+		{
+			assetsByName.Add(asset);
+			Add(keyFunction(asset));
 		}
 
 		protected override string[] GetAssetNames()
 		{
-			return _assets.Keys.ToArray();
+			return _assetsByName.Keys.ToArray();
 		}
 
 		public override void Update()
 		{
-			AssetType[] values = getAssetsFunction();
-			_assets = new StratusSortedList<string, AssetType>(keyFunction, values.Length);
-			_assets.AddRange(values);
-
+			IList<AssetType> values = getAssetsFunction();
+			_assetsByName = new StratusSortedList<string, AssetType>(keyFunction, values.Count);
+			_assetsByName.AddRange(values);
 			base.Update();
 		}
 	}

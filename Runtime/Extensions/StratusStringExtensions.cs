@@ -49,7 +49,13 @@ namespace Stratus
 		// Fields
 		//--------------------------------------------------------------------/
 		public const char newlineChar = '\n';
-		public static readonly string[] newlineSeparators = new string[] { $"{newlineChar}", Environment.NewLine };
+		public const string newlineString = "\n";
+		public static readonly string[] newlineSeparators = new string[] 
+		{ 
+			"\r\n",
+			"\n", 
+			"\r",
+		};
 		public const char whitespace = ' ';
 		public const char underscore = '_';
 		private static StringBuilder stringBuilder = new StringBuilder();
@@ -85,11 +91,36 @@ namespace Stratus
 		}
 
 		/// <summary>
+		/// Given a string and a dictionary of replacements, replaces all instances of each replacement found in the string
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="replacements"></param>
+		/// <returns></returns>
+		public static string Replace(this string input, Dictionary<string, string> replacements)
+		{
+			stringBuilder.Clear();
+			stringBuilder.Append(input);
+			foreach(var replacement in replacements)
+			{
+				stringBuilder.Replace(replacement.Key, replacement.Value);
+			}
+			return stringBuilder.ToString();
+		}
+
+		/// <summary>
 		/// Returns true if the string is null or empty
 		/// </summary>
 		public static bool IsNullOrEmpty(this string str)
 		{
 			return string.IsNullOrEmpty(str);
+		}
+
+		/// <summary>
+		/// Returns true if the rich text is null or empty
+		/// </summary>
+		public static bool IsNullOrEmpty(this StratusRichText richText)
+		{
+			return richText == null || string.IsNullOrEmpty(richText.text);
 		}
 
 		/// <summary>
@@ -103,13 +134,13 @@ namespace Stratus
 		}
 
 		/// <summary>
-		/// Counts the number of lines in this string (by splitting it)
+		/// Returns true if the richtext is neither null or empty
 		/// </summary>
 		/// <param name="str"></param>
 		/// <returns></returns>
-		public static int CountLines(this string str, StringSplitOptions options = StringSplitOptions.None)
+		public static bool IsValid(this StratusRichText str)
 		{
-			return str.Split(newlineSeparators, options).Length;
+			return !str.IsNullOrEmpty();
 		}
 
 		/// <summary>
@@ -179,6 +210,43 @@ namespace Stratus
 			return str.Replace("\n", replacement);
 		}
 
+		public static string[] SplitNewlines(this string input, StringSplitOptions options = StringSplitOptions.None)
+		{
+			if (input.IsNullOrEmpty())
+			{
+				return new string[] { };
+			}
+
+			return input.Split(newlineSeparators, options);
+		}
+
+		public static IEnumerable<string> ReadNewlines(this string input)
+		{
+			if (input == null)
+			{
+				yield break;
+			}
+
+			using (System.IO.StringReader reader = new System.IO.StringReader(input))
+			{
+				string line;
+				while ((line = reader.ReadLine()) != null)
+				{
+					yield return line;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Counts the number of lines in this string (by splitting it)
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns></returns>
+		public static int CountLines(this string str, StringSplitOptions options = StringSplitOptions.None)
+		{
+			return str.Count(x => x == newlineChar) + 1;
+		}
+
 		/// <summary>
 		/// Uppercases the first character of this string
 		/// </summary>
@@ -226,7 +294,7 @@ namespace Stratus
 		/// </summary>
 		public static string JoinLines(this IEnumerable<string> str)
 		{
-			return string.Join("\n", str);
+			return string.Join(newlineString, str);
 		}
 
 		/// <summary>
@@ -308,14 +376,11 @@ namespace Stratus
 			return builder.ToString();
 		}
 
-		/// <summary>
-		/// Formats this string, applying rich text formatting to it
-		/// </summary>
-		public static string ToRichText(this string input, FontStyle style, string hexColor, int size = 0)
+		public static string ToRichText(this string input, StratusRichTextOptions options)
 		{
 			StringBuilder builder = new StringBuilder();
 
-			switch (style)
+			switch (options.style)
 			{
 				case FontStyle.Normal:
 					break;
@@ -330,15 +395,15 @@ namespace Stratus
 					break;
 			}
 
-			bool applyColor = hexColor.IsValid();
-			bool applySize = size > 0;
+			bool applyColor = options.hexColor.IsValid();
+			bool applySize = options.size > 0;
 			if (applyColor)
 			{
-				builder.Append($"<color=#{hexColor}>");
+				builder.Append($"<color=#{options.hexColor}>");
 			}
 			if (applySize)
 			{
-				builder.Append($"<size={size}>");
+				builder.Append($"<size={options.size}>");
 			}
 			builder.Append(input);
 			if (applyColor)
@@ -350,7 +415,7 @@ namespace Stratus
 				builder.Append("</size>");
 			}
 
-			switch (style)
+			switch (options.style)
 			{
 				case FontStyle.Normal:
 					break;
@@ -368,6 +433,11 @@ namespace Stratus
 			return builder.ToString();
 		}
 
+		/// <summary>
+		/// Formats this string, applying rich text formatting to it
+		/// </summary>
+		public static string ToRichText(this string input, FontStyle style, string hexColor, int size = 0)
+			=> input.ToRichText(new StratusRichTextOptions(style, hexColor, size));
 
 		/// <summary>
 		/// Formats this string, applying rich text formatting to it
@@ -413,7 +483,7 @@ namespace Stratus
 		/// <param name="replacement"></param>
 		/// <returns></returns>
 		public static string Truncate(this string input, int length, string replacement = "...")
-		{			
+		{
 			if (input.Length > length)
 			{
 				input = $"{input.Substring(0, length)}{replacement}";

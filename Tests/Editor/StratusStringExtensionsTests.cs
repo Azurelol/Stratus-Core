@@ -12,7 +12,7 @@ namespace Stratus.Editor.Tests
 	public class StratusStringExtensionsTests
 	{
 		[Test]
-		public void TestEnclosure()
+		public void EnclosesLine()
 		{
 			string input = "foo";
 			Assert.AreEqual("(foo)", input.Enclose(StratusStringEnclosure.Parenthesis));
@@ -24,7 +24,7 @@ namespace Stratus.Editor.Tests
 		}
 
 		[Test]
-		public void TestNullOrEmpty()
+		public void IsNullOrEmpty()
 		{
 			string value = null;
 			Assert.True(value.IsNullOrEmpty());
@@ -39,41 +39,75 @@ namespace Stratus.Editor.Tests
 		}
 
 		[Test]
-		public void TestRichText()
+		public void IsRichTextValid()
 		{
-			string input = "Boo";
-			Assert.AreEqual($"<b>Boo</b>", input.ToRichText(FontStyle.Bold));
-			Assert.AreEqual($"<i>Boo</i>", input.ToRichText(FontStyle.Italic));
-			Assert.AreEqual($"<b><i>Boo</i></b>", input.ToRichText(FontStyle.BoldAndItalic));
+			StratusRichText richText = null;
+			Assert.False(richText.IsValid());
+			richText = new StratusRichText(null);
+			Assert.False(richText.IsValid());
+			richText = new StratusRichText("");
+			Assert.False(richText.IsValid());
+			richText = new StratusRichText("foo!");
+			Assert.True(richText.IsValid());
+		}
 
-			Color inputColor = Color.red;
-			Assert.AreEqual($"<b><color=#{inputColor.ToHex()}>Boo</color></b>", input.ToRichText(FontStyle.Bold, inputColor));
+		[TestCase("foo")]
+		[TestCase("bar!")]
+		[TestCase("")]
+		public void RichTextStoresOriginalText(string text)
+		{
+			StratusRichText richText = new StratusRichText(text);
+			Assert.AreEqual(text, richText.text);
+		}
 
-			string cleanText = "Hello there!";
+		[TestCase("foo", FontStyle.Italic, "<i>foo</i>")]
+		[TestCase("bar", FontStyle.Bold, "<b>bar</b>")]
+		[TestCase("foobar", FontStyle.Normal, "foobar")]
+		public void RichTextIsGeneratedCorrectly(string input, FontStyle fontStyle, string expected)
+		{
+			StratusRichTextOptions options = new StratusRichTextOptions()
+			{
+				style = fontStyle
+			};
+			StratusRichText richText = new StratusRichText(input, options);
+			Assert.AreEqual(expected, richText.richText);
+		}
+
+		[TestCase("Hello there!")]
+		public void RichTextIsApplied(string input)
+		{
+			string output;
+
 			void compareCleanText()
 			{
-				input = input.StripRichText();
-				Assert.AreEqual(input, cleanText);
+				output = output.StripRichText();
+				Assert.AreEqual(output, input);
 			}
 
-			input = cleanText.ToRichText(FontStyle.Italic);
+			foreach(var style in StratusEnum.Values<FontStyle>())
+			{
+				output = input.ToRichText(style);
+				compareCleanText();
+			}
+
+			output = input.ToRichText(Color.green);
 			compareCleanText();
 
-			input = cleanText.ToRichText(FontStyle.BoldAndItalic);
-			compareCleanText();
-
-			input = cleanText.ToRichText(FontStyle.Bold);
-			compareCleanText();
-
-			input = cleanText.ToRichText(Color.green);
-			compareCleanText();
-
-			input = cleanText.ToRichText(34);
+			output = input.ToRichText(34);
 			compareCleanText();
 		}
 
+		[TestCase(0)]
+		[TestCase(-1)]
+		public void RichTextIgnoresInvalidSize(int size)
+		{
+			string input = "hello there!";
+			string output = input.ToRichText(size);
+			Assert.AreEqual(input, output);
+		}
+
 		[Test]
-		public void TestJoin()
+		public void JoinsLines()
 		{
 			string[] values = new string[]
 			{
@@ -84,12 +118,10 @@ namespace Stratus.Editor.Tests
 			Assert.AreEqual("A B C", values.Join(" "));
 			Assert.AreEqual("A,B,C", values.Join(","));
 			Assert.AreEqual("A\nB\nC", values.JoinLines());
-
-
 		}
 
 		[Test]
-		public void TestAppend()
+		public void AppendLines()
 		{
 			string cat = "cat", dog = "dog", bird = "bird";
 			Assert.AreEqual($"{dog}{Environment.NewLine}{cat}", dog.AppendLines(cat));
@@ -98,7 +130,7 @@ namespace Stratus.Editor.Tests
 		}
 
 		[Test]
-		public void TestTrim()
+		public void TrimNullOrEmpty()
 		{
 			string predicatedString = "Waaagh";
 			string[] input = new string[]
@@ -120,7 +152,7 @@ namespace Stratus.Editor.Tests
 		}
 
 		[Test]
-		public void TestCase()
+		public void ToTitleCase()
 		{
 			void TestTitleCase(string value, string expected) => Assert.AreEqual(expected, value.ToTitleCase());
 			TestTitleCase("COOL_MEMBER_NAME", "Cool Member Name");
@@ -138,7 +170,7 @@ namespace Stratus.Editor.Tests
 		}
 
 		[Test]
-		public void TestTruncation()
+		public void Truncate()
 		{
 			string input = "Hello there brown cow";
 
@@ -156,20 +188,24 @@ namespace Stratus.Editor.Tests
 			Assert.AreEqual("Hello!!!", text);
 		}
 
-		[Test]
-		public void TestLines()
+		[TestCase("hello\nthere\ncat", 3)]
+		[TestCase("hello", 1)]
+		[TestCase("\rHi!\r\nHo!\nHi!\r\nHo!", 4)]
+		[TestCase("", 1)]
+		public void CountLines(string input, int count)
 		{
-			// Count Lines, Trim Lines
-			{
-				string value = "hello\nthere\ncat";
-				Assert.AreEqual(3, value.CountLines());
-				value = value.ReplaceNewLines(" ");
-				Assert.AreEqual("hello there cat", value);
-			}
+			Assert.AreEqual(count, input.CountLines());
+		}
+
+		[TestCase("hello\nthere\ncat", "hello there cat")]
+		public void ReplaceNewlines(string input, string expected)
+		{
+			string actual = input.ReplaceNewLines(" ");
+			Assert.AreEqual(expected, actual);
 		}
 
 		[Test]
-		public void TestSort()
+		public void SortsSequenceOfStrings()
 		{
 			string a = "a", b = "b", c = "c";
 			string[] input = new string[]
@@ -180,6 +216,15 @@ namespace Stratus.Editor.Tests
 			Assert.AreEqual(output[0], a);
 			Assert.AreEqual(output[1], b);
 			Assert.AreEqual(output[2], c);
+		}
+
+		[TestCase("hi\nho", StringSplitOptions.None, "hi", "ho")]
+		[TestCase("hi\nho\r\nhi\rho", StringSplitOptions.None, "hi", "ho", "hi", "ho")]
+		[TestCase("hi\n\r\nhi\rho", StringSplitOptions.None, "hi", "", "hi", "ho")]
+		public void SplitNewlines(string input, StringSplitOptions options, params string[] expected)
+		{
+			string[] actual = input.SplitNewlines(options);
+			Assert.AreEqual(expected, actual);
 		}
 	}
 

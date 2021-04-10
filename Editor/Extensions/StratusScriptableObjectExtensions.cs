@@ -8,12 +8,12 @@ namespace Stratus
 	{
 		public static T AddInstanceToAsset<T>(this ScriptableObject assetObject) where T : ScriptableObject
 		{
-			return StratusAssets.AddInstanceToAsset<T>(assetObject);
+			return StratusAssetUtility.AddInstanceToAsset<T>(assetObject);
 		}
 
 		public static ScriptableObject AddInstanceToAsset(this ScriptableObject assetObject, Type type)
 		{
-			return StratusAssets.AddInstanceToAsset(assetObject, type);
+			return StratusAssetUtility.AddInstanceToAsset(assetObject, type);
 		}
 	}
 

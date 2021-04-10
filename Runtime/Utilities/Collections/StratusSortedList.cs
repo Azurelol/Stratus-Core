@@ -23,19 +23,27 @@ namespace Stratus
 			AddRange(values);
 		}
 
-		public bool Add(ValueType value)
+		public bool Add(ValueType value, bool overwrite = false)
 		{
 			KeyType key = keyFunction(value);
 			if (ContainsKey(key))
 			{
-				StratusDebug.LogError($"Value with key '{key}' already exists in this collection!");
-				return false;
+				if (overwrite)
+				{
+					this[key] = value;
+					return true;
+				}
+				else
+				{
+					StratusDebug.LogError($"Value with key '{key}' already exists in this collection!");
+					return false;
+				}
 			}
 			Add(key, value);
 			return true;
 		}
 
-		public int AddRange(IEnumerable<ValueType> values)
+		public int AddRange(IEnumerable<ValueType> values, bool overwrite = false)
 		{
 			if (values == null)
 			{
@@ -45,7 +53,7 @@ namespace Stratus
 			int failCount = 0;
 			foreach (ValueType value in values)
 			{
-				if (!Add(value))
+				if (!Add(value, overwrite))
 				{
 					failCount++;
 				}

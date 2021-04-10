@@ -39,6 +39,11 @@ namespace Stratus
 			this.SetData(data);
 		}
 
+		public StratusTreeModel(IEnumerable<T> data)
+		{
+			this.SetData(data.ToList());
+		}
+
 		//------------------------------------------------------------------------/
 		// Methods
 		//------------------------------------------------------------------------/ 

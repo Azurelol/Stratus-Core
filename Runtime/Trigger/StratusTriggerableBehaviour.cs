@@ -8,50 +8,31 @@ namespace Stratus
 	/// </summary>
 	public abstract class StratusTriggerableBehaviour : StratusTriggerBase
 	{
-		/// <summary>
-		/// This event signals that the triggerable has finished
-		/// </summary>
-		public class EndedEvent : StratusEvent { }
-
-		//------------------------------------------------------------------------/
-		// Fields
-		//------------------------------------------------------------------------/
+		#region Fields
 		/// <summary>
 		/// Whether this event dispatcher will respond to trigger events
 		/// </summary>
 		[Tooltip("How long after activation before the event is fired")]
-		public float delay;
+		public float delay; 
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Properties
-		//------------------------------------------------------------------------/  
-		/// <summary>
-		/// The latest received trigger event
-		/// </summary>
-		protected StratusTriggerBehaviour.TriggerEvent triggerEvent { get; private set; }
+		#region Properties
+		protected StratusTriggerBehaviour.TriggerEvent lastTriggerEvent { get; private set; } 
+		#endregion
 
-		/// <summary>
-		/// The latest received instruction
-		/// </summary>
-		protected StratusTriggerBehaviour.Instruction instruction { get; private set; }
-
+		#region Events
 		/// <summary>
 		/// Subscribe to be notified when this trigger has been activated
 		/// </summary>
 		public UnityAction<StratusTriggerableBehaviour> onTriggered { get; set; }
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Interface
-		//------------------------------------------------------------------------/
-		abstract protected void OnAwake();
-		abstract protected void OnTrigger();
+		#region Virtual
+		protected abstract void OnAwake();
+		protected abstract void OnTrigger(object data);
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Methods
-		//------------------------------------------------------------------------/
-		/// <summary>
-		/// Called when the script instance is first being loaded.
-		/// </summary>
+		#region Messages
 		void Awake()
 		{
 			awoke = true;
@@ -59,44 +40,47 @@ namespace Stratus
 			this.OnAwake();
 			onTriggered = (StratusTriggerableBehaviour trigger) => { };
 		}
+		#endregion
 
-		/// <summary>
-		/// When the trigger event is received, runs the trigger sequence.
-		/// </summary>
-		/// <param name="e"></param>
+		#region Event Handlers
 		protected void OnTriggerEvent(StratusTriggerBehaviour.TriggerEvent e)
 		{
-			triggerEvent = e;
-			instruction = triggerEvent.instruction;
-			this.RunTriggerSequence();
+			lastTriggerEvent = e;
+			this.RunTriggerSequence(e.data);
 		}
+		#endregion
 
+		#region Methods
 		/// <summary>
-		/// Activates this triggerable
+		/// Executes this triggerable, after a set <see cref="delay"/>
 		/// </summary>
-		public void Activate()
+		public void Trigger(object data = null)
 		{
 			if (!enabled)
+			{
+				this.LogWarning($"Cannot trigger while not enabled");
 				return;
+			}
 
 			if (debug)
+			{
 				StratusDebug.Log($"<i>{description}</i> has been triggered!", this);
-			this.RunTriggerSequence();
+			}
+
+			this.RunTriggerSequence(data);
 			activated = true;
 		}
+		#endregion
 
-		/// <summary>
-		/// Runs the trigger sequence. After a specified delay, it will invoke
-		/// the abstract 'OnTrigger' method.
-		/// </summary>
-		protected void RunTriggerSequence()
+		#region Procedures
+		protected void RunTriggerSequence(object data)
 		{
 			var seq = StratusActions.Sequence(this.gameObject.Actions());
 			StratusActions.Delay(seq, this.delay);
-			StratusActions.Call(seq, this.OnTrigger);
+			StratusActions.Call(seq, () => this.OnTrigger(data));
 			StratusActions.Call(seq, () => onTriggered(this));
-		}
-
+		} 
+		#endregion
 	}
 
 }

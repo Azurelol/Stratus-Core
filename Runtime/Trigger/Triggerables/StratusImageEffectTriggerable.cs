@@ -59,7 +59,7 @@ namespace Stratus
 			currentColor = image.color;
 		}
 
-		protected override void OnTrigger()
+		protected override void OnTrigger(object data = null)
 		{
 			switch (type)
 			{

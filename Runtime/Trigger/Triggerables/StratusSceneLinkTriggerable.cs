@@ -47,7 +47,7 @@ namespace Stratus
 				throw new Exception($"No SceneLinker is available!");
 		}
 
-		protected override void OnTrigger()
+		protected override void OnTrigger(object data = null)
 		{
 			Load();
 		}

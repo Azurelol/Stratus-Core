@@ -149,7 +149,6 @@ namespace Stratus.Editor
 				 SerializedProperty element = serializedProperty.GetArrayElementAtIndex(index);
 				 //rect.y += 2;
 				 //rect.height = EditorGUIUtility.singleLineHeight;
-				 Debug.Log($"Drawing {serializedProperty.name} index {index}");
 				 EditorGUI.PropertyField(rect, element);
 				 //EditorGUI.ObjectField(, element, GUIContent.none);
 			 };

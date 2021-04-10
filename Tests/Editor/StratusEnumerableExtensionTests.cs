@@ -139,7 +139,7 @@ namespace Stratus.Editor.Tests
 				new TestDataObject("foo", 3),
 				new TestDataObject("bar", 7),
 			};
-			int[] target = values.Convert(x => x.value).ToArray();
+			int[] target = values.Transform(x => x.value).ToArray();
 			values.ForEachIndexed((v, i) => Assert.AreEqual(v.value, target[i]));
 		}
 
@@ -222,7 +222,7 @@ namespace Stratus.Editor.Tests
 		{
 			int[] before = new int[] { 1, 2, 3 };
 			string[] after = new string[] { "1", "2", "3" };
-			Assert.AreEqual(before.Convert(x => x.ToString()), after);
+			Assert.AreEqual(before.Transform(x => x.ToString()), after);
 		}
 
 		[Test]

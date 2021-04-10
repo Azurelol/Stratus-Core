@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Stratus.Editor
 {
 	[Serializable]
-	public class StratusMemberInspectorTreeElement : TreeElement<StratusComponentInformation.MemberReference>
+	public class StratusMemberInspectorTreeElement : StratusTreeElement<StratusComponentInformation.MemberReference>
 	{
 
 		public static List<StratusMemberInspectorTreeElement> GenerateFavoritesTree()
@@ -17,7 +17,7 @@ namespace Stratus.Editor
 			return elements;
 		}
 
-		public static List<StratusMemberInspectorTreeElement> GenerateInspectorTree(StratusGameObjectInformation target)
+		public static IList<StratusMemberInspectorTreeElement> GenerateInspectorTree(StratusGameObjectInformation target)
 		{
 			var tree = new StratusSerializedTree<StratusMemberInspectorTreeElement, StratusComponentInformation.MemberReference>();
 			tree.AddElements(target.members, 0);

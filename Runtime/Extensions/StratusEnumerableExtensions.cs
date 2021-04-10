@@ -213,7 +213,7 @@ namespace Stratus
 		/// <summary>
 		/// Converts an enumerable from one type to another through a conversion function
 		/// </summary>
-		public static IEnumerable<U> Convert<T, U>(this IEnumerable<T> source, Func<T, U> function)
+		public static IEnumerable<U> Transform<T, U>(this IEnumerable<T> source, Func<T, U> function)
 		{
 			foreach (T item in source)
 			{
@@ -256,7 +256,7 @@ namespace Stratus
 		/// </summary>
 		public static U[] ToArray<T, U>(this IEnumerable<T> source, Func<T, U> function)
 		{
-			return source.Convert(function).ToArray();
+			return source.Transform(function).ToArray();
 		}
 
 		/// <summary>

@@ -28,7 +28,7 @@ namespace Stratus
 
 		}
 
-		protected override void OnTrigger()
+		protected override void OnTrigger(object data = null)
 		{
 			if (this.delivery == StratusTriggerBehaviour.Scope.GameObject)
 			{
@@ -48,7 +48,7 @@ namespace Stratus
 
 			else if (this.delivery == StratusTriggerBehaviour.Scope.Component)
 			{
-				this.target.Activate();
+				this.target.Trigger();
 			}
 		}
 	}

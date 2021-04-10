@@ -13,35 +13,25 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		// Events
 		//------------------------------------------------------------------------/
-		public enum Instruction
-		{
-			/// <summary>
-			/// Instructs the triggerable to activate (default)
-			/// </summary>
-			[Tooltip("Instructs the triggerable to activate (default)")]
-			On,
-			/// <summary>
-			/// Instructs the triggerable to deactivate
-			/// </summary>
-			[Tooltip("Instructs the triggerable to deactivate")]
-			Off,
-			/// <summary>
-			/// Instructs the triggerable something it cared about happened
-			/// </summary>
-			[Tooltip("Instructs the triggerable something it cared about happened")]
-			Signal
-		}
-
 		/// <summary>
 		/// When received by a triggerable component, it will activate it
 		/// </summary>
-		public class TriggerEvent : Stratus.StratusEvent
+		public class TriggerEvent : StratusEvent
 		{
-			public Instruction instruction;
+			public object data { get; private set; }
 
-			public TriggerEvent(Instruction instruction = Instruction.On)
+			public TriggerEvent()
 			{
-				this.instruction = instruction;
+			}
+
+			public TriggerEvent(object data)
+			{
+				Update(data);
+			}
+
+			internal void Update(object data)
+			{
+				this.data = data;
 			}
 		}
 
@@ -65,11 +55,6 @@ namespace Stratus
 		[Header("Targeting")]
 		[Tooltip("What component to send the trigger event to")]
 		public List<StratusTriggerableBehaviour> targets = new List<StratusTriggerableBehaviour>();
-		/// <summary>
-		/// What instruction to send to the triggerable
-		/// </summary>
-		[Tooltip("What instruction to send to the triggerable")]
-		public Instruction instruction;
 		/// <summary>
 		/// Whether the trigger will be sent to the GameObject as an event or invoked directly on the dispatcher component
 		/// </summary>
@@ -96,13 +81,9 @@ namespace Stratus
 		// Properties
 		//------------------------------------------------------------------------/
 		/// <summary>
-		/// Whether we are currently debugging the trigger (development purposes)
-		/// </summary>
-		private bool isDebug => false;
-		/// <summary>
 		/// The trigger event being dispatched
 		/// </summary>
-		private TriggerEvent triggerEvent => new TriggerEvent(instruction);
+		private TriggerEvent triggerEvent => new TriggerEvent();
 
 		//------------------------------------------------------------------------/
 		// Messages
@@ -126,13 +107,17 @@ namespace Stratus
 		/// <summary>
 		/// Triggers the event
 		/// </summary>
-		protected void Activate()
+		protected void Activate(object data = null)
 		{
 			if (!enabled)
+			{
 				return;
+			}
 
 			if (debug)
+			{
 				StratusDebug.Log($"<i>{description}</i> has been activated!", this);
+			}
 
 			// Dispatch the trigger event onto a given target if one is provided
 			foreach (var target in targets)
@@ -154,7 +139,7 @@ namespace Stratus
 
 				else if (scope == Scope.Component)
 				{
-					target.Activate();
+					target.Trigger();
 				}
 			}
 
