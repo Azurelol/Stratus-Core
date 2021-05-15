@@ -5,27 +5,23 @@
 	/// </summary>
 	public abstract class StratusManagedBehaviour : StratusBehaviour
 	{
-		//--------------------------------------------------------------------------------------------/
-		// Messages
-		//--------------------------------------------------------------------------------------------/
+		#region Virtual Functions
 		protected virtual void OnManagedAwake() { }
 		protected virtual void OnManagedDestroy() { }
 		protected virtual void OnManagedStart() { }
 		protected virtual void OnManagedUpdate() { }
 		protected virtual void OnManagedFixedUpdate() { }
 		protected virtual void OnManagedLateUpdate() { }
+		#endregion
 
-		//--------------------------------------------------------------------------------------------/
-		// Messages : Management
-		//--------------------------------------------------------------------------------------------/
+		#region Managed Routines
 		protected internal void ManagedStart() => OnManagedStart();
 		protected internal void ManagedUpdate() => OnManagedUpdate();
 		protected internal void ManagedFixedUpdate() => OnManagedFixedUpdate();
 		protected internal void ManagedLateUpdate() => OnManagedLateUpdate();
+		#endregion
 
-		//--------------------------------------------------------------------------------------------/
-		// Methods
-		//--------------------------------------------------------------------------------------------/
+		#region Messages
 		private void Awake()
 		{
 			StratusManagedBehaviourSystem.Add(this);
@@ -37,10 +33,9 @@
 			StratusManagedBehaviourSystem.Remove(this);
 			this.OnManagedDestroy();
 		}
+		#endregion
 
-		//--------------------------------------------------------------------------------------------/
-		// Static Methods
-		//--------------------------------------------------------------------------------------------/
+		#region Static Methods
 		/// <summary>
 		/// Instantiates this behaviour at runtime, adding it to the managed behaviour system
 		/// </summary>
@@ -62,7 +57,8 @@
 		{
 			StratusManagedBehaviourSystem.Remove(behaviour);
 			Destroy(behaviour);
-		}
+		} 
+		#endregion
 
 	}
 

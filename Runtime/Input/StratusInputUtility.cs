@@ -8,6 +8,8 @@ namespace Stratus
 {
 	public enum StratusInputActionPhase
 	{
+		Disabled,
+		Waiting,
 		Started,
 		Performed,
 		Canceled,
@@ -18,14 +20,14 @@ namespace Stratus
 
 	public static class StratusInputUtility
 	{
-		public static StratusInputActionPhase Convert(InputActionPhase phase)
+		public static StratusInputActionPhase Convert(this InputActionPhase phase)
 		{
 			switch (phase)
 			{
 				case InputActionPhase.Disabled:
-					break;
+					return StratusInputActionPhase.Disabled;
 				case InputActionPhase.Waiting:
-					break;
+					return StratusInputActionPhase.Waiting;
 				case InputActionPhase.Started:
 					return StratusInputActionPhase.Started;
 				case InputActionPhase.Performed:
@@ -35,12 +37,30 @@ namespace Stratus
 			}
 			throw new NotImplementedException(phase.ToString());
 		}
+
+		public static InputActionPhase Convert(this StratusInputActionPhase phase)
+		{
+			switch (phase)
+			{
+				case StratusInputActionPhase.Disabled:
+					return InputActionPhase.Disabled;
+				case StratusInputActionPhase.Waiting:
+					return InputActionPhase.Waiting;
+				case StratusInputActionPhase.Started:
+					return InputActionPhase.Started;
+				case StratusInputActionPhase.Performed:
+					return InputActionPhase.Performed;
+				case StratusInputActionPhase.Canceled:
+					return InputActionPhase.Canceled;
+			}
+			throw new NotImplementedException(phase.ToString());
+		}
 	}
 
 	public class StratusPersistentInputAction<T>
 	{
 		public T currentValue { get; private set; }
-		public StratusInputActionPhase phase { get; private set; }
+		public InputActionPhase currentPhase { get; private set; }
 		public bool active { get; private set; }
 		public Action<T> callback { get; private set; }
 
@@ -49,15 +69,19 @@ namespace Stratus
 			this.callback = callback;
 		}
 
-		public void Set(StratusInputActionPhase phase, T value)
-		{			
+		public void Set(InputActionPhase phase, T value)
+		{
 			currentValue = value;
+			currentPhase = phase;
 			switch (phase)
 			{
-				case StratusInputActionPhase.Started:
+				case InputActionPhase.Started:
+				case InputActionPhase.Performed:
 					active = true;
 					break;
-				case StratusInputActionPhase.Canceled:
+				case InputActionPhase.Canceled:
+				case InputActionPhase.Disabled:
+				case InputActionPhase.Waiting:
 					active = false;
 					break;
 			}

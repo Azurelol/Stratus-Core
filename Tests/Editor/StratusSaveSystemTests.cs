@@ -53,7 +53,7 @@ namespace Stratus
 		{
 		}
 
-		private MockSaveSystem GetDefault(bool createDirectoryPerSave)
+		private MockSaveSystem GetDefaultSaveSystem(bool createDirectoryPerSave)
 		{
 			var namingConvention = new StratusIncrementalFileNamingConvention("SAVE");
 			var format = new StratusSaveDefaultFormat(createDirectoryPerSave);
@@ -64,9 +64,9 @@ namespace Stratus
 		}
 
 		[Test]
-		public void CreatesSaveWithDefaultFormat()
+		public void CreatesSave()
 		{
-			var saveSystem = GetDefault(false);
+			var saveSystem = GetDefaultSaveSystem(false);
 
 			int a = 7;
 			data.a = a;
@@ -89,7 +89,7 @@ namespace Stratus
 		[Test]
 		public void CreatesSaveWitSnapshot()
 		{
-			var saveSystem = GetDefault(false);
+			var saveSystem = GetDefaultSaveSystem(false);
 			var save = new MockSave(data);
 			save.SetSnapshot(Texture2D.whiteTexture);
 			Assert.True(saveSystem.Save(save));
@@ -101,9 +101,9 @@ namespace Stratus
 		}
 
 		[Test]
-		public void CreatesSaveOnDirectory()
+		public void CreatesSubdirectoryPerSave()
 		{
-			var saveSystem = GetDefault(true);
+			var saveSystem = GetDefaultSaveSystem(true);
 			saveSystem.configuration.format = new StratusSaveDefaultFormat(true);
 
 			var save = new MockSave(data);

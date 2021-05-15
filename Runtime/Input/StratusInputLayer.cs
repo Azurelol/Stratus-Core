@@ -160,17 +160,17 @@ namespace Stratus
 
 	}
 
-	public abstract class StratusInputLayer<ActionMap> : StratusInputLayer
+	public class StratusInputLayer<ActionMap> : StratusInputLayer
 		where ActionMap : StratusInputActionMap, new()
 	{
 		public ActionMap actions { get; } = new ActionMap();
 		public override string map => actions.map;
 
-		public StratusInputLayer(string label) : base(label)
+		public StratusInputLayer(string label) : this(label, new ActionMap())
 		{
 		}
 
-		public StratusInputLayer(string label, ActionMap actions) : this(label)
+		public StratusInputLayer(string label, ActionMap actions) : base(label)
 		{
 			this.actions = actions;
 		}
@@ -178,6 +178,10 @@ namespace Stratus
 		public override bool HandleInput(InputAction.CallbackContext context)
 		{
 			return actions.HandleInput(context);
+		}
+
+		protected override void OnActive(bool enabled)
+		{
 		}
 	}
 

@@ -30,10 +30,64 @@ namespace Stratus
 		public StratusInputActionPhase Convert(InputActionPhase phase) => StratusInputUtility.Convert(phase);
 	}
 
+	public abstract class StratusInputActionMap<T> : StratusInputActionMap
+		where T : Enum
+	{
+		private Lazy<T[]> availableActions = new Lazy<T[]>(() => StratusEnum.Values<T>());
+		private Dictionary<string, Action<InputAction>> actions = new Dictionary<string, Action<InputAction>>();
+		public bool lowercase { get; private set; }
+
+		public StratusInputActionMap(bool lowercase = false)
+		{
+			this.lowercase = lowercase;
+		}
+
+		protected StratusInputActionMap()
+		{
+		}
+
+		public void Bind(T action, Action<InputAction> onAction)
+		{
+			string name = action.ToString();
+			actions.AddOrUpdate(lowercase ? name.ToLowerInvariant() : name, onAction);
+		}
+
+		public void Bind<ValueType>(T action, Action<ValueType> onAction)
+			where ValueType : struct
+		{
+			Bind(action, a => onAction(a.ReadValue<ValueType>()));
+		}
+
+		public void Bind<ValueType>(T action, Action<InputActionPhase, ValueType> onAction)
+			where ValueType : struct
+		{
+			Bind(action, a => onAction(a.phase, a.ReadValue<ValueType>()));
+		}
+
+		public void Bind(T action, Action onAction)
+		{
+			Bind(action, a => onAction());
+		}
+
+		public override bool HandleInput(InputAction.CallbackContext context)
+		{
+			bool handled = false;
+			if (context.phase != InputActionPhase.Waiting)
+			{
+				if (actions.ContainsKey(context.action.name))
+				{
+					actions[context.action.name].Invoke(context.action);
+					handled = true;
+				}
+			}
+			return handled;
+		}
+	}
+
 	public interface IStratusInputUIActionHandler
 	{
 		void Navigate(Vector2 dir);
 	}
 
-	
+
 }

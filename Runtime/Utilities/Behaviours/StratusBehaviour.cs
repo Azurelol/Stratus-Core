@@ -124,6 +124,17 @@ namespace Stratus
 				this.LogError($"Error: Component {(label != null ? label : " ")}of type {typeof(T)} on GameObject {gameObject.name } was not assigned");
 			}
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="direction">A normalized direction vector</param>
+		/// <param name="distance"></param>
+		/// <param name="color"></param>
+		protected void DrawRay(Vector3 direction, float distance, Color color)
+		{
+			Debug.DrawRay(transform.position, transform.CalculatePositionAtDirection(direction, distance), color);
+		}
 	}
 
 }

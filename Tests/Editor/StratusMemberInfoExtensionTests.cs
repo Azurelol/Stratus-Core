@@ -92,8 +92,8 @@ namespace Stratus.Editor.Tests
 		[Test]
 		public void GetFullName()
 		{
-			Assert.AreEqual("Boop(int n, int b)", testType.GetMethod(nameof(MockDataObject.Boop1)).GetFullName());
-			Assert.AreEqual("Boop1(int c, int d)", testType.GetMethod(nameof(MockDataObject.Boop2)).GetFullName());
+			Assert.AreEqual("Boop1(int n, int b)", testType.GetMethod(nameof(MockDataObject.Boop1)).GetFullName());
+			Assert.AreEqual("Boop2(int c, int d)", testType.GetMethod(nameof(MockDataObject.Boop2)).GetFullName());
 		}
 
 		[Test]
