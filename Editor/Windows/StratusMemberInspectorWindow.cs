@@ -261,34 +261,34 @@ namespace Stratus.Editor
 				this.target = (GameObject)EditorGUILayout.ObjectField(this.target, this.gameObjectType, true);
 				StratusEditorUtility.OnLastControlMouseClick(null, () =>
 		  {
-				  bool hasBookmark = this.target.HasComponent<StratusGameObjectBookmark>();
-				  string bookmarkLabel = hasBookmark ? "Remove Bookmark" : "Bookmark";
-				  GenericMenu menu = new GenericMenu();
+			  bool hasBookmark = this.target.HasComponent<StratusGameObjectBookmark>();
+			  string bookmarkLabel = hasBookmark ? "Remove Bookmark" : "Bookmark";
+			  GenericMenu menu = new GenericMenu();
 
-			// 1. Bookmark
-			if (hasBookmark)
-				  {
-					  menu.AddItem(new GUIContent(bookmarkLabel), false, () =>
-				{
-					  RemoveBookmark(target);
-				  });
-				  }
-				  else
-				  {
-					  menu.AddItem(new GUIContent(bookmarkLabel), false, () =>
-				{
-					  SetBookmark(target);
-				  });
-				  }
-
-			// 2. Clear Favorites
-			menu.AddItem(new GUIContent("Clear Watch List"), false, () =>
+			  // 1. Bookmark
+			  if (hasBookmark)
+			  {
+				  menu.AddItem(new GUIContent(bookmarkLabel), false, () =>
 			{
-					this.currentTargetInformation.ClearWatchList();
-				});
+				RemoveBookmark(target);
+			});
+			  }
+			  else
+			  {
+				  menu.AddItem(new GUIContent(bookmarkLabel), false, () =>
+			{
+				SetBookmark(target);
+			});
+			  }
 
-				  menu.ShowAsContext();
+			  // 2. Clear Favorites
+			  menu.AddItem(new GUIContent("Clear Watch List"), false, () =>
+			  {
+				  this.currentTargetInformation.ClearWatchList();
 			  });
+
+			  menu.ShowAsContext();
+		  });
 			});
 
 			if (changed)

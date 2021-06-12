@@ -13,9 +13,7 @@ namespace Stratus
 	public abstract class StratusPlayerInput<T> : StratusSingletonBehaviour<T>, IStratusPlayerInput
 		where T : StratusSingletonBehaviour<T>
 	{
-		//------------------------------------------------------------------------/
-		// Fields
-		//------------------------------------------------------------------------/
+		#region Fields
 		public PlayerInput playerInput;
 		public StratusInputActionDecoratorMap decoratorMap;
 		public bool debug = false;
@@ -23,10 +21,9 @@ namespace Stratus
 
 		private StratusInputStack<StratusInputLayer> inputLayers = new StratusInputStack<StratusInputLayer>();
 		private Dictionary<string, StratusInputScheme> inputSchemes = new Dictionary<string, StratusInputScheme>();
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Properties
-		//------------------------------------------------------------------------/
+		#region Properties
 		public InputActionMap currentActionMap => playerInput.currentActionMap;
 		public StratusInputLayer currentInputLayer => inputLayers.activeLayer;
 		public string currentActionMapName => playerInput.currentActionMap.name;
@@ -47,21 +44,18 @@ namespace Stratus
 			}
 		}
 		public StratusInputScheme latestInputSchemeUsed { get; private set; }
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Events
-		//------------------------------------------------------------------------/
+		#region Events
 		public event Action<StratusInputScheme> onInputSchemeChanged;
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Abstract
-		//------------------------------------------------------------------------/
+		#region Virtual
 		protected abstract void OnInputAwake();
 		protected abstract void OnInputSchemeChanged(StratusInputScheme inputScheme);
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Messages
-		//------------------------------------------------------------------------/
+		#region Messages
 		protected override void OnAwake()
 		{
 			StratusScene.Connect<StratusInputLayer.PushEvent>(OnPushLayerEvent);
@@ -95,10 +89,9 @@ namespace Stratus
 				}
 			}
 		}
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Events
-		//------------------------------------------------------------------------/
+		#region Event Handlers
 		private void OnPushLayerEvent(StratusInputLayer.PushEvent e)
 		{
 			StratusOperationResult result = inputLayers.Push(e.layer);
@@ -133,7 +126,7 @@ namespace Stratus
 			bool switched = false;
 
 			if (!IsCurrentActionMap(layer.map))
-			{				
+			{
 				try
 				{
 					if (!playerInput.enabled)
@@ -170,10 +163,9 @@ namespace Stratus
 		{
 			return playerInput.currentActionMap != null && playerInput.currentActionMap.name.Equals(actionMapName, StringComparison.InvariantCultureIgnoreCase);
 		}
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Methods
-		//------------------------------------------------------------------------/
+		#region Methods
 		public void ActivateInput()
 		{
 			playerInput.ActivateInput();
@@ -204,10 +196,9 @@ namespace Stratus
 			}
 			return decorator.sprite;
 		}
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Statics
-		//------------------------------------------------------------------------/
+		#region Static Methods
 		public static void DispatchPushLayerEvent(StratusInputLayer layer)
 		{
 			layer.pushed = true;
@@ -220,9 +211,31 @@ namespace Stratus
 			StratusScene.Dispatch<StratusInputLayer.PopEvent>(new StratusInputLayer.PopEvent());
 		}
 
-		//------------------------------------------------------------------------/
-		// Main Input Procedures
-		//------------------------------------------------------------------------/
+		public static StratusInputScheme TryParse(string deviceName)
+		{
+			StratusInputScheme result = StratusInputScheme.Unknown;
+			switch (deviceName)
+			{
+				case "Keyboard":
+					result = StratusInputScheme.KeyboardMouse;
+					break;
+
+				case "Mouse":
+					result = StratusInputScheme.KeyboardMouse;
+					break;
+			}
+			if (result == StratusInputScheme.Unknown)
+			{
+				if (deviceName.Contains("DualShock"))
+				{
+					result = StratusInputScheme.DualShock;
+				}
+			}
+			return result;
+		}
+		#endregion
+
+		#region Procedures
 		private void OnInputActionTriggered(InputAction.CallbackContext context)
 		{
 			if (hasInputLayer)
@@ -283,36 +296,8 @@ namespace Stratus
 			{
 				this.Log($"Last device used now {latestInputSchemeUsed}");
 			}
-		}
-
-		public static StratusInputScheme TryParse(string deviceName)
-		{
-			StratusInputScheme result = StratusInputScheme.Unknown;
-			switch (deviceName)
-			{
-				case "Keyboard":
-					result = StratusInputScheme.KeyboardMouse;
-					break;
-
-				case "Mouse":
-					result = StratusInputScheme.KeyboardMouse;
-					break;
-			}
-			if (result == StratusInputScheme.Unknown)
-			{
-				if (deviceName.Contains("DualShock"))
-				{
-					result = StratusInputScheme.DualShock;
-				}
-			}
-			return result;
-		}
-	}
-
-	public enum StratusPlayerInputActionMap
-	{
-		Player,
-		UI
+		} 
+		#endregion
 	}
 
 	public enum StratusInputScheme

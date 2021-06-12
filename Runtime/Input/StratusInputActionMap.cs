@@ -34,7 +34,8 @@ namespace Stratus
 		where T : Enum
 	{
 		private Lazy<T[]> availableActions = new Lazy<T[]>(() => StratusEnum.Values<T>());
-		private Dictionary<string, Action<InputAction>> actions = new Dictionary<string, Action<InputAction>>();
+		private Dictionary<string, Action<InputAction>> actions 
+			= new Dictionary<string, Action<InputAction>>(StringComparer.InvariantCultureIgnoreCase);
 		public bool lowercase { get; private set; }
 
 		public StratusInputActionMap(bool lowercase = false)

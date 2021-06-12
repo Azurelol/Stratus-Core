@@ -133,7 +133,7 @@ namespace Stratus
 		/// <param name="color"></param>
 		protected void DrawRay(Vector3 direction, float distance, Color color)
 		{
-			Debug.DrawRay(transform.position, transform.CalculatePositionAtDirection(direction, distance), color);
+			Debug.DrawRay(transform.position, direction.normalized * distance, color);
 		}
 	}
 

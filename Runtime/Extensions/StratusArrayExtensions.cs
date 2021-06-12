@@ -27,7 +27,7 @@ namespace Stratus
 		/// <returns></returns>
 		public static int FindIndex<T>(this T[] array, T value)
 		{
-			return Array.FindIndex(array, x => x.Equals(value));
+			return array != null ? Array.FindIndex(array, x => x.Equals(value)) : -1;
 		}
 
 		/// <summary>

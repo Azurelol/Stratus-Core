@@ -185,7 +185,6 @@ namespace Stratus.Editor
 						break;
 
 					case StratusSerializedPropertyModel.SerializationType.Custom:
-						//propertiesChanged |= this.DrawSerializedProperty(property.unitySerialization, this.serializedObject);
 						propertiesChanged |= this.DrawSerializedProperty(property.customSerialization);
 						break;
 				}
@@ -267,28 +266,6 @@ namespace Stratus.Editor
 				this.propertiesByType.Add(currentType, query.models);
 				this.unityPropertiesByType.Add(currentType, query.unitySerialized);
 				this.propertyGroups.Add(new Tuple<Type, StratusSerializedPropertyModel[]>(currentType, query.models));
-
-				//// Add all the properties for this type into the property map by type  
-				//if (!currentType.IsGenericType)
-				//{
-				//	this.propertiesByType.Add(currentType, query.models);
-				//	this.unityPropertiesByType.Add(currentType, query.unitySerialized);
-				//	this.propertyGroups.Add(new Tuple<Type, StratusSerializedPropertyModel[]>(currentType, query.models));
-				//}
-				//else
-				//{
-				//	if (!previousType.IsGenericType)
-				//	{
-				//		SerializedProperty[] joinedUnityProperties = this.unityPropertiesByType[previousType].Concat(query.unitySerialized);
-				//		this.unityPropertiesByType[previousType] = joinedUnityProperties;
-				//		// Combined
-				//		StratusSerializedPropertyModel[] joinedProperties = this.propertiesByType[previousType].Concat(query.models);
-				//		this.propertiesByType[previousType] = joinedProperties;
-				//		// Concat property groups
-				//		this.propertyGroups.RemoveLast();
-				//		this.propertyGroups.Add(new Tuple<Type, StratusSerializedPropertyModel[]>(previousType, joinedProperties));
-				//	}
-				//}
 
 				// Move on to the parent type (if any)
 				previousType = currentType;
@@ -395,7 +372,6 @@ namespace Stratus.Editor
 		public static Tuple<SerializedProperty[], StratusSerializedField[]> GetSerializedProperties(SerializedObject serializedObject, Type type)
 		{
 			FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
-			//FieldInfo[] fields = type.GetSerializedFields(true);
 
 			List<SerializedProperty> serializedProperties = new List<SerializedProperty>();
 			List<StratusSerializedField> odinSerializedProperties = new List<StratusSerializedField>();

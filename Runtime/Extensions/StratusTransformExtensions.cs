@@ -43,12 +43,12 @@ namespace Stratus
 		/// Calculates a position on a given normalized direction vector from the transform's position.
 		/// </summary>
 		/// <param name="transform"></param>
-		/// <param name="normalizedDirVec"></param>
+		/// <param name="direction"></param>
 		/// <param name="distance"></param>
 		/// <returns></returns>
-		public static Vector3 CalculatePositionAtDirection(this Transform transform, Vector3 normalizedDirVec, float distance)
+		public static Vector3 CalculatePositionAtDirection(this Transform transform, Vector3 direction, float distance)
 		{
-			return transform.position + (normalizedDirVec * distance);
+			return transform.position + (direction * distance);
 		}
 
 		/// <summary>

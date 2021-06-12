@@ -32,7 +32,6 @@ namespace Stratus.Editor
 			public Type type { get; protected set; }
 			public abstract bool DrawEditorGUILayout(object target, bool isChild = false);
 			public abstract bool DrawEditorGUI(Rect position, object target);
-			//public abstract bool DrawGUILayout(Rect rectobject target, bool isChild = false);
 			public bool isDrawable { get; protected set; }
 			public bool isPrimitive { get; protected set; }
 			public float height { get; protected set; }
@@ -122,7 +121,6 @@ namespace Stratus.Editor
 			}
 
 			ObjectDrawer drawer = objectDrawers[type];
-			//drawer.SetDisplayName(field.Name);
 			return drawer;
 		}
 

@@ -80,7 +80,7 @@ namespace Stratus.Editor
 			public override bool DrawEditorGUI(Rect position, object target)
 			{
 				bool changed = false;
-				string content = this.isDrawable ? this.displayName : $"No serialized fields for {this.type.Name}";
+				string content = this.isDrawable ? this.displayName : $"No serialized fields to draw for {this.type.Name}";
 				EditorGUI.LabelField(position, content);
 
 				// Draw all drawers
