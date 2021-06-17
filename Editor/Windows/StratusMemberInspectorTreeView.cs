@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
+
 using UnityEngine;
 
 namespace Stratus.Editor
@@ -9,7 +11,6 @@ namespace Stratus.Editor
 	[Serializable]
 	public class StratusMemberInspectorTreeElement : StratusTreeElement<StratusComponentInformation.MemberReference>
 	{
-
 		public static List<StratusMemberInspectorTreeElement> GenerateFavoritesTree()
 		{
 			StratusComponentInformation.MemberReference[] members = StratusGameObjectBookmark.watchList;
@@ -27,10 +28,6 @@ namespace Stratus.Editor
 
 	public class StratusMemberInspectorTreeView : StratusMultiColumnTreeView<StratusMemberInspectorTreeElement, StratusMemberInspectorWindow.Column>
 	{
-		public StratusMemberInspectorTreeView(TreeViewState state, StratusTreeModel<StratusMemberInspectorTreeElement> model) : base(state, model)
-		{
-		}
-
 		public StratusMemberInspectorTreeView(TreeViewState state, IList<StratusMemberInspectorTreeElement> data) : base(state, data)
 		{
 		}
@@ -40,7 +37,7 @@ namespace Stratus.Editor
 			TreeViewColumn column = null;
 			switch (columnType)
 			{
-				case StratusMemberInspectorWindow.Column.Favorite:
+				case StratusMemberInspectorWindow.Column.Watch:
 					column = new TreeViewColumn
 					{
 						headerContent = new GUIContent(StratusGUIStyles.starStackIcon, "Watch"),
@@ -52,7 +49,7 @@ namespace Stratus.Editor
 						maxWidth = 45,
 						autoResize = false,
 						allowToggleVisibility = false,
-						selectorFunction = (StratusTreeViewItem<StratusMemberInspectorTreeElement> element) => element.item.data.isWatched.ToString()
+						selectorFunction = (StratusTreeViewItem<StratusMemberInspectorTreeElement> element) => element.element.data.isWatched.ToString()
 					};
 					break;
 				case StratusMemberInspectorWindow.Column.GameObject:
@@ -66,7 +63,7 @@ namespace Stratus.Editor
 						maxWidth = 120,
 						autoResize = false,
 						allowToggleVisibility = true,
-						selectorFunction = (StratusTreeViewItem<StratusMemberInspectorTreeElement> element) => element.item.data.gameObjectName
+						selectorFunction = (StratusTreeViewItem<StratusMemberInspectorTreeElement> element) => element.element.data.gameObjectName
 					};
 					break;
 				case StratusMemberInspectorWindow.Column.Component:
@@ -80,7 +77,7 @@ namespace Stratus.Editor
 						maxWidth = 250,
 						autoResize = false,
 						allowToggleVisibility = true,
-						selectorFunction = (StratusTreeViewItem<StratusMemberInspectorTreeElement> element) => element.item.data.componentName
+						selectorFunction = (StratusTreeViewItem<StratusMemberInspectorTreeElement> element) => element.element.data.componentName
 					};
 					break;
 				case StratusMemberInspectorWindow.Column.Type:
@@ -93,7 +90,7 @@ namespace Stratus.Editor
 						minWidth = 60,
 						autoResize = false,
 						allowToggleVisibility = true,
-						selectorFunction = (StratusTreeViewItem<StratusMemberInspectorTreeElement> element) => element.item.data.type.ToString()
+						selectorFunction = (StratusTreeViewItem<StratusMemberInspectorTreeElement> element) => element.element.data.type.ToString()
 					};
 					break;
 				case StratusMemberInspectorWindow.Column.Member:
@@ -107,7 +104,7 @@ namespace Stratus.Editor
 						maxWidth = 120,
 						autoResize = false,
 						allowToggleVisibility = false,
-						selectorFunction = (StratusTreeViewItem<StratusMemberInspectorTreeElement> element) => element.item.data.name
+						selectorFunction = (StratusTreeViewItem<StratusMemberInspectorTreeElement> element) => element.element.data.name
 					};
 					break;
 				case StratusMemberInspectorWindow.Column.Value:
@@ -121,7 +118,7 @@ namespace Stratus.Editor
 						maxWidth = 250,
 						autoResize = true,
 						allowToggleVisibility = false,
-						selectorFunction = (StratusTreeViewItem<StratusMemberInspectorTreeElement> element) => element.item.data.latestValueString
+						selectorFunction = (StratusTreeViewItem<StratusMemberInspectorTreeElement> element) => element.element.data.latestValueString
 					};
 					break;
 			}
@@ -132,27 +129,27 @@ namespace Stratus.Editor
 		{
 			switch (column)
 			{
-				case StratusMemberInspectorWindow.Column.Favorite:
-					if (item.item.data.isWatched)
+				case StratusMemberInspectorWindow.Column.Watch:
+					if (item.element.data.isWatched)
 					{
 						this.DrawIcon(cellRect, StratusGUIStyles.starIcon);
 					}
 
 					break;
 				case StratusMemberInspectorWindow.Column.GameObject:
-					DefaultGUI.Label(cellRect, item.item.data.gameObjectName, args.selected, args.focused);
+					DefaultGUI.Label(cellRect, item.element.data.gameObjectName, args.selected, args.focused);
 					break;
 				case StratusMemberInspectorWindow.Column.Component:
-					DefaultGUI.Label(cellRect, item.item.data.componentName, args.selected, args.focused);
+					DefaultGUI.Label(cellRect, item.element.data.componentName, args.selected, args.focused);
 					break;
 				case StratusMemberInspectorWindow.Column.Type:
-					DefaultGUI.Label(cellRect, item.item.data.type.ToString(), args.selected, args.focused);
+					DefaultGUI.Label(cellRect, item.element.data.type.ToString(), args.selected, args.focused);
 					break;
 				case StratusMemberInspectorWindow.Column.Member:
-					DefaultGUI.Label(cellRect, item.item.data.name, args.selected, args.focused);
+					DefaultGUI.Label(cellRect, item.element.data.name, args.selected, args.focused);
 					break;
 				case StratusMemberInspectorWindow.Column.Value:
-					DefaultGUI.Label(cellRect, item.item.data.latestValueString, args.selected, args.focused);
+					DefaultGUI.Label(cellRect, item.element.data.latestValueString, args.selected, args.focused);
 					break;
 			}
 		}
@@ -179,25 +176,25 @@ namespace Stratus.Editor
 			// 1. Select
 			menu.AddItem(new GUIContent("Select"), false, () => Selection.activeGameObject = member.componentInfo.gameObject);
 
-			if (!Application.isPlaying)
+			// 2. Watch
+			if (member.isWatched)
 			{
-				// 2. Watch
-				bool isFavorite = member.isWatched;
-				if (isFavorite)
-				{
-					menu.AddItem(new GUIContent("Remove Watch"), false, () => member.componentInfo.RemoveWatch(member));
-				}
-				else
-				{
-					menu.AddItem(new GUIContent("Watch"), false, () =>
-					{
-						GameObject target = member.componentInfo.gameObject;
-						member.componentInfo.Watch(member);
-					});
-				}
+				menu.AddItem(new GUIContent("Remove Watch"), false, () => member.componentInfo.RemoveWatch(member));
 			}
-
+			else
+			{
+				menu.AddItem(new GUIContent("Watch"), false, () =>
+				{
+					GameObject target = member.componentInfo.gameObject;
+					member.componentInfo.Watch(member);
+				});
+			}
 		}
 
+
+		protected override void OnItemDoubleClicked(StratusMemberInspectorTreeElement element)
+		{
+			element.data.ToggleWatch();
+		}
 	}
 }

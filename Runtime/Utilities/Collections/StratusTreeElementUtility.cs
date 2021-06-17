@@ -365,7 +365,7 @@ namespace Stratus
 
 		public static List<TreeElementType> GenerateFlatTree<TreeElementType, DataType>(params DataType[] elements)
 		  where TreeElementType : StratusTreeElement<DataType>, new()
-		  where DataType : class, IStratusLabeled
+		  where DataType : class, IStratusNamed
 		{
 			List<TreeElementType> treeList = new List<TreeElementType>();
 
@@ -409,7 +409,7 @@ namespace Stratus
 
 		public static TreeElementType[] GetChildren<TreeElementType, DataType>(TreeElementType element)
 		  where TreeElementType : StratusTreeElement<DataType>, new()
-		  where DataType : class, IStratusLabeled
+		  where DataType : class, IStratusNamed
 		{
 			List<TreeElementType> children = new List<TreeElementType>();
 			GetChildrenRecursive<TreeElementType, DataType>(element, children);
@@ -418,7 +418,7 @@ namespace Stratus
 
 		private static void GetChildrenRecursive<TreeElementType, DataType>(TreeElementType element, List<TreeElementType> children)
 		  where TreeElementType : StratusTreeElement<DataType>, new()
-		  where DataType : class, IStratusLabeled
+		  where DataType : class, IStratusNamed
 		{
 			foreach (var child in element.children)
 			{

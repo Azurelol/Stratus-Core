@@ -20,7 +20,7 @@ namespace Stratus.Editor
 
 		protected override void OnWindowGUI()
 		{
-			this.treeView.TreeViewGUI(this.guiPosition);
+			this.treeView.TreeViewGUI(this.positionToGUI);
 		}
 
 		[MenuItem(StratusCore.rootMenu + "Save System")]

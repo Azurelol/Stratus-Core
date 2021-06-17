@@ -6,19 +6,17 @@ using System.Reflection;
 using UnityEngine.Serialization;
 using System.Linq.Expressions;
 using UnityEngine.Events;
+using System.Text;
 
 namespace Stratus
 {
-
 	/// <summary>
 	/// Information about a gameobject and all its components
 	/// </summary>
 	[Serializable]
 	public class StratusGameObjectInformation : ISerializationCallbackReceiver
 	{
-		//------------------------------------------------------------------------/
-		// Declaration
-		//------------------------------------------------------------------------/  
+		#region Declarations
 		public enum Change
 		{
 			Components,
@@ -26,28 +24,31 @@ namespace Stratus
 			ComponentsAndWatchList,
 			None
 		}
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Fields
-		//------------------------------------------------------------------------/  
+		#region Fields
 		public GameObject target;
 		public StratusComponentInformation[] components;
 		public int fieldCount;
 		public int propertyCount;
-		//------------------------------------------------------------------------/
-		// Properties
-		//------------------------------------------------------------------------/  
+		#endregion
+
+		#region Properties
 		public bool initialized { get; private set; }
+		/// <summary>
+		/// The recorded number of compoents of the gameobject
+		/// </summary>
 		public int numberofComponents => components.Length;
+		public Dictionary<Type, StratusComponentInformation> componentsByType { get; private set; }
 		public StratusComponentInformation.MemberReference[] members { get; private set; }
 		public StratusComponentInformation.MemberReference[] watchList { get; private set; }
 		public int memberCount => fieldCount + propertyCount;
 		public bool isValid => target != null && this.numberofComponents > 0;
-		public static UnityAction<StratusGameObjectInformation, Change> onChanged { get; set; } = new UnityAction<StratusGameObjectInformation, Change>((StratusGameObjectInformation information, Change change) => { });
+		public static UnityAction<StratusGameObjectInformation, StratusOperationResult<Change>> onChanged { get; set; } = 
+			new UnityAction<StratusGameObjectInformation, StratusOperationResult<Change>>((StratusGameObjectInformation information, StratusOperationResult<Change> change) => { });
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Messages
-		//------------------------------------------------------------------------/  
+		#region Messages
 		public void OnBeforeSerialize()
 		{
 		}
@@ -55,7 +56,9 @@ namespace Stratus
 		public void OnAfterDeserialize()
 		{
 			if (this.components == null)
+			{
 				return;
+			}
 
 			// Verify that components are still valid
 			//this.ValidateComponents();
@@ -63,10 +66,9 @@ namespace Stratus
 			// Cache current member references
 			this.CacheReferences();
 		}
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// CTOR
-		//------------------------------------------------------------------------/  
+		#region Constructor
 		public StratusGameObjectInformation(GameObject target)
 		{
 			// Set target
@@ -90,15 +92,16 @@ namespace Stratus
 				this.propertyCount += componentInfo.propertyCount;
 				components.Add(componentInfo);
 			}
+
 			this.components = components.ToArray();
+			this.componentsByType = components.ToDictionary(c => c.type);
 
 			// Now cache member references
 			this.CacheReferences();
 		}
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Methods: Watch
-		//------------------------------------------------------------------------/  
+		#region Methods
 		/// <summary>
 		/// Clears the watchlist for every component
 		/// </summary>
@@ -112,9 +115,6 @@ namespace Stratus
 			StratusGameObjectBookmark.UpdateWatchList();
 		}
 
-		//------------------------------------------------------------------------/
-		// Methods: Update
-		//------------------------------------------------------------------------/  
 		/// <summary>
 		/// Updates the values of all the favorite members for this GameObject
 		/// </summary>
@@ -137,6 +137,9 @@ namespace Stratus
 			}
 		}
 
+		public bool HasComponent(Type t) => componentsByType.ContainsKey(t);
+		public bool HasComponent<T>() where T : Component => HasComponent(typeof(T));
+
 		/// <summary>
 		/// Caches all member references from among their components
 		/// </summary>
@@ -150,6 +153,7 @@ namespace Stratus
 			}
 			this.members = memberReferences.ToArray();
 
+			Debug.Log("Member references recorded");
 			this.CacheWatchList();
 			this.initialized = true;
 		}
@@ -174,37 +178,43 @@ namespace Stratus
 		/// </summary>
 		public void Refresh()
 		{
-			Change change = ValidateComponents();
+			var validation = ValidateComponents();
+			Change change = validation.result;
 			switch (change)
 			{
 				case Change.Components:
 					this.CacheReferences();
-					onChanged(this, change);
+					onChanged(this, validation);
 					break;
 				case Change.ComponentsAndWatchList:
 					this.CacheReferences();
-					onChanged(this, change);
+					onChanged(this, validation);
 					break;
 				case Change.None:
 					break;
 			}
 		}
+		#endregion
 
+		#region Procedures
 		/// <summary>
-		/// Verifies that the component references for this GameObject are still valid,
-		/// returning false if any components were removed
+		/// Verifies that the component references for this GameObject are still valid
 		/// </summary>
-		private Change ValidateComponents()
+		private StratusOperationResult<Change> ValidateComponents()
 		{
 			bool watchlistChanged = false;
 			bool changed = false;
+			Change change;
+
+			StringBuilder message = new StringBuilder();
 
 			// Check if any components are null
-			foreach (var component in this.components)
+			foreach (StratusComponentInformation component in this.components)
 			{
 				if (component.component == null)
 				{
 					changed = true;
+					message.AppendLine($"Component {component.name} is now null");
 					if (component.hasWatchList)
 					{
 						watchlistChanged = true;
@@ -213,13 +223,20 @@ namespace Stratus
 				else
 				{
 					if (component.valid)
+					{
 						changed |= component.Refresh();
+						message.AppendLine($"The members of component {component.name} have changed");
+					}
 				}
 			}
 
 			// Check for other component changes
 			Component[] targetComponents = target.GetComponents<Component>();
-			changed |= this.numberofComponents != targetComponents.Length;
+			if (this.numberofComponents != targetComponents.Length)
+			{
+				changed = true;
+				message.AppendLine($"The number of components have changed {numberofComponents} -> {targetComponents.Length}");
+			}
 
 			// If there's noticeable changes, let's add any components that were not there before
 			if (changed)
@@ -236,6 +253,7 @@ namespace Stratus
 					{
 						ci = new StratusComponentInformation(component);
 						currentComponents.Add(ci);
+						message.AppendLine($"Recording new component {ci.name}");
 					}
 				}
 
@@ -247,15 +265,16 @@ namespace Stratus
 			{
 				if (watchlistChanged)
 				{
-					return Change.ComponentsAndWatchList;
+					change = Change.ComponentsAndWatchList;
 				}
 
-				return Change.Components;
+				change = Change.Components;
 			}
+			change = Change.None;
 
-			// If any components were removed, or added, note the change
-			return Change.None;
+			return new StratusOperationResult<Change>(change == Change.None, change, message.ToString());
 		}
+		#endregion
 
 
 	}

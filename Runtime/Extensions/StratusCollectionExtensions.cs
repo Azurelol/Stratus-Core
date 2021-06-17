@@ -40,6 +40,19 @@ namespace Stratus
 			=> collection == null || collection.Count == 0;
 
 		/// <summary>
+		/// Returns the collection to an array (an empty one if it's null)
+		/// </summary>
+		public static T[] ToArrayOrEmpty<T>(this ICollection<T> collection)
+		{
+			if (collection == null)
+			{
+				return new T[] { };
+			}
+
+			return collection.ToArray();
+		}
+
+		/// <summary>
 		/// Returns true if the given collection is valid (not null or empty)
 		/// </summary>
 		/// <typeparam name="T"></typeparam>

@@ -9,6 +9,7 @@ using Stratus.Utilities;
 using UnityEditor.IMGUI.Controls;
 using UnityEditor.AnimatedValues;
 using UnityEditor.Callbacks;
+using Stratus;
 
 namespace Stratus.Editor
 {
@@ -40,7 +41,7 @@ namespace Stratus.Editor
 
 		public enum Column
 		{
-			Favorite,
+			Watch,
 			GameObject,
 			Component,
 			Member,
@@ -60,8 +61,14 @@ namespace Stratus.Editor
 		[SerializeField]
 		private StratusGameObjectInformation targetTemporaryInformation;
 
+		[SerializeReference]
+		private StratusGameObjectInformation _currentTargetInformation;
+
+		/// <summary>
+		/// How quickly <see cref="StratusMemberReference"/> values are updated
+		/// </summary>
 		[SerializeField]
-		private float pollSpeed = 1f;
+		private float updateSpeed = 1f;
 
 		[SerializeField]
 		private StratusMemberInspectorTreeView memberInspector;
@@ -71,21 +78,28 @@ namespace Stratus.Editor
 
 		private StratusCountdown pollTimer;
 		private const string displayName = "Watcher";
+		private string[] toolbarOptions = StratusEnum.Names<Mode>();
 
 		//------------------------------------------------------------------------/
 		// Properties
 		//------------------------------------------------------------------------/     
 		public InformationMode informationMode { get; private set; }
-		public StratusGameObjectInformation currentTargetInformation { get; private set; }
-		private string[] toolbarOptions = new string[]
+		public StratusGameObjectInformation currentTargetInformation
 		{
-	  nameof(Mode.Inspector),
-	  nameof(Mode.WatchList),
-		};
+			get => _currentTargetInformation;
+			private set
+			{
+				if (value == null)
+				{
+					this.Log("Clearing current target information");
+				}
+				_currentTargetInformation = value;
+			}
+		}
+
 		private Type gameObjectType { get; set; }
 		private bool hasTarget => this.target != null && this.currentTargetInformation != null;
 		private int selectedIndex { get; set; }
-		private StratusDropdownList<StratusComponentInformation> componentList { get; set; }
 		private bool updateTreeView { get; set; }
 
 		//------------------------------------------------------------------------/
@@ -94,44 +108,78 @@ namespace Stratus.Editor
 		protected override void OnWindowEnable()
 		{
 			if (this.treeViewState == null)
+			{
 				this.treeViewState = new TreeViewState();
+			}
 
-			this.pollTimer = new StratusCountdown(this.pollSpeed);
+			this.pollTimer = new StratusCountdown(this.updateSpeed);
 			this.gameObjectType = typeof(GameObject);
-
 			this.CheckTarget();
 
 			// Update tree view on assembly reload
 			StratusGameObjectBookmark.onUpdate += this.OnBookmarkUpdate;
 			StratusGameObjectInformation.onChanged += this.OnGameObjectInformationChanged;
+			this.Log("Enabled");
 		}
+
+		static readonly float[] rowWeights = new float[] 
+		{
+			0.2f,
+			0.7f,
+			0.1f
+		};
 
 		protected override void OnWindowGUI()
 		{
-			StratusEditorGUILayout.Aligned(this.DrawControls, TextAlignment.Center);
-
-			switch (this.mode)
+			void drawControls(Rect rect)
 			{
-				case Mode.Inspector:
-					this.SelectTarget();
-					if (this.hasTarget)
-					{
-						EditorGUILayout.LabelField($"({this.informationMode})", EditorStyles.centeredGreyMiniLabel);
-						this.memberInspector.TreeViewGUI(this.currentPosition);
-					}
-					break;
+				StratusEditorGUILayout.Aligned(this.DrawControls, TextAlignment.Center);
 
-				case Mode.WatchList:
-					if (StratusGameObjectBookmark.hasWatchList)
-					{
-						this.memberInspector.TreeViewGUI(this.currentPosition);
-					}
-					break;
+				switch (this.mode)
+				{
+					case Mode.Inspector:
+						this.DrawTargetSelector();
+						break;
+				}
 			}
 
+			void drawInspector(Rect rect)
+			{
+				switch (this.mode)
+				{
+					case Mode.Inspector:
+						if (this.hasTarget)
+						{
+							this.memberInspector.TreeViewGUI(rect);
+						}
+						break;
+
+					case Mode.WatchList:
+						if (StratusGameObjectBookmark.hasWatchList)
+						{
+							this.memberInspector.TreeViewGUI(rect);
+						}
+						break;
+				}
+			}
+
+			void drawUpdate(Rect rect)
+			{
+				rect = rect.Intend(4f);
+				EditorGUI.ProgressBar(rect, pollTimer.normalizedProgress, "Update");
+			}
+
+			Rect[] rows = positionToGUI.Column(rowWeights);
+			rows.ForEach(drawControls, drawInspector, drawUpdate);
 		}
+
 		protected override void OnWindowUpdate()
 		{
+			if (!Application.isPlaying)
+			{
+				return;
+			}
+
 			// Check whether values need to be updated
 			pollTimer.Update(Time.deltaTime);
 			if (pollTimer.isFinished)
@@ -173,7 +221,9 @@ namespace Stratus.Editor
 				case PlayModeStateChange.EnteredEditMode:
 					updateTreeView = true;
 					if (this.target)
-						this.OnTargetSelected();
+					{
+						this.CreateTargetInformation();
+					}
 					break;
 
 				// Don't bother trying to update while exiting
@@ -200,15 +250,15 @@ namespace Stratus.Editor
 			}
 		}
 
-		private void OnGameObjectInformationChanged(StratusGameObjectInformation information, StratusGameObjectInformation.Change change)
+		private void OnGameObjectInformationChanged(StratusGameObjectInformation information, StratusOperationResult<StratusGameObjectInformation.Change> change)
 		{
-			//Trace.Script($"Information changed for {information.target.name}, change = {change}");
-
-			if (change == StratusGameObjectInformation.Change.ComponentsAndWatchList)
+			this.Log($"Information changed for {information.target.name}, change = {change.result}:\n{change.message}");
+			if (change.result == StratusGameObjectInformation.Change.ComponentsAndWatchList)
+			{
 				StratusGameObjectBookmark.UpdateWatchList();
+			}
 
 			this.SetTreeView();
-			//this.OnBookmarkUpdate();
 		}
 
 		//------------------------------------------------------------------------/
@@ -252,7 +302,7 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		// Methods: Target Selection
 		//------------------------------------------------------------------------/
-		private void SelectTarget()
+		private void DrawTargetSelector()
 		{
 			EditorGUILayout.Space();
 			EditorGUILayout.LabelField("Target", StratusGUIStyles.header);
@@ -260,49 +310,52 @@ namespace Stratus.Editor
 			{
 				this.target = (GameObject)EditorGUILayout.ObjectField(this.target, this.gameObjectType, true);
 				StratusEditorUtility.OnLastControlMouseClick(null, () =>
-		  {
-			  bool hasBookmark = this.target.HasComponent<StratusGameObjectBookmark>();
-			  string bookmarkLabel = hasBookmark ? "Remove Bookmark" : "Bookmark";
-			  GenericMenu menu = new GenericMenu();
+				{
+					bool hasBookmark = this.target.HasComponent<StratusGameObjectBookmark>();
+					string bookmarkLabel = hasBookmark ? "Remove Bookmark" : "Bookmark";
+					GenericMenu menu = new GenericMenu();
 
-			  // 1. Bookmark
-			  if (hasBookmark)
-			  {
-				  menu.AddItem(new GUIContent(bookmarkLabel), false, () =>
-			{
-				RemoveBookmark(target);
-			});
-			  }
-			  else
-			  {
-				  menu.AddItem(new GUIContent(bookmarkLabel), false, () =>
-			{
-				SetBookmark(target);
-			});
-			  }
+					// 1. Bookmark
+					if (hasBookmark)
+					{
+						menu.AddItem(new GUIContent(bookmarkLabel), false, () =>
+						{
+							RemoveBookmark(target);
+						});
+					}
+					else
+					{
+						menu.AddItem(new GUIContent(bookmarkLabel), false, () =>
+						{
+							SetBookmark(target);
+						});
+					}
 
-			  // 2. Clear Favorites
-			  menu.AddItem(new GUIContent("Clear Watch List"), false, () =>
-			  {
-				  this.currentTargetInformation.ClearWatchList();
-			  });
+					// 2. Clear Watch List
+					menu.AddItem(new GUIContent("Clear Watch List"), false, () =>
+					{
+						this.Log("Clearing watch list");
+						this.currentTargetInformation.ClearWatchList();
+					});
 
-			  menu.ShowAsContext();
-		  });
+					menu.ShowAsContext();
+				});
 			});
 
 			if (changed)
 			{
 				if (this.target)
 				{
-					this.OnTargetSelected();
+					this.CreateTargetInformation();
 				}
 				else
 				{
 					this.currentTargetInformation = null;
 
 					if (this.informationMode == InformationMode.Temporary)
+					{
 						this.targetTemporaryInformation = null;
+					}
 				}
 			}
 		}
@@ -311,25 +364,26 @@ namespace Stratus.Editor
 		{
 			this.target = target;
 			this.selectedIndex = 0;
-			this.OnTargetSelected();
+			this.CreateTargetInformation();
 		}
 
 		private void CheckTarget()
 		{
-			if (this.target)
+			if (target)
 			{
-				this.OnTargetSelected();
+				this.CreateTargetInformation();
 			}
 			else
 			{
+				this.Log("Clearing target");
 				this.currentTargetInformation = this.targetTemporaryInformation = null;
 			}
 		}
 
-		private void OnTargetSelected()
+		private void CreateTargetInformation()
 		{
 			// If there's no target information or if the target is different from the previous
-			//if (this.currentTargetInformation == null || this.currentTargetInformation.target != this.target)
+			///if (this.currentTargetInformation == null || this.currentTargetInformation.target != this.target)
 			{
 				// If the target has as bookmark, use that information instead
 				StratusGameObjectBookmark bookmark = this.target.GetComponent<StratusGameObjectBookmark>();
@@ -337,10 +391,12 @@ namespace Stratus.Editor
 				{
 					this.informationMode = InformationMode.Bookmark;
 					this.currentTargetInformation = bookmark.information;
+					this.Log("Setting target from bookmark");
 				}
 				// Otherwise recreate the current target information
 				else if (this.currentTargetInformation == null || this.currentTargetInformation.target != this.target)
 				{
+					this.Log("Recreating current target information");
 					this.informationMode = InformationMode.Temporary;
 					this.targetTemporaryInformation = new StratusGameObjectInformation(this.target);
 					this.currentTargetInformation = this.targetTemporaryInformation;
@@ -352,18 +408,6 @@ namespace Stratus.Editor
 			//this.showComponent = this.GenerateAnimBools(this.currentTargetInformation.numberofComponents, false);
 			//this.componentList = new DropdownList<ComponentInformation>(this.currentTargetInformation.components, (ComponentInformation component) => component.name, this.lastComponentIndex);
 			this.SetTreeView();
-		}
-
-		//------------------------------------------------------------------------/
-		// Methods: Data
-		//------------------------------------------------------------------------/
-		private void Refresh()
-		{
-			this.currentTargetInformation?.Refresh();
-			foreach (var targetInformation in StratusGameObjectBookmark.availableInformation)
-			{
-				targetInformation.Refresh();
-			}
 		}
 
 		//------------------------------------------------------------------------/
@@ -380,15 +424,6 @@ namespace Stratus.Editor
 			{
 				this.SetTreeView();
 			}
-
-			//StratusEditorUtility.DrawContextMenu(this.DrawSettingsContext, StratusEditorUtility.ContextMenuType.Options);      
-		}
-
-		private GenericMenu DrawSettingsContext()
-		{
-			GenericMenu menu = new GenericMenu();
-			menu.AddItem("Refresh", false, this.Refresh);
-			return menu;
 		}
 
 		private void SetTreeView()
@@ -402,20 +437,21 @@ namespace Stratus.Editor
 
 				case Mode.Inspector:
 					if (this.hasTarget)
+					{
+						this.Log("Generating inspector tree");
 						members = StratusMemberInspectorTreeElement.GenerateInspectorTree(this.currentTargetInformation);
+					}
 					else
 						return;
 					break;
 			}
-			//this.favoritesTree = MemberInspectorTreeElement.GenerateFavoritesTree();
+
 			if (this.memberInspector == null)
 			{
 				this.memberInspector = new StratusMemberInspectorTreeView(this.treeViewState, members);
-				//Trace.Script("Created member inspector tree view");
 			}
 			else
 			{
-				//Trace.Script($"Set tree view with ({members.Count - 1}) members");
 				this.memberInspector.SetTree(members);
 			}
 
@@ -423,12 +459,12 @@ namespace Stratus.Editor
 			{
 				case Mode.WatchList:
 					this.memberInspector.EnableColumn(Column.GameObject);
-					this.memberInspector.DisableColumn(Column.Favorite);
+					this.memberInspector.DisableColumn(Column.Watch);
 					break;
 
 				case Mode.Inspector:
 					this.memberInspector.DisableColumn(Column.GameObject);
-					this.memberInspector.EnableColumn(Column.Favorite);
+					this.memberInspector.EnableColumn(Column.Watch);
 					break;
 			}
 

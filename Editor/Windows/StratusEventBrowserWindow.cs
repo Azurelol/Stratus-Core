@@ -19,7 +19,7 @@ namespace Stratus.Editor
 		/// <summary>
 		/// Basic information about an event
 		/// </summary>
-		public class EventInformation : IStratusLabeled
+		public class EventInformation : IStratusNamed
 		{
 			public string @namespace;
 			public string @class;
@@ -27,7 +27,7 @@ namespace Stratus.Editor
 			public string members;
 			private const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
-			string IStratusLabeled.label => this.name;
+			string IStratusNamed.name => this.name;
 
 			public EventInformation(System.Type type)
 			{
@@ -73,7 +73,7 @@ namespace Stratus.Editor
 							width = 175,
 							autoResize = true,
 							sortedAscending = true,
-							selectorFunction = (StratusTreeViewItem<EventTreeElement> element) => element.item.data.@namespace
+							selectorFunction = (StratusTreeViewItem<EventTreeElement> element) => element.element.data.@namespace
 						};
 						break;
 					case Columns.Class:
@@ -84,7 +84,7 @@ namespace Stratus.Editor
 							minWidth = 200,
 							width = 200,
 							autoResize = true,
-							selectorFunction = (StratusTreeViewItem<EventTreeElement> element) => element.item.data.members
+							selectorFunction = (StratusTreeViewItem<EventTreeElement> element) => element.element.data.members
 						};
 						break;
 					case Columns.Name:
@@ -95,7 +95,7 @@ namespace Stratus.Editor
 							minWidth = 200,
 							width = 200,
 							autoResize = true,
-							selectorFunction = (StratusTreeViewItem<EventTreeElement> element) => element.item.data.name
+							selectorFunction = (StratusTreeViewItem<EventTreeElement> element) => element.element.data.name
 						};
 						break;
 
@@ -107,7 +107,7 @@ namespace Stratus.Editor
 							minWidth = 400,
 							width = 450,
 							autoResize = true,
-							selectorFunction = (StratusTreeViewItem<EventTreeElement> element) => element.item.data.members
+							selectorFunction = (StratusTreeViewItem<EventTreeElement> element) => element.element.data.members
 						};
 						break;
 				}
@@ -119,16 +119,16 @@ namespace Stratus.Editor
 				switch (column)
 				{
 					case Columns.Name:
-						DefaultGUI.Label(cellRect, item.item.data.name, args.selected, args.focused);
+						DefaultGUI.Label(cellRect, item.element.data.name, args.selected, args.focused);
 						break;
 					case Columns.Class:
-						DefaultGUI.Label(cellRect, item.item.data.@class, args.selected, args.focused);
+						DefaultGUI.Label(cellRect, item.element.data.@class, args.selected, args.focused);
 						break;
 					case Columns.Members:
-						DefaultGUI.Label(cellRect, item.item.data.members, args.selected, args.focused);
+						DefaultGUI.Label(cellRect, item.element.data.members, args.selected, args.focused);
 						break;
 					case Columns.Namespace:
-						DefaultGUI.Label(cellRect, item.item.data.@namespace, args.selected, args.focused);
+						DefaultGUI.Label(cellRect, item.element.data.@namespace, args.selected, args.focused);
 						break;
 				}
 			}
@@ -155,6 +155,10 @@ namespace Stratus.Editor
 
 				});
 			}
+
+			protected override void OnItemDoubleClicked(EventTreeElement element)
+			{
+			}
 		}
 
 		//------------------------------------------------------------------------/
@@ -179,7 +183,7 @@ namespace Stratus.Editor
 
 		protected override void OnWindowGUI()
 		{
-			this.treeView.TreeViewGUI(this.guiPosition);
+			this.treeView.TreeViewGUI(this.positionToGUI);
 		}
 
 		[MenuItem(StratusCore.rootMenu + "Event Browser")]
@@ -193,7 +197,7 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		private IList<EventTreeElement> BuildEventTree()
 		{
-			this.events = StratusReflection.GetSubclass<Stratus.StratusEvent>();
+			this.events = StratusReflection.GetSubclass<StratusEvent>();
 			EventInformation[] eventsInformation = new EventInformation[this.events.Length];
 			for (int i = 0; i < this.events.Length; ++i)
 			{

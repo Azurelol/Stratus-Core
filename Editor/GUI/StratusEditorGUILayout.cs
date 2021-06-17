@@ -467,5 +467,24 @@ namespace Stratus.Editor
 			}
 			GUILayout.EndHorizontal();
 		}
+
+		public static void Rows(Rect[] rows, params Action<Rect>[] onRow)
+		{
+			if (rows.Length != onRow.Length)
+			{
+				throw new ArgumentException($"The amount of rows {rows.Length} and actions {onRow.Length} for them is not equal");
+			}
+
+			for (int i = 0; i < rows.Length; i++)
+			{
+				Rect row = rows[i];
+				Action<Rect> action = onRow[i];
+				Debug.Log($"{i} : {row}");
+				
+				//GUILayout.BeginArea(row);
+				action(row);
+				//GUILayout.EndArea();
+			}
+		}
 	}
 }

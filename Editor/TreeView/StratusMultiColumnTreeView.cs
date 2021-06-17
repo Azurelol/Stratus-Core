@@ -14,9 +14,7 @@ namespace Stratus.Editor
 		where TreeElementType : StratusTreeElement
 		where ColumnType : struct, IConvertible
 	{
-		//------------------------------------------------------------------------/
-		// Declarations
-		//------------------------------------------------------------------------/
+		#region Declarations
 		public class TreeViewColumn : MultiColumnHeaderState.Column
 		{
 			/// <summary>
@@ -40,30 +38,27 @@ namespace Stratus.Editor
 			{
 			}
 		}
+		#endregion
 
-
-		//------------------------------------------------------------------------/
-		// Fields
-		//------------------------------------------------------------------------/
+		#region Fields
 		public bool showControls = true;
 		private float rowHeights = 20f;
 		private float toggleWidth = 18f;
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Properties
-		//------------------------------------------------------------------------/
-
+		#region Properties
 		protected TreeViewColumn[] columns { get; private set; }
 		public bool initialized { get; private set; }
 		public StratusMultiColumnHeader stratusMultiColumnHeader { get; set; }
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Virtual
-		//------------------------------------------------------------------------/ 
+		#region Virtual
 		protected abstract TreeViewColumn BuildColumn(ColumnType columnType);
 		protected abstract void DrawColumn(Rect cellRect, StratusTreeViewItem<TreeElementType> item, ColumnType column, ref RowGUIArgs args);
 		protected abstract ColumnType GetColumn(int index);
 		protected abstract int GetColumnIndex(ColumnType columnType);
+		protected abstract void OnItemDoubleClicked(TreeElementType element);
+		#endregion
 
 		//------------------------------------------------------------------------/
 		// CTOR
@@ -168,6 +163,12 @@ namespace Stratus.Editor
 		protected override bool CanMultiSelect(TreeViewItem item)
 		{
 			return true;
+		}
+
+		protected override void DoubleClickedItem(int id)
+		{
+			var element = GetElement(id);
+			OnItemDoubleClicked(element);
 		}
 
 		//------------------------------------------------------------------------/
@@ -300,7 +301,7 @@ namespace Stratus.Editor
 			}
 
 			// Default
-			return types.Order(l => l.item.name, ascending);
+			return types.Order(l => l.element.name, ascending);
 		}
 
 

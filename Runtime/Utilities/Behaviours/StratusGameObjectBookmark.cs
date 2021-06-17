@@ -84,9 +84,8 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		// Methods: Watch
 		//------------------------------------------------------------------------/
-
 		/// <summary>
-		/// Updates the list of current favorited members
+		/// Updates the list of currently watched members
 		/// </summary>
 		public static void UpdateWatchList(bool invokeDelegate = false)
 		{

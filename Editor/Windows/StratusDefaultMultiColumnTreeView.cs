@@ -25,7 +25,7 @@ namespace Stratus.Editor
 						width = 175,
 						autoResize = true,
 						sortedAscending = true,
-						selectorFunction = (StratusTreeViewItem<StratusDefaultTreeElement> element) => element.item.name
+						selectorFunction = (StratusTreeViewItem<StratusDefaultTreeElement> element) => element.element.name
 					};
 					break;
 				case StratusDefaultColumn.Value:
@@ -36,7 +36,7 @@ namespace Stratus.Editor
 						minWidth = 200,
 						width = 400,
 						autoResize = true,
-						selectorFunction = (StratusTreeViewItem<StratusDefaultTreeElement> element) => element.item.value
+						selectorFunction = (StratusTreeViewItem<StratusDefaultTreeElement> element) => element.element.value
 					};
 					break;
 			}
@@ -48,10 +48,10 @@ namespace Stratus.Editor
 			switch (column)
 			{
 				case StratusDefaultColumn.Property:
-					DefaultGUI.Label(cellRect, item.item.name, args.selected, args.focused);
+					DefaultGUI.Label(cellRect, item.element.name, args.selected, args.focused);
 					break;
 				case StratusDefaultColumn.Value:
-					DefaultGUI.Label(cellRect, item.item.value, args.selected, args.focused);
+					DefaultGUI.Label(cellRect, item.element.value, args.selected, args.focused);
 					break;
 			}
 		}
@@ -77,6 +77,10 @@ namespace Stratus.Editor
 			{
 				menu.AddItem(new GUIContent(action.label), false, () => action.action());
 			}
+		}
+
+		protected override void OnItemDoubleClicked(StratusDefaultTreeElement element)
+		{
 		}
 	}
 

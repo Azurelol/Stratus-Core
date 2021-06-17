@@ -13,19 +13,16 @@ namespace Stratus
 	[Serializable]
 	public partial class StratusTreeElement
 	{
-		//------------------------------------------------------------------------/
-		// Fields
-		//------------------------------------------------------------------------/ 
+		#region Fields
 		[SerializeField] public int id;
 		[SerializeField] public string name;
 		[SerializeField] public int depth;
 
 		[NonSerialized] public StratusTreeElement parent;
 		[NonSerialized] public List<StratusTreeElement> children;
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Properties
-		//------------------------------------------------------------------------/ 
+		#region Properties
 		/// <summary>
 		/// Whether this tree element has children
 		/// </summary>
@@ -46,10 +43,9 @@ namespace Stratus
 		/// How many children in total this element has (including subchildren)
 		/// </summary>
 		public StratusTreeElement[] allChildren => GetAllChildren(this);
+		#endregion
 
-		//------------------------------------------------------------------------/
-		// Methods
-		//------------------------------------------------------------------------/ 
+		#region Constructors
 		public StratusTreeElement()
 		{
 		}
@@ -60,11 +56,16 @@ namespace Stratus
 			this.depth = depth;
 			this.id = id;
 		}
+		#endregion
 
+		#region Messages
 		public override string ToString()
 		{
 			return $"{name} id({id}) depth({depth})";
 		}
+
+		#endregion
+
 	}
 
 	/// <summary>
@@ -72,41 +73,53 @@ namespace Stratus
 	/// </summary>
 	/// <typeparam name="DataType"></typeparam>
 	public abstract class StratusTreeElement<DataType> : StratusTreeElement, ISerializationCallbackReceiver
-	  where DataType : class, IStratusLabeled
+	  where DataType : class, IStratusNamed
 	{
-		//----------------------------------------------------------------------/
-		// Fields
-		//----------------------------------------------------------------------/
+		#region Fields
 		[OdinSerialize]
 		public DataType data;
 		[OdinSerialize]
 		public string dataTypeName;
+		#endregion
 
-		//----------------------------------------------------------------------/
-		// Properties
-		//----------------------------------------------------------------------/    
+		#region Properties
 		public bool hasData => data != null;
 		public Type dataType => data.GetType();
 		public DataType[] childrenData { get; private set; }
+		#endregion
 
-		//----------------------------------------------------------------------/
-		// Messages
-		//----------------------------------------------------------------------/    
+		#region Constructors
+		public StratusTreeElement(DataType data)
+		{
+			name = data.name;
+			Set(data);
+		}
+
+		public StratusTreeElement()
+		{
+		}
+
+		public StratusTreeElement(string name, int depth, int id) : base(name, depth, id)
+		{
+		}
+		#endregion
+
+		#region Messages
 		public void OnBeforeSerialize()
 		{
 			if (hasData)
+			{
 				this.UpdateName();
+			}
 		}
 
 		public void OnAfterDeserialize()
 		{
 			this.childrenData = this.GetChildrenData();
 		}
+		#endregion
 
-		//----------------------------------------------------------------------/
-		// Methods
-		//----------------------------------------------------------------------/
-
+		#region Methods
 		public void Set(DataType data)
 		{
 			this.data = data;
@@ -121,7 +134,7 @@ namespace Stratus
 
 		protected virtual string GetName()
 		{
-			return data.label;
+			return data.name;
 		}
 
 		public DataType[] GetChildrenData()
@@ -131,12 +144,15 @@ namespace Stratus
 
 			List<DataType> children = new List<DataType>();
 			foreach (var child in this.children)
+			{
 				children.Add(((StratusTreeElement<DataType>)child).data);
+			}
 			return children.ToArray();
 		}
 
 		public StratusTreeElement<DataType> GetChild(int index) => (StratusTreeElement<DataType>)children[index];
 		public T GetParent<T>() where T : StratusTreeElement => (T)parent;
+		#endregion
 
 
 	}

@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+
 using Stratus.OdinSerializer;
+
 using UnityEngine;
 
 namespace Stratus
@@ -17,7 +20,7 @@ namespace Stratus
 		[NonSerialized]
 		private TreeElementType _root;
 		[SerializeField]
-		protected int _maxDepth; 
+		protected int _maxDepth;
 		#endregion
 
 		#region Properties
@@ -33,14 +36,35 @@ namespace Stratus
 				return this._root;
 			}
 		}
+		/// <summary>
+		/// The elements of the tree (including the root node at index 0)
+		/// </summary>
 		public TreeElementType[] elements => _elements.ToArray();
-
+		/// <summary>
+		/// Whether the tree is currently valid
+		/// </summary>
 		private bool valid => this._root != null;
-		public bool hasElements => this._elements.Count > 1;
+		/// <summary>
+		/// Whether the tree has elements (not including the root node)
+		/// </summary>
+		public bool hasElements => Count > 0;
+		/// <summary>
+		/// The current max depth of the tree, that is the depth of its deepest node
+		/// </summary>
 		public int maxDepth => this._maxDepth;
-		public static int rootDepth { get; } = -1;
-		public static int defaultDepth { get; } = 0;
-		public bool hasRoot => this.hasElements && this._elements[0].depth == rootDepth; 
+		/// <summary>
+		/// Whether the tree has a root element
+		/// </summary>
+		public bool hasRoot => this.hasElements && this._elements[0].depth == rootDepth;
+		/// <summary>
+		/// The number of elements in the tree, not including the root node.
+		/// </summary>
+		public int Count => _elements.Count - 1;
+		#endregion
+
+		#region Constants
+		public const int rootDepth = -1;
+		public const int defaultDepth = 0;
 		#endregion
 
 		#region Constructors
@@ -53,7 +77,7 @@ namespace Stratus
 		public StratusSerializedTree()
 		{
 			this.AddRoot();
-		} 
+		}
 		#endregion
 
 		private void BuildRootFromElements()
@@ -113,6 +137,9 @@ namespace Stratus
 			return this.idCounter++;
 		}
 
+		/// <summary>
+		/// Creates and adds the element to the tree
+		/// </summary>
 		protected TreeElementType CreateElement(int depth)
 		{
 			TreeElementType element = new TreeElementType();
@@ -136,7 +163,7 @@ namespace Stratus
 		#endregion
 
 		#region Interface
-		public void AddElement(TreeElementType element, int depth, bool generateID = true)
+		public void AddElement(TreeElementType element, int depth = defaultDepth, bool generateID = true)
 		{
 			OnAddElement(element, depth, generateID);
 		}
@@ -281,16 +308,21 @@ namespace Stratus
 			this._elements.Clear();
 			this.idCounter = 0;
 			this.AddRoot();
-		} 
+		}
 		#endregion
 	}
 
+	/// <summary>
+	/// A tree with an element type that encapsulates a data type
+	/// </summary>
+	/// <typeparam name="TreeElementType"></typeparam>
+	/// <typeparam name="DataType"></typeparam>
 	[Serializable]
-	public class StratusSerializedTree<TreeElementType, DataType> 
+	public class StratusSerializedTree<TreeElementType, DataType>
 		: StratusSerializedTree<TreeElementType>
 
 	  where TreeElementType : StratusTreeElement<DataType>, new()
-	  where DataType : class, IStratusLabeled
+	  where DataType : class, IStratusNamed
 	{
 		//------------------------------------------------------------------------/
 		// CTOR
@@ -314,7 +346,7 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		public void AddElement(DataType data)
 		{
-			this.AddElement(data, defaultDepth);
+			this.CreateElement(data, defaultDepth);
 		}
 
 		public TreeElementType AddChildElement(DataType data, TreeElementType parent)
@@ -358,23 +390,20 @@ namespace Stratus
 		{
 			foreach (DataType data in elementsData)
 			{
-				this.AddElement(data, depth);
+				this.CreateElement(data, depth);
 			}
 		}
 
 		#region Internal
-		private void AddElement(DataType data, int depth)
-		{
-			TreeElementType element = this.CreateElement(data, depth);
-			this._elements.Add(element);
-		}
-
+		/// <summary>
+		/// Creates and adds the element to the tree
+		/// </summary>
 		private TreeElementType CreateElement(DataType data, int depth)
 		{
 			TreeElementType element = CreateElement(depth);
 			element.Set(data);
 			return element;
-		} 
+		}
 		#endregion
 	}
 

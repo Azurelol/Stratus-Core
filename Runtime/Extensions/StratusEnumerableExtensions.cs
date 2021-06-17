@@ -273,6 +273,22 @@ namespace Stratus
 		}
 
 		/// <summary>
+		/// Perform an action on each item.
+		/// </summary>
+		/// <param name="source">The source.</param>
+		/// <param name="action">The action to perform.</param>
+		public static void ForEach<T>(this IEnumerable<T> source, params Action<T>[] actions)
+		{
+			var actionEnumerator = actions.GetEnumerator();
+			foreach (T item in source)
+			{
+				actionEnumerator.MoveNext();
+				var action = actionEnumerator.Current as Action<T>;
+				action(item);
+			}
+		}
+
+		/// <summary>
 		/// Perform an action on each item, in reverse
 		/// </summary>
 		/// <param name="source">The source.</param>
@@ -518,6 +534,21 @@ namespace Stratus
 			}
 
 			return dictionary;
+		}
+
+		/// <summary>
+		/// Merges two sequences together using a given selector
+		/// </summary>
+		public static IEnumerable<TResult> Merge<TFirst, TSecond, TResult>(this IEnumerable<TFirst> first,
+																	IEnumerable<TSecond> second,
+																	Func<TFirst, TSecond, TResult> selector)
+		{
+			var firstEnumerator = first.GetEnumerator();
+			var secondEnumerator = second.GetEnumerator();
+			while (firstEnumerator.MoveNext() && secondEnumerator.MoveNext())
+			{
+				yield return selector(firstEnumerator.Current, secondEnumerator.Current);
+			}
 		}
 	}
 }

@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace Stratus
 {
-	public interface IStratusLabeled
+	public interface IStratusNamed
 	{
-		string label { get; }
+		string name { get; }
 	}
 
 }

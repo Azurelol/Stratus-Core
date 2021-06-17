@@ -21,7 +21,7 @@ namespace Stratus
 		/// Serialized reference to the member of a component
 		/// </summary>
 		[Serializable]
-		public class MemberReference : IStratusLabeled
+		public class MemberReference : IStratusNamed
 		{
 			//------------------------------------------------------------------------/
 			// Fields
@@ -47,7 +47,7 @@ namespace Stratus
 			/// </summary>
 			public int memberIndex;
 			/// <summary>
-			/// Whether this memebr reference is favorited
+			/// Whether this member reference is favorited
 			/// </summary>
 			public bool isWatched = false;
 			/// <summary>
@@ -62,7 +62,7 @@ namespace Stratus
 			public string latestValueString { get; private set; }
 			public object latestValue { get; private set; }
 			public bool initialized { get; private set; } = false;
-			string IStratusLabeled.label => this.name;
+			string IStratusNamed.name => this.name;
 
 			//------------------------------------------------------------------------/
 			// CTOR
@@ -115,11 +115,39 @@ namespace Stratus
 				this.latestValue = value;
 				this.latestValueString = value != null ? value.ToString() : string.Empty;
 			}
+
+			/// <summary>
+			/// Clears the latest recorded value
+			/// </summary>
+			public void ClearValue()
+			{
+				this.latestValue = null;
+				this.latestValueString = string.Empty;
+			}
+
+			/// <summary>
+			/// Toggles whether this member is being watched
+			/// </summary>
+			public void ToggleWatch()
+			{
+				if (isWatched)
+				{
+					componentInfo.RemoveWatch(this);
+				}
+				else
+				{
+					componentInfo.Watch(this);
+				}
+			}
 		}
 
 		//------------------------------------------------------------------------/
 		// Fields
 		//------------------------------------------------------------------------/
+		/// <summary>
+		/// The name of the component type
+		/// </summary>
+		public string name;
 		/// <summary>
 		/// The component this information is about
 		/// </summary>
@@ -145,13 +173,10 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		// Properties
 		//------------------------------------------------------------------------/
-		public string name => type.Name;
 		public GameObject gameObject => component.gameObject;
 		public FieldInfo[] fields { get; private set; }
-		public Dictionary<string, FieldInfo> fieldsByName { get; private set; }
 		public int fieldCount => fields.Length;
 		public PropertyInfo[] properties { get; private set; }
-		public Dictionary<string, PropertyInfo> propertiesByName { get; private set; }
 		public int propertyCount => properties.Length;
 		public bool hasFields => fieldCount > 0;
 		public bool hasProperties => propertyCount > 0;
@@ -184,9 +209,7 @@ namespace Stratus
 			this.valid = true;
 		}
 
-		//------------------------------------------------------------------------/
-		// Methods
-		//------------------------------------------------------------------------/
+		#region Constructors
 		public StratusComponentInformation(Component component, bool alphabeticalSort = false)
 		{
 			if (component == null)
@@ -196,6 +219,7 @@ namespace Stratus
 			}
 
 			this.component = component;
+			this.name = component.GetType().Name;
 			this.InitializeComponentInformation();
 			this.memberReferences = this.CreateAllMemberReferences();
 			this.OnMemberReferencesSet();
@@ -216,8 +240,6 @@ namespace Stratus
 			this.fields = this.type.GetFields(bindingFlags);
 			if (this.alphabeticalSorted)
 				Array.Sort(this.fields, delegate (FieldInfo a, FieldInfo b) { return a.Name.CompareTo(b.Name); });
-			//this.fieldsByName = new Dictionary<string, FieldInfo>();
-			//this.fieldsByName.AddRange(this.fields, (FieldInfo fi) => fi.Name);
 			this.fieldValues = new object[this.fields.Length];
 			this.fieldValueStrings = new string[this.fields.Length];
 
@@ -225,15 +247,12 @@ namespace Stratus
 			this.properties = this.type.GetProperties(bindingFlags);
 			if (this.alphabeticalSorted)
 				Array.Sort(this.properties, delegate (PropertyInfo a, PropertyInfo b) { return a.Name.CompareTo(b.Name); });
-			//this.propertiesByName = new Dictionary<string, PropertyInfo>();
-			//this.propertiesByName.AddRange(this.properties, (PropertyInfo pi) => pi.Name);
 			this.propertyValues = new object[this.properties.Length];
 			this.propertyValueStrings = new string[this.properties.Length];
-
-			// Member Reference Dictionary
-
 		}
+		#endregion
 
+		#region Methods
 		/// <summary>
 		/// Updates the values of all fields and properties for this component
 		/// </summary>
@@ -301,6 +320,8 @@ namespace Stratus
 		public void RemoveWatch(StratusComponentInformation.MemberReference memberReference)
 		{
 			memberReference.isWatched = false;
+			memberReference.ClearValue();
+
 			if (this.AssertMemberIndex(memberReference))
 			{
 				this.watchList.RemoveAll(x => x.name == memberReference.name && x.memberIndex == memberReference.memberIndex);
@@ -446,7 +467,9 @@ namespace Stratus
 
 			// Optionally, let the bookmarks know
 			if (updateBookmark)
+			{
 				StratusGameObjectBookmark.UpdateWatchList();
+			}
 		}
 
 		/// <summary>
@@ -483,7 +506,8 @@ namespace Stratus
 
 			// Couldn't update this member reference
 			return false;
-		}
+		} 
+		#endregion
 
 		/// <summary>
 		/// Retrieves the value of the selected field

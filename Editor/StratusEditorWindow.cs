@@ -50,7 +50,7 @@ namespace Stratus.Editor
 		/// <summary>
 		/// The rect used by this window in GUI space, where top left is at position(0,0)
 		/// </summary>
-		protected Rect guiPosition => GUIUtility.ScreenToGUIRect(this.position);
+		protected Rect positionToGUI => GUIUtility.ScreenToGUIRect(this.position);
 
 		/// <summary>
 		/// Computes the current avaialble position within the window, after taking into account
@@ -62,7 +62,7 @@ namespace Stratus.Editor
 			{
 
 				Rect lastRect = GUILayoutUtility.GetLastRect();
-				Rect available = this.guiPosition;
+				Rect available = this.positionToGUI;
 				available.x += lastRect.x;
 				available.y += lastRect.height + lastRect.y;
 				available.height -= lastRect.y;

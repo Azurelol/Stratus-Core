@@ -9,14 +9,13 @@ using UnityEngine;
 
 namespace Stratus
 {
-
 	public class StratusTreeViewItem<T> : TreeViewItem where T : StratusTreeElement
 	{
-		public T item { get; set; }
+		public T element { get; set; }
 
 		public StratusTreeViewItem(int id, int depth, string displayName, T item) : base(id, depth, displayName)
 		{
-			this.item = item;
+			this.element = item;
 		}
 
 	}
@@ -96,6 +95,7 @@ namespace Stratus
 			}
 
 			this.rows.Clear();
+
 			// IF there's a search string, build the rows from it
 			if (!string.IsNullOrEmpty(this.searchString))
 			{
@@ -121,7 +121,7 @@ namespace Stratus
 		{
 			base.ContextClickedItem(id);
 			StratusTreeViewItem<TreeElementType> treeItem = (StratusTreeViewItem<TreeElementType>)this.FindItem(id, this.rootItem);
-			TreeElementType treeElement = treeItem.item;
+			TreeElementType treeElement = treeItem.element;
 
 			GenericMenu menu = new GenericMenu();
 			this.OnItemContextMenu(menu, treeElement);
@@ -154,7 +154,7 @@ namespace Stratus
 		public TreeElementType GetElement(int id)
 		{
 			StratusTreeViewItem<TreeElementType> treeItem = (StratusTreeViewItem<TreeElementType>)this.FindItem(id, this.rootItem);
-			return treeItem.item;
+			return treeItem.element;
 		}
 
 		public List<TreeElementType> GetElements(IList<int> ids)
@@ -246,7 +246,7 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		// Methods: Search
 		//------------------------------------------------------------------------/ 
-		private void Search(TreeElementType from, string search, List<TreeViewItem> result)
+		private void Search(TreeElementType sourceElement, string search, List<TreeViewItem> result)
 		{
 			if (string.IsNullOrEmpty(search))
 			{
@@ -258,9 +258,12 @@ namespace Stratus
 
 			// Search for matching elements starting from the given element
 			Stack<TreeElementType> stack = new Stack<TreeElementType>();
-			foreach (StratusTreeElement element in from.children)
+			if (sourceElement.hasChildren)
 			{
-				stack.Push((TreeElementType)element);
+				foreach (StratusTreeElement element in sourceElement.children)
+				{
+					stack.Push((TreeElementType)element);
+				}
 			}
 
 			while (stack.Count > 0)
@@ -363,7 +366,7 @@ namespace Stratus
 						bool validDrag = this.ValidDrag(args.parentItem, draggedRows);
 						if (args.performDrop && validDrag)
 						{
-							TreeElementType parentData = ((StratusTreeViewItem<TreeElementType>)args.parentItem).item;
+							TreeElementType parentData = ((StratusTreeViewItem<TreeElementType>)args.parentItem).element;
 							if (this.IsParentValid(parentData))
 							{
 								this.OnDropDraggedElementsAtIndex(draggedRows, parentData, args.insertAtIndex == -1 ? 0 : args.insertAtIndex);
@@ -397,7 +400,7 @@ namespace Stratus
 			List<StratusTreeElement> draggedElements = new List<StratusTreeElement>();
 			foreach (TreeViewItem x in draggedRows)
 			{
-				draggedElements.Add(((StratusTreeViewItem<TreeElementType>)x).item);
+				draggedElements.Add(((StratusTreeViewItem<TreeElementType>)x).element);
 			}
 
 			int[] selectedIDs = draggedElements.Select(x => x.id).ToArray();
