@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 namespace Stratus
@@ -21,7 +22,7 @@ namespace Stratus
 		public StratusGameObjectInformation information => this._information;
 		public static StratusGameObjectInformation[] availableInformation { get; private set; } = new StratusGameObjectInformation[0];
 		public static bool hasAvailableInformation => availableInformation != null && availableInformation.Length > 0;
-		public static StratusComponentInformation.MemberReference[] watchList { get; private set; } = new StratusComponentInformation.MemberReference[0];
+		public static StratusComponentMemberWatchInfo[] watchList { get; private set; } = new StratusComponentMemberWatchInfo[0];
 		public static bool hasWatchList => watchList != null && watchList.Length > 0;
 		public static System.Action onUpdate { get; set; } = new System.Action(() => { });
 
@@ -73,11 +74,11 @@ namespace Stratus
 
 		public void SetInformation(StratusGameObjectInformation information)
 		{
-			if (information.target != this.gameObject)
+			if (information.gameObject != this.gameObject)
 				return;
 
 			this._information = (StratusGameObjectInformation)information.CloneJSON();
-			this._information.CacheReferences();
+			this._information.UpdateMemberReferences();
 			StratusGameObjectBookmark.UpdateAvailable();
 		}
 
@@ -89,18 +90,18 @@ namespace Stratus
 		/// </summary>
 		public static void UpdateWatchList(bool invokeDelegate = false)
 		{
-			List<StratusComponentInformation.MemberReference> values = new List<StratusComponentInformation.MemberReference>();
+			List<StratusComponentMemberWatchInfo> values = new List<StratusComponentMemberWatchInfo>();
 			foreach (var targetInfo in availableInformation)
 			{
-				// Update the watch list cache first
-				targetInfo.CacheWatchList();
 				// Now add that object's members onto this
 				values.AddRange(targetInfo.watchList);
 			}
 			StratusGameObjectBookmark.watchList = values.ToArray();
 
 			if (invokeDelegate)
+			{
 				StratusGameObjectBookmark.onUpdate();
+			}
 		}
 
 		/// <summary>
@@ -116,7 +117,9 @@ namespace Stratus
 			StratusGameObjectBookmark.availableInformation = availableInformation.ToArray();
 
 			if (invokeDelegate)
+			{
 				StratusGameObjectBookmark.onUpdate();
+			}
 		}
 
 		/// <summary>

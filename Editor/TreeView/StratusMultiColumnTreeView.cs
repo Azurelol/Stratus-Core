@@ -60,6 +60,10 @@ namespace Stratus.Editor
 		protected abstract void OnItemDoubleClicked(TreeElementType element);
 		#endregion
 
+		#region Events
+		public event Action<ColumnType> onColumnSortedChanged;
+		#endregion
+
 		//------------------------------------------------------------------------/
 		// CTOR
 		//------------------------------------------------------------------------/
@@ -113,6 +117,7 @@ namespace Stratus.Editor
 		private void OnSortingChanged(MultiColumnHeader multiColumnHeader)
 		{
 			this.SortIfNeeded(this.rootItem, this.GetRows());
+			this.onColumnSortedChanged?.Invoke(GetColumn(multiColumnHeader.sortedColumnIndex));
 		}
 
 		protected override IList<TreeViewItem> BuildRows(TreeViewItem root)
@@ -247,6 +252,11 @@ namespace Stratus.Editor
 		public void DisableColumn(ColumnType column)
 		{
 			this.stratusMultiColumnHeader.DisableColumn(this.GetColumnIndex(column));
+		}
+
+		public void SortByColumn(ColumnType column, bool ascending = true)
+		{			
+			this.stratusMultiColumnHeader.SetSorting(GetColumnIndex(column), ascending);
 		}
 
 		//------------------------------------------------------------------------/

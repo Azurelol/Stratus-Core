@@ -276,6 +276,21 @@ namespace Stratus
 			return sb.ToString();
 		}
 
+		public static Dictionary<Key, List<Value>> ToDictionaryOfList<Key, Value>(this IEnumerable<Value> values, Func<Value, Key> selector)
+		{
+			Dictionary<Key, List<Value>> result = new Dictionary<Key, List<Value>>();
+			foreach(var value in values)
+			{
+				Key key = selector(value);
+				if (!result.ContainsKey(key))
+				{
+					result.Add(key, new List<Value>());
+				}
+				result[key].Add(value);
+			}
+			return result;
+		}
+
 
 	}
 }

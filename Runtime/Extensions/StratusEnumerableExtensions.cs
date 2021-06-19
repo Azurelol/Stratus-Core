@@ -504,13 +504,16 @@ namespace Stratus
 			bool unique = true)
 		{
 			Dictionary<Key, Value> dictionary = new Dictionary<Key, Value>();
-			if (unique)
+			if (source != null)
 			{
-				dictionary.AddRange(keyFunction, source);
-			}
-			else
-			{
-				dictionary.AddRangeUnique(keyFunction, source);
+				if (unique)
+				{
+					dictionary.AddRange(keyFunction, source);
+				}
+				else
+				{
+					dictionary.AddRangeUnique(keyFunction, source);
+				}
 			}
 
 			return dictionary;

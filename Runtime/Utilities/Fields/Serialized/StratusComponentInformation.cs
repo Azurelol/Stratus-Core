@@ -8,139 +8,13 @@ using System;
 
 namespace Stratus
 {
+
 	/// <summary>
 	/// Information about a component
 	/// </summary>
 	[Serializable]
 	public class StratusComponentInformation : ISerializationCallbackReceiver
 	{
-		//------------------------------------------------------------------------/
-		// Declarations
-		//------------------------------------------------------------------------/  
-		/// <summary>
-		/// Serialized reference to the member of a component
-		/// </summary>
-		[Serializable]
-		public class MemberReference : IStratusNamed
-		{
-			//------------------------------------------------------------------------/
-			// Fields
-			//------------------------------------------------------------------------/
-			/// <summary>
-			/// The name of this member
-			/// </summary>
-			public string name;
-			/// <summary>
-			/// The type for this member
-			/// </summary>
-			public MemberTypes type;
-			/// <summary>
-			/// The name of the component this member is part of
-			/// </summary>
-			public string componentName;
-			/// <summary>
-			/// The name of the GameObject for the component this member is a part of 
-			/// </summary>
-			public string gameObjectName => componentInfo.gameObject.name;
-			/// <summary>
-			/// THe index to this member for either the fields or properties of the component
-			/// </summary>
-			public int memberIndex;
-			/// <summary>
-			/// Whether this member reference is favorited
-			/// </summary>
-			public bool isWatched = false;
-			/// <summary>
-			/// Information regarding the component this member belongs to
-			/// </summary>
-			[NonSerialized]
-			public StratusComponentInformation componentInfo;
-
-			//------------------------------------------------------------------------/
-			// Properties
-			//------------------------------------------------------------------------/
-			public string latestValueString { get; private set; }
-			public object latestValue { get; private set; }
-			public bool initialized { get; private set; } = false;
-			string IStratusNamed.name => this.name;
-
-			//------------------------------------------------------------------------/
-			// CTOR
-			//------------------------------------------------------------------------/
-			public MemberReference(MemberInfo member, StratusComponentInformation componentInfo, int index)
-			{
-				this.name = member.Name;
-				this.componentName = componentInfo.name;
-				this.type = member.MemberType;
-				this.memberIndex = index;
-				this.Initialize(componentInfo);
-			}
-
-			//------------------------------------------------------------------------/
-			// Methods
-			//------------------------------------------------------------------------/
-			/// <summary>
-			/// Initializes this member reference, linking it to the component it's part of.
-			/// This needs to be done before attempting to retrieve the value
-			/// </summary>
-			/// <param name="componentInfo"></param>
-			public void Initialize(StratusComponentInformation componentInfo)
-			{
-				this.componentInfo = componentInfo;
-				this.initialized = true;
-			}
-
-			/// <summary>
-			/// Retrieves the latest value for this member
-			/// </summary>
-			public void UpdateValue()
-			{
-				object value = null;
-				try
-				{
-					switch (this.type)
-					{
-						case MemberTypes.Field:
-							value = componentInfo.fields[memberIndex].GetValue(componentInfo.component);
-							break;
-						case MemberTypes.Property:
-							value = componentInfo.properties[memberIndex].GetValue(componentInfo.component);
-							break;
-					}
-				}
-				catch
-				{
-				}
-
-				this.latestValue = value;
-				this.latestValueString = value != null ? value.ToString() : string.Empty;
-			}
-
-			/// <summary>
-			/// Clears the latest recorded value
-			/// </summary>
-			public void ClearValue()
-			{
-				this.latestValue = null;
-				this.latestValueString = string.Empty;
-			}
-
-			/// <summary>
-			/// Toggles whether this member is being watched
-			/// </summary>
-			public void ToggleWatch()
-			{
-				if (isWatched)
-				{
-					componentInfo.RemoveWatch(this);
-				}
-				else
-				{
-					componentInfo.Watch(this);
-				}
-			}
-		}
-
 		//------------------------------------------------------------------------/
 		// Fields
 		//------------------------------------------------------------------------/
@@ -159,7 +33,7 @@ namespace Stratus
 		/// <summary>
 		/// A list of all members fields and properties of this component
 		/// </summary>
-		public List<MemberReference> memberReferences;
+		public List<StratusComponentMemberInfo> memberReferences;
 
 		[NonSerialized]
 		public Type type;
@@ -180,10 +54,8 @@ namespace Stratus
 		public int propertyCount => properties.Length;
 		public bool hasFields => fieldCount > 0;
 		public bool hasProperties => propertyCount > 0;
-		public Dictionary<string, MemberReference> membersByName { get; private set; }
-		public List<MemberReference> watchList { get; private set; } = new List<MemberReference>();
-		public bool hasWatchList => watchList.NotEmpty();
-		public bool valid { get; private set; }
+		public Dictionary<string, StratusComponentMemberInfo> membersByName { get; private set; }		
+		public bool valid => component != null;
 
 		//------------------------------------------------------------------------/
 		// Messages
@@ -195,18 +67,14 @@ namespace Stratus
 		public void OnAfterDeserialize()
 		{
 			// If there's no component, stuff is gone!
-			if (this.component == null)
+			if (!valid)
 			{
-				this.valid = false;
 				return;
 			}
 
 			// Initialize step
 			this.InitializeComponentInformation();
 			this.InitializeMemberReferences();
-
-			// This information is now valid
-			this.valid = true;
 		}
 
 		#region Constructors
@@ -214,7 +82,6 @@ namespace Stratus
 		{
 			if (component == null)
 			{
-				this.valid = false;
 				return;
 			}
 
@@ -223,9 +90,6 @@ namespace Stratus
 			this.InitializeComponentInformation();
 			this.memberReferences = this.CreateAllMemberReferences();
 			this.OnMemberReferencesSet();
-
-			// This information is now valid
-			this.valid = true;
 		}
 
 		/// <summary>
@@ -287,68 +151,66 @@ namespace Stratus
 		}
 
 		/// <summary>
-		/// Updates the values of all the watched variables for this component
+		/// Updates the value of the given member (if it belongs to this component)
 		/// </summary>
-		public void UpdateWatchValues()
+		/// <param name="component"></param>
+		public bool UpdateValue(IStratusComponentMemberInfo member)
 		{
-			foreach (var member in this.watchList)
+			if (!membersByName.ContainsKey(member.name)
+				|| member.componentName != this.name)
 			{
-				member.UpdateValue();
+				return false;
 			}
+
+			return membersByName[member.name].UpdateValue(this);
 		}
 
 		/// <summary>
-		/// Adds a member to the watch list
+		/// Updates the value of the given member (if it belongs to this component)
 		/// </summary>
-		/// <param name="member"></param>
-		/// <param name="componentInfo"></param>
-		/// <param name="memberIndex"></param>
-		public void Watch(StratusComponentInformation.MemberReference memberReference)
+		/// <param name="component"></param>
+		public bool ClearValue(IStratusComponentMemberInfo member)
 		{
-			memberReference.isWatched = true;
-			if (this.AssertMemberIndex(memberReference))
+			if (!membersByName.ContainsKey(member.name)
+				|| member.componentName != this.name)
 			{
-				this.watchList.Add(memberReference);
-				StratusGameObjectBookmark.UpdateWatchList(true);
+				return false;
 			}
+
+			membersByName[member.name].ClearValue();
+			return true;
 		}
 
 		/// <summary>
-		/// Removes a member from the watch list
+		/// Updates the values of all the variables for this component
 		/// </summary>
-		/// <param name="memberReference"></param>
-		public void RemoveWatch(StratusComponentInformation.MemberReference memberReference)
+		public void ClearValues()
 		{
-			memberReference.isWatched = false;
-			memberReference.ClearValue();
-
-			if (this.AssertMemberIndex(memberReference))
+			foreach (var member in this.memberReferences)
 			{
-				this.watchList.RemoveAll(x => x.name == memberReference.name && x.memberIndex == memberReference.memberIndex);
-				StratusGameObjectBookmark.UpdateWatchList(true);
+				member.ClearValue();
 			}
-		}
+		}	
 
 		/// <summary>
 		/// Saves all member references for this GameObject
 		/// </summary>
 		/// <returns></returns>
-		private List<MemberReference> CreateAllMemberReferences()
+		private List<StratusComponentMemberInfo> CreateAllMemberReferences()
 		{
 			// Make a reference for all members
-			List<MemberReference> memberReferences = new List<MemberReference>();
+			List<StratusComponentMemberInfo> memberReferences = new List<StratusComponentMemberInfo>();
 			for (int f = 0; f < this.fields.Length; ++f)
 			{
-				MemberReference memberReference = new MemberReference(this.fields[f], this, f);
+				StratusComponentMemberInfo memberReference = new StratusComponentMemberInfo(this.fields[f], this, f);
 				memberReferences.Add(memberReference);
 			}
 
 			for (int p = 0; p < this.properties.Length; ++p)
 			{
-				MemberReference memberReference = new MemberReference(this.properties[p], this, p);
+				StratusComponentMemberInfo memberReference = new StratusComponentMemberInfo(this.properties[p], this, p);
 				memberReferences.Add(memberReference);
 			}
-			this.watchList = new List<MemberReference>();
 			return memberReferences;
 		}
 
@@ -357,21 +219,15 @@ namespace Stratus
 		/// </summary>
 		private void InitializeMemberReferences()
 		{
-			// Set all member references, also record initial watchlist
-			this.watchList = new List<MemberReference>();
-
 			// Validate
-			Predicate<MemberReference> validate = (MemberReference member) =>
+			Predicate<StratusComponentMemberInfo> validate = (StratusComponentMemberInfo member) =>
 			{
 				return AssertMemberIndex(member);
 			};
 
 			// Iteration
-			System.Action<MemberReference> iterate = (MemberReference member) =>
+			Action<StratusComponentMemberInfo> iterate = (StratusComponentMemberInfo member) =>
 			{
-				member.Initialize(this);
-				if (member.isWatched)
-					this.watchList.Add(member);
 			};
 
 			this.memberReferences.ForEachRemoveInvalid(iterate, validate);
@@ -380,8 +236,8 @@ namespace Stratus
 
 		private void OnMemberReferencesSet()
 		{
-			this.membersByName = new Dictionary<string, MemberReference>();
-			this.membersByName.AddRangeUnique((MemberReference member) => member.name, this.memberReferences);
+			this.membersByName = new Dictionary<string, StratusComponentMemberInfo>();
+			this.membersByName.AddRangeUnique((StratusComponentMemberInfo member) => member.name, this.memberReferences);
 		}
 
 		/// <summary>
@@ -401,7 +257,7 @@ namespace Stratus
 				{
 					changed |= true;
 					Debug.Log($"New field detected! {field.Name}");
-					MemberReference memberReference = new MemberReference(field, this, i);
+					StratusComponentMemberInfo memberReference = new StratusComponentMemberInfo(field, this, i);
 					this.memberReferences.Add(memberReference);
 					this.membersByName.Add(field.Name, memberReference);
 				}
@@ -417,7 +273,7 @@ namespace Stratus
 				{
 					changed |= true;
 					Debug.Log($"New property detected! {property.Name}");
-					MemberReference memberReference = new MemberReference(property, this, i);
+					StratusComponentMemberInfo memberReference = new StratusComponentMemberInfo(property, this, i);
 					this.memberReferences.Add(memberReference);
 					this.membersByName.Add(property.Name, memberReference);
 				}
@@ -431,10 +287,10 @@ namespace Stratus
 		/// </summary>
 		/// <param name="memberReference"></param>
 		/// <returns></returns>
-		private bool AssertMemberIndex(MemberReference memberReference)
+		private bool AssertMemberIndex(StratusComponentMemberInfo memberReference)
 		{
 			int index = memberReference.memberIndex;
-			switch (memberReference.type)
+			switch (memberReference.memberType)
 			{
 				case MemberTypes.Field:
 					if (!this.fields.ContainsIndex(index))
@@ -453,33 +309,16 @@ namespace Stratus
 			return true;
 		}
 
-		/// <summary>
-		/// Clears the watchlist
-		/// </summary>
-		public void ClearWatchList(bool updateBookmark = true)
-		{
-			// Clear the watch list
-			foreach (var member in this.watchList)
-			{
-				member.isWatched = false;
-			}
-			this.watchList.Clear();
 
-			// Optionally, let the bookmarks know
-			if (updateBookmark)
-			{
-				StratusGameObjectBookmark.UpdateWatchList();
-			}
-		}
 
 		/// <summary>
 		/// Attempts to update the member index for this member, if possible
 		/// </summary>
 		/// <param name="memberReference"></param>
 		/// <returns></returns>
-		private bool UpdateMemberIndex(MemberReference memberReference)
+		private bool UpdateMemberIndex(StratusComponentMemberInfo memberReference)
 		{
-			if (memberReference.type == MemberTypes.Field)
+			if (memberReference.memberType == MemberTypes.Field)
 			{
 				for (int i = 0; i < this.fields.Length; ++i)
 				{
@@ -491,7 +330,7 @@ namespace Stratus
 					}
 				}
 			}
-			else if (memberReference.type == MemberTypes.Property)
+			else if (memberReference.memberType == MemberTypes.Property)
 			{
 				for (int i = 0; i < this.properties.Length; ++i)
 				{
@@ -506,7 +345,7 @@ namespace Stratus
 
 			// Couldn't update this member reference
 			return false;
-		} 
+		}
 		#endregion
 
 		/// <summary>
