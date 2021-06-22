@@ -8,19 +8,11 @@ using UnityEngine;
 
 namespace Stratus.Editor
 {
+	#region Inspector
 	[Serializable]
 	public class StratusMemberInspectorTreeElement : StratusTreeElement<StratusComponentMemberInfo>
 	{
-		public static List<StratusMemberInspectorTreeElement> GenerateFavoritesTree()
-		{
-			// @TODO : NOt impl
-			StratusComponentMemberInfo[] members = new StratusComponentMemberInfo[] { };
-			//StratusGameObjectBookmark.watchList;
-			List<StratusMemberInspectorTreeElement> elements = StratusMemberInspectorTreeElement.GenerateFlatTree<StratusMemberInspectorTreeElement, StratusComponentMemberInfo>(members);
-			return elements;
-		}
-
-		public static IList<StratusMemberInspectorTreeElement> GenerateInspectorTree(StratusGameObjectInformation target)
+		public static IList<StratusMemberInspectorTreeElement> Generate(StratusGameObjectInformation target)
 		{
 			var tree = new StratusSerializedTree<StratusMemberInspectorTreeElement, StratusComponentMemberInfo>();
 			tree.AddElements(target.visibleMembers, 0);
@@ -31,10 +23,14 @@ namespace Stratus.Editor
 	public class StratusMemberInspectorTreeView : StratusMultiColumnTreeView<StratusMemberInspectorTreeElement, StratusMemberInspectorWindow.Column>
 	{
 		public StratusGameObjectInformation gameObject { get; private set; }
+		public StratusComponentMemberWatchList watchList { get; private set; }
 
-		public StratusMemberInspectorTreeView(TreeViewState state, StratusGameObjectInformation gameObject, IList<StratusMemberInspectorTreeElement> data) : base(state, data)
+		public StratusMemberInspectorTreeView(TreeViewState state, StratusGameObjectInformation gameObject, IList<StratusMemberInspectorTreeElement> data, StratusComponentMemberWatchList watchList)
+			: base(state, data)
 		{
 			this.gameObject = gameObject;
+			this.watchList = watchList;
+			this.watchList.onUpdated += this.Reload;
 		}
 
 		protected override TreeViewColumn BuildColumn(StratusMemberInspectorWindow.Column columnType)
@@ -54,7 +50,7 @@ namespace Stratus.Editor
 						maxWidth = 45,
 						autoResize = false,
 						allowToggleVisibility = false,
-						selectorFunction = (StratusTreeViewItem<StratusMemberInspectorTreeElement> element) => gameObject.IsWatched(element.element.data).ToString()
+						selectorFunction = (StratusTreeViewItem<StratusMemberInspectorTreeElement> element) => watchList.Contains(element.element.data).ToString()
 					};
 					break;
 				case StratusMemberInspectorWindow.Column.GameObject:
@@ -135,7 +131,7 @@ namespace Stratus.Editor
 			switch (column)
 			{
 				case StratusMemberInspectorWindow.Column.Watch:
-					if (gameObject.IsWatched(item.element.data))
+					if (watchList.Contains(item.element.data))
 					{
 						this.DrawIcon(cellRect, StratusGUIStyles.starIcon);
 					}
@@ -171,37 +167,154 @@ namespace Stratus.Editor
 
 		protected override void OnContextMenu(GenericMenu menu)
 		{
-
 		}
 
 		protected override void OnItemContextMenu(GenericMenu menu, StratusMemberInspectorTreeElement treeElement)
 		{
 			StratusComponentMemberInfo member = treeElement.data;
 
-			//// 1. Select
-			//menu.AddItem(new GUIContent("Select"), false, () => Selection.activeGameObject = member.componentInfo.gameObject);
-
 			menu.AddItem(new GUIContent("Fetch"), false, () => gameObject.UpdateValue(member));
 			menu.AddItem(new GUIContent("Copy"), false, () => GUIUtility.systemCopyBuffer = member.latestValueString);
 
 			// 2. Watch
-			if (gameObject.IsWatched(member))
+			if (watchList.Contains(member))
 			{
-				menu.AddItem(new GUIContent("Remove Watch"), false, () => gameObject.RemoveWatch(member));
+				menu.AddItem(new GUIContent("Remove Watch"), false, () => watchList.Remove(member));
 			}
 			else
 			{
 				menu.AddItem(new GUIContent("Watch"), false, () =>
 				{
-					gameObject.AddWatch(member);
+					watchList.Add(member);
 				});
 			}
 		}
 
-
 		protected override void OnItemDoubleClicked(StratusMemberInspectorTreeElement element)
 		{
-			gameObject.ToggleWatch(element.data);
+			watchList.Toggle(element.data);
 		}
 	}
+	#endregion
+
+
+	#region Watch
+	[Serializable]
+	public class StratusComponentMemberWatchTreeElement : StratusTreeElement<StratusComponentMemberWatchInfo>
+	{
+		public static IList<StratusComponentMemberWatchTreeElement> Generate(StratusComponentMemberWatchList target)
+		{
+			var tree = new StratusSerializedTree<StratusComponentMemberWatchTreeElement, StratusComponentMemberWatchInfo>();
+			tree.AddElements(target.members, 0);
+			return tree.elements;
+		}
+	}
+
+	public enum StratusComponentMemberWatchViewColumn
+	{
+		Component,
+		Member,
+		Type
+	}
+
+	public class StratusMemberInspectorWatchListTreeView : StratusMultiColumnTreeView<StratusComponentMemberWatchTreeElement, StratusComponentMemberWatchViewColumn>
+	{
+		public StratusComponentMemberWatchList watchList { get; private set; }
+
+		public StratusMemberInspectorWatchListTreeView(TreeViewState state, StratusComponentMemberWatchList watchList)
+			: base(state, new StratusValue<IList<StratusComponentMemberWatchTreeElement>>(() => StratusComponentMemberWatchTreeElement.Generate(watchList)))
+		{
+			this.watchList = watchList;
+			this.watchList.onUpdated += this.Reload;
+		}
+
+		protected override TreeViewColumn BuildColumn(StratusComponentMemberWatchViewColumn columnType)
+		{
+			TreeViewColumn column = null;
+			switch (columnType)
+			{
+				case StratusComponentMemberWatchViewColumn.Component:
+					column = new TreeViewColumn
+					{
+						headerContent = new GUIContent("Component"),
+						sortedAscending = true,
+						sortingArrowAlignment = TextAlignment.Right,
+						width = 250,
+						minWidth = 150,
+						maxWidth = 300,
+						autoResize = false,
+						allowToggleVisibility = true,
+						selectorFunction = (StratusTreeViewItem<StratusComponentMemberWatchTreeElement> element) => element.element.data.componentName
+					};
+					break;
+				case StratusComponentMemberWatchViewColumn.Type:
+					column = new TreeViewColumn
+					{
+						headerContent = new GUIContent("Type"),
+						sortedAscending = true,
+						sortingArrowAlignment = TextAlignment.Center,
+						width = 100,
+						minWidth = 100,
+						autoResize = false,
+						allowToggleVisibility = true,
+						selectorFunction = (StratusTreeViewItem<StratusComponentMemberWatchTreeElement> element) => element.element.data.typeName
+					};
+					break;
+				case StratusComponentMemberWatchViewColumn.Member:
+					column = new TreeViewColumn
+					{
+						headerContent = new GUIContent("Member"),
+						sortedAscending = true,
+						sortingArrowAlignment = TextAlignment.Center,
+						width = 100,
+						minWidth = 80,
+						maxWidth = 120,
+						autoResize = false,
+						allowToggleVisibility = false,
+						selectorFunction = (StratusTreeViewItem<StratusComponentMemberWatchTreeElement> element) => element.element.data.name
+					};
+					break;
+			}
+			return column;
+		}
+
+		protected override void DrawColumn(Rect cellRect, StratusTreeViewItem<StratusComponentMemberWatchTreeElement> item, StratusComponentMemberWatchViewColumn column, ref RowGUIArgs args)
+		{
+			switch (column)
+			{
+				case StratusComponentMemberWatchViewColumn.Component:
+					DefaultGUI.Label(cellRect, item.element.data.componentName, args.selected, args.focused);
+					break;
+				case StratusComponentMemberWatchViewColumn.Type:
+					DefaultGUI.Label(cellRect, item.element.data.typeName, args.selected, args.focused);
+					break;
+				case StratusComponentMemberWatchViewColumn.Member:
+					DefaultGUI.Label(cellRect, item.element.data.name, args.selected, args.focused);
+					break;
+			}
+		}
+
+		protected override StratusComponentMemberWatchViewColumn GetColumn(int index)
+		{
+			return (StratusComponentMemberWatchViewColumn)index;
+		}
+
+		protected override void OnContextMenu(GenericMenu menu)
+		{
+		}
+
+		protected override void OnItemContextMenu(GenericMenu menu, StratusComponentMemberWatchTreeElement treeElement)
+		{
+			StratusComponentMemberWatchInfo member = treeElement.data;
+			menu.AddItem(new GUIContent("Remove"), false, () =>
+			{
+				watchList.Remove(member);
+			});
+		}
+
+		protected override void OnItemDoubleClicked(StratusComponentMemberWatchTreeElement element)
+		{
+		}
+	}
+	#endregion
 }

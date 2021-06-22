@@ -10,9 +10,10 @@ using UnityEngine.Assertions;
 
 namespace Stratus.Editor
 {
-	public abstract class StratusMultiColumnTreeView<TreeElementType, ColumnType> : StratusTreeViewWithTreeModel<TreeElementType>
+	public abstract class StratusMultiColumnTreeView<TreeElementType, ColumnType> 
+		: StratusTreeViewWithTreeModel<TreeElementType>
 		where TreeElementType : StratusTreeElement
-		where ColumnType : struct, IConvertible
+		where ColumnType : Enum
 	{
 		#region Declarations
 		public class TreeViewColumn : MultiColumnHeaderState.Column
@@ -56,7 +57,7 @@ namespace Stratus.Editor
 		protected abstract TreeViewColumn BuildColumn(ColumnType columnType);
 		protected abstract void DrawColumn(Rect cellRect, StratusTreeViewItem<TreeElementType> item, ColumnType column, ref RowGUIArgs args);
 		protected abstract ColumnType GetColumn(int index);
-		protected abstract int GetColumnIndex(ColumnType columnType);
+		protected virtual int GetColumnIndex(ColumnType columnType) => (int)(object)columnType;
 		protected abstract void OnItemDoubleClicked(TreeElementType element);
 		#endregion
 
@@ -67,7 +68,7 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		// CTOR
 		//------------------------------------------------------------------------/
-		public StratusMultiColumnTreeView(TreeViewState state, IList<TreeElementType> data)
+		public StratusMultiColumnTreeView(TreeViewState state, StratusValue<IList<TreeElementType>> data)
 			: base(state, new StratusTreeModel<TreeElementType>(data))
 		{
 			this.columns = this.BuildColumns();
@@ -77,7 +78,7 @@ namespace Stratus.Editor
 		}
 
 		public StratusMultiColumnTreeView(TreeViewState state, IEnumerable<TreeElementType> data)
-			: this(state, data.ToList())
+			: this(state, new StratusValue<IList<TreeElementType>>(data.ToList()))
 		{
 		}
 
@@ -100,10 +101,6 @@ namespace Stratus.Editor
 			this.rowHeight = this.rowHeights;
 			this.customFoldoutYOffset = (this.rowHeight - EditorGUIUtility.singleLineHeight) * 0.5f;
 			this.extraSpaceBeforeIconAndLabel = this.toggleWidth;
-
-			// Search
-			//this.search = new SearchField();
-			//this.search.downOrUpArrowKeyPressed += this.SetFocusAndEnsureSelectedItem;
 
 			// Callbacks
 			this.multiColumnHeader.sortingChanged += this.OnSortingChanged;
@@ -254,7 +251,7 @@ namespace Stratus.Editor
 			this.stratusMultiColumnHeader.DisableColumn(this.GetColumnIndex(column));
 		}
 
-		public void SortByColumn(ColumnType column, bool ascending = true)
+		public void SortByColumn(ColumnType column, bool ascending = false)
 		{			
 			this.stratusMultiColumnHeader.SetSorting(GetColumnIndex(column), ascending);
 		}

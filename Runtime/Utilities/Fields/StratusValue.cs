@@ -58,7 +58,6 @@ namespace Stratus
 		}
 
 		public static implicit operator StratusValue<T>(T value) => new StratusValue<T>(value);
-		//public static implicit operator T(StratusValue<T> value ) => value.value;
 	}
 
 }

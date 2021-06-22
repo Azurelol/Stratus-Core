@@ -22,8 +22,6 @@ namespace Stratus
 		public StratusGameObjectInformation information => this._information;
 		public static StratusGameObjectInformation[] availableInformation { get; private set; } = new StratusGameObjectInformation[0];
 		public static bool hasAvailableInformation => availableInformation != null && availableInformation.Length > 0;
-		public static StratusComponentMemberWatchInfo[] watchList { get; private set; } = new StratusComponentMemberWatchInfo[0];
-		public static bool hasWatchList => watchList != null && watchList.Length > 0;
 		public static System.Action onUpdate { get; set; } = new System.Action(() => { });
 
 		//------------------------------------------------------------------------/
@@ -90,14 +88,6 @@ namespace Stratus
 		/// </summary>
 		public static void UpdateWatchList(bool invokeDelegate = false)
 		{
-			List<StratusComponentMemberWatchInfo> values = new List<StratusComponentMemberWatchInfo>();
-			foreach (var targetInfo in availableInformation)
-			{
-				// Now add that object's members onto this
-				values.AddRange(targetInfo.watchList);
-			}
-			StratusGameObjectBookmark.watchList = values.ToArray();
-
 			if (invokeDelegate)
 			{
 				StratusGameObjectBookmark.onUpdate();
@@ -128,8 +118,6 @@ namespace Stratus
 		public static void UpdateAvailable()
 		{
 			StratusGameObjectBookmark.UpdateInformation();
-			StratusGameObjectBookmark.UpdateWatchList();
-
 			StratusGameObjectBookmark.onUpdate();
 		}
 

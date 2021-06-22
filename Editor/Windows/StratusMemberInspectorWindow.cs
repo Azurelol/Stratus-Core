@@ -49,17 +49,17 @@ namespace Stratus.Editor
 			Value,
 		}
 
+
+
 		//------------------------------------------------------------------------/
 		// Fields
 		//------------------------------------------------------------------------/   
 		[SerializeField]
 		private Mode mode = Mode.Inspector;
 		[SerializeField]
-		private Column watchColumn = Column.Component;
-		[SerializeField]
 		private GameObject target;
 		[SerializeField]
-		private StratusGameObjectInformation targetTemporaryInformation;
+		private StratusComponentMemberWatchList watchList = new StratusComponentMemberWatchList();
 		[SerializeReference]
 		private StratusGameObjectInformation _currentTargetInformation;
 		/// <summary>
@@ -68,7 +68,9 @@ namespace Stratus.Editor
 		[SerializeField]
 		private float updateSpeed = defaultUpdateSpeed;
 		[SerializeField]
-		private StratusMemberInspectorTreeView memberInspector;
+		private StratusMemberInspectorTreeView inspectorTreeView;
+		[SerializeField]
+		private StratusMemberInspectorWatchListTreeView watchListTreeView;
 		[SerializeField]
 		private TreeViewState treeViewState;
 
@@ -79,8 +81,7 @@ namespace Stratus.Editor
 		static readonly float[] rowWeights = new float[]
 		{
 			0.2f,
-			0.7f,
-			0.1f
+			0.8f
 		};
 		#endregion
 
@@ -90,22 +91,17 @@ namespace Stratus.Editor
 
 		#region Properties
 		public InformationMode informationMode { get; private set; }
-		public StratusGameObjectInformation currentTargetInformation
+		public StratusGameObjectInformation targetInformation
 		{
 			get => _currentTargetInformation;
 			private set
 			{
-				if (value == null)
-				{
-					this.Log("Clearing current target information");
-				}
-				this.Log($"Setting target information for {value}");
 				_currentTargetInformation = value;
 			}
 		}
 
 		private static readonly Type gameObjectType = typeof(GameObject);
-		private bool hasTarget => this.currentTargetInformation != null;
+		private bool hasTarget => this.target != null && this.targetInformation != null;
 		private bool updateTreeView { get; set; }
 		#endregion
 
@@ -119,10 +115,17 @@ namespace Stratus.Editor
 				this.treeViewState = new TreeViewState();
 			}
 
-			if (currentTargetInformation == null && target != null)
+			if (this.watchList == null)
+			{
+				this.watchList = new StratusComponentMemberWatchList();
+			}
+
+			if (targetInformation == null && target != null)
 			{
 				this.CreateTargetInformation();
 			}
+
+			this.SetTreeView();
 
 			ResetUpdateTimer();
 
@@ -138,7 +141,57 @@ namespace Stratus.Editor
 
 		protected override void OnWindowGUI()
 		{
-			DrawMemberInspectorGUI();
+			void drawToolbar()
+			{
+				EditorGUI.BeginChangeCheck();
+				{
+					this.mode = (Mode)GUILayout.Toolbar((int)this.mode, this.toolbarOptions, GUILayout.ExpandWidth(false));
+
+				}
+				if (EditorGUI.EndChangeCheck())
+				{
+					this.SetTreeView();
+				}
+			}
+
+			void drawControls(Rect rect)
+			{
+				StratusEditorGUILayout.Aligned(drawToolbar, TextAlignment.Center);
+				switch (this.mode)
+				{
+					case Mode.Inspector:
+						this.DrawTargetSelector();
+						break;
+				}
+			}
+
+			void drawTreeView(Rect rect)
+			{
+				switch (this.mode)
+				{
+					case Mode.Inspector:
+						if (inspectorTreeView == null)
+						{
+							SetTreeView();
+						}
+						if (this.hasTarget)
+						{
+							this.inspectorTreeView.TreeViewGUI(rect);
+						}
+						break;
+
+					case Mode.WatchList:
+						if (watchListTreeView == null)
+						{
+							SetTreeView();
+						}
+						this.watchListTreeView.TreeViewGUI(rect);
+						break;
+				}
+			}
+
+			Rect[] rows = positionToGUI.Column(rowWeights);
+			rows.ForEach(drawControls, drawTreeView);
 		}
 
 		protected override void OnWindowUpdate()
@@ -156,19 +209,8 @@ namespace Stratus.Editor
 				{
 					case Mode.Inspector:
 						if (this.hasTarget)
-						{							
-							this.currentTargetInformation.UpdateWatchValues();
-						}
-						break;
-
-					case Mode.WatchList:
-						if (StratusGameObjectBookmark.hasAvailableInformation)
 						{
-							foreach (var targetInfo in StratusGameObjectBookmark.availableInformation)
-							{
-								//targetInfo.Refresh();
-								targetInfo.UpdateWatchValues();
-							}
+							this.targetInformation.UpdateValues(watchList);
 						}
 						break;
 				}
@@ -188,8 +230,8 @@ namespace Stratus.Editor
 					updateTreeView = true;
 					if (this.target)
 					{
-						this.currentTargetInformation.Refresh();
-						//this.CreateTargetInformation();
+						this.targetInformation.Refresh();
+						SetTreeView();
 					}
 					break;
 
@@ -198,7 +240,7 @@ namespace Stratus.Editor
 					updateTreeView = false;
 					break;
 				case PlayModeStateChange.ExitingPlayMode:
-					currentTargetInformation.ClearValues();
+					targetInformation.ClearValues();
 					updateTreeView = false;
 					break;
 			}
@@ -214,34 +256,29 @@ namespace Stratus.Editor
 
 			if (updateTreeView)
 			{
-				this.SetTargetTreeView();
+				this.SetTreeView();
 			}
 		}
 
 		private void OnGameObjectInformationChanged(StratusGameObjectInformation information, StratusOperationResult<StratusGameObjectInformation.Change> change)
 		{
 			this.Log($"Information changed for {information.gameObject.name}, change = {change.result}:\n{change.message}");
-			if (change.result == StratusGameObjectInformation.Change.ComponentsAndWatchList)
-			{
-				StratusGameObjectBookmark.UpdateWatchList();
-			}
-
-			this.SetTargetTreeView();
+			this.SetTreeView();
 		}
 		#endregion
 
 		#region Target Selection
 		private void SelectTarget(GameObject target)
 		{
-			if (this.currentTargetInformation != null && this.currentTargetInformation.gameObject == target)
+			if (this.targetInformation != null && this.targetInformation.gameObject == target)
 			{
 				this.LogWarning($"The GameObject {target.name} is already the target");
 				return;
 			}
 
 			this.target = target;
-			this.currentTargetInformation = null;
-			this.memberInspector = null;
+			this.targetInformation = null;
+			this.inspectorTreeView = null;
 			this.CreateTargetInformation();
 		}
 
@@ -260,147 +297,62 @@ namespace Stratus.Editor
 			if (bookmark != null)
 			{
 				this.informationMode = InformationMode.Bookmark;
-				this.currentTargetInformation = bookmark.information;
-				this.Log("Setting target from bookmark");
+				this.targetInformation = bookmark.information;
 			}
 			// Otherwise recreate the current target information
-			else if (this.currentTargetInformation == null || this.currentTargetInformation.gameObject != this.target)
+			else if (this.targetInformation == null || this.targetInformation.gameObject != this.target)
 			{
-				this.Log("Recreating current target information");
 				this.informationMode = InformationMode.Temporary;
-				this.targetTemporaryInformation = new StratusGameObjectInformation(this.target);
-				this.currentTargetInformation = this.targetTemporaryInformation;
+				this.targetInformation = new StratusGameObjectInformation(this.target);
 			}
 
-			this.currentTargetInformation.Refresh();
-			this.SetTargetTreeView();
+			this.targetInformation.Refresh();
+			this.SetTreeView();
 		}
 
 		/// <summary>
 		/// Creates the tree view for the current target
 		/// </summary>
-		private void SetTargetTreeView()
+		private void SetTreeView()
 		{
-			IList<StratusMemberInspectorTreeElement> members = null;
 			switch (this.mode)
 			{
-				case Mode.WatchList:
-					members = StratusMemberInspectorTreeElement.GenerateFavoritesTree();
-					break;
-
 				case Mode.Inspector:
-					if (this.hasTarget)
 					{
-						this.Log("Generating inspector tree elements from current state of the target");
-						members = StratusMemberInspectorTreeElement.GenerateInspectorTree(this.currentTargetInformation);
+						IList<StratusMemberInspectorTreeElement> members = null;
+						if (this.hasTarget)
+						{
+							members = StratusMemberInspectorTreeElement.Generate(this.targetInformation);
+						}
+						if (this.inspectorTreeView == null)
+						{
+							this.inspectorTreeView = new StratusMemberInspectorTreeView(this.treeViewState, this.targetInformation, members, this.watchList);
+						}
+						else
+						{
+							this.inspectorTreeView.SetTree(new StratusValue<IList<StratusMemberInspectorTreeElement>>(members));
+						}
+
+						this.inspectorTreeView.DisableColumn(Column.GameObject);
+						this.inspectorTreeView.EnableColumn(Column.Watch);
+						this.inspectorTreeView.SortByColumn(Column.Watch, false);
 					}
-					else
-						return;
+
 					break;
-			}
 
-			if (this.memberInspector == null)
-			{
-				this.Log("Generating inspector tree");
-				this.memberInspector = new StratusMemberInspectorTreeView(this.treeViewState, this.currentTargetInformation, members);
-			}
-			else
-			{
-				this.memberInspector.SetTree(members);
-				this.memberInspector.onColumnSortedChanged += (col) =>
-				{
-					this.watchColumn = col;
-				};
-			}
-
-			switch (this.mode)
-			{
 				case Mode.WatchList:
-					this.memberInspector.EnableColumn(Column.GameObject);
-					this.memberInspector.DisableColumn(Column.Watch);
-					this.memberInspector.SortByColumn(watchColumn);
-					break;
-
-				case Mode.Inspector:
-					this.memberInspector.DisableColumn(Column.GameObject);
-					this.memberInspector.EnableColumn(Column.Watch);
+					{
+						if (this.watchListTreeView == null)
+						{
+							watchListTreeView = new StratusMemberInspectorWatchListTreeView(treeViewState, watchList);
+						}
+					}
 					break;
 			}
 		}
 		#endregion
 
 		#region GUI
-		private void DrawMemberInspectorGUI()
-		{
-			void drawToolbar()
-			{
-				// Toolbar      
-				EditorGUI.BeginChangeCheck();
-				{
-					this.mode = (Mode)GUILayout.Toolbar((int)this.mode, this.toolbarOptions, GUILayout.ExpandWidth(false));
-
-				}
-				if (EditorGUI.EndChangeCheck() || this.memberInspector == null)
-				{
-					this.SetTargetTreeView();
-
-				}
-			}
-
-			//void drawUpdateSlider()
-			//{
-			//	updateSpeed = EditorGUILayout.Slider("Update", updateSpeed, minimumUpdateSpeed, maximuUpdateSpeed);
-			//	if (pollTimer.total != updateSpeed)
-			//	{
-			//		ResetUpdateTimer();
-			//	}
-			//}
-
-			void drawControls(Rect rect)
-			{
-				StratusEditorGUILayout.Aligned(drawToolbar, TextAlignment.Center);
-				//drawUpdateSlider();
-				switch (this.mode)
-				{
-					case Mode.Inspector:
-						this.DrawTargetSelector();
-						break;
-				}
-			}
-
-			void drawInspector(Rect rect)
-			{
-				switch (this.mode)
-				{
-					case Mode.Inspector:
-						if (this.hasTarget)
-						{
-							this.memberInspector.TreeViewGUI(rect);
-						}
-						break;
-
-					case Mode.WatchList:
-						if (StratusGameObjectBookmark.hasWatchList)
-						{
-							this.memberInspector.TreeViewGUI(rect);
-						}
-						break;
-				}
-			}
-
-			void drawUpdate(Rect rect)
-			{
-				GUILayout.BeginArea(rect);
-				//rect = rect.Intend(4f);
-
-				GUILayout.EndArea();
-				//EditorGUI.ProgressBar(rect, pollTimer.normalizedProgress, "Update");
-			}
-
-			Rect[] rows = positionToGUI.Column(rowWeights);
-			rows.ForEach(drawControls, drawInspector, drawUpdate);
-		}
-
 		private void DrawTargetSelector()
 		{
 			EditorGUILayout.Space();
@@ -435,7 +387,7 @@ namespace Stratus.Editor
 					menu.AddItem(new GUIContent("Clear Watch List"), false, () =>
 					{
 						this.Log("Clearing watch list");
-						this.currentTargetInformation.ClearWatchList();
+						this.watchList.Clear();
 					});
 
 					menu.ShowAsContext();
@@ -458,9 +410,9 @@ namespace Stratus.Editor
 		[OnOpenAsset]
 		public static bool OnOpenAsset(int instanceID, int line)
 		{
-			if (instance == null || instance.memberInspector == null)
+			if (instance == null || instance.inspectorTreeView == null)
 				return false;
-			return instance.memberInspector.TryOpenAsset(instanceID, line);
+			return instance.inspectorTreeView.TryOpenAsset(instanceID, line);
 		}
 
 		public static void Inspect(GameObject target)
@@ -472,16 +424,13 @@ namespace Stratus.Editor
 		public static void SetBookmark(GameObject target)
 		{
 			StratusGameObjectBookmark bookmark = StratusGameObjectBookmark.Add(target);
-			bookmark.SetInformation(instance.currentTargetInformation);
-			instance.currentTargetInformation = bookmark.information;
+			bookmark.SetInformation(instance.targetInformation);
+			instance.targetInformation = bookmark.information;
 			instance.informationMode = InformationMode.Bookmark;
 		}
 
 		public static void RemoveBookmark(GameObject target)
 		{
-			instance.targetTemporaryInformation = (StratusGameObjectInformation)instance.currentTargetInformation.CloneJSON();
-			instance.targetTemporaryInformation.ClearWatchList();
-			instance.currentTargetInformation = instance.targetTemporaryInformation;
 			StratusGameObjectBookmark.Remove(target);
 			instance.informationMode = InformationMode.Temporary;
 		}

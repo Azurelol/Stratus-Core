@@ -29,29 +29,16 @@ namespace Stratus
 
 		#region Fields
 		[SerializeField]
+		private string _name;
+		[SerializeField]
 		private GameObject _gameObject;
 		public StratusComponentInformation[] components;
-		[SerializeField]
-		private List<StratusComponentMemberWatchInfo> _watchList;
 		public int fieldCount;
 		public int propertyCount;
 		#endregion
 
 		#region Properties
 		public GameObject gameObject => _gameObject;
-		public StratusComponentMemberWatchInfo[] watchList => _watchList.ToArray();
-		private Dictionary<string, StratusComponentMemberWatchInfo> watchByPath
-		{
-			get
-			{
-				if (_watchByPath == null)
-				{
-					_watchByPath = this._watchList.ToDictionary(m => m.path);
-				}
-				return _watchByPath;
-			}
-		}
-		Dictionary<string, StratusComponentMemberWatchInfo> _watchByPath;
 		public bool initialized { get; private set; }
 		public bool debug { get; set; } = true;
 		/// <summary>
@@ -129,22 +116,12 @@ namespace Stratus
 		public StratusGameObjectInformation(GameObject target)
 		{
 			this._gameObject = target;
+			this._name = gameObject.name;
 			InitializeComponents(target);
 		}
 		#endregion
 
 		#region Methods
-
-		/// <summary>
-		/// Clears the watchlist for every component
-		/// </summary>
-		public void ClearWatchList()
-		{
-			_watchList.Clear();
-			watchByPath.Clear();
-			StratusGameObjectBookmark.UpdateWatchList();
-		}
-
 		/// <summary>
 		/// Clears the values of all watch members
 		/// </summary>
@@ -156,76 +133,38 @@ namespace Stratus
 			}
 		}
 
-		#region Watch
 		/// <summary>
-		/// Returns true if the member of the component is being watched
-		/// </summary>
-		public bool IsWatched(StratusComponentMemberInfo member)
-		{
-			return watchByPath.ContainsKey(member.path);
-		}
-
-		/// <summary>
-		/// Adds a member to the watch list
+		/// Returns true if the member with a given path (through a component) is present
 		/// </summary>
 		/// <param name="member"></param>
-		/// <param name="componentInfo"></param>
-		/// <param name="memberIndex"></param>
-		public void AddWatch(StratusComponentMemberInfo member)
+		/// <returns></returns>
+		public bool HasMember(IStratusComponentMemberInfo member)
 		{
-			// Don't add duplicates since we only hold one and 
-			// handle duplicate components
-			if (!IsWatched(member))
+			return componentsByName.ContainsKey(member.componentName);
+		}
+
+		/// <summary>
+		/// Clears the values of all watch members
+		/// </summary>
+		public void ClearWatchValues(StratusComponentMemberWatchList watchList)
+		{
+			foreach (var member in watchList.members)
 			{
-				var watch = member.ToWatch();
-				_watchList.Add(watch);
-				watchByPath.Add(member.path, watch);
-				StratusGameObjectBookmark.UpdateWatchList(true);
+				ClearValue(member);
 			}
 		}
 
 		/// <summary>
-		/// Removes a member from the watch list
+		/// Updates the values in the watch list that are present in this GameObject
 		/// </summary>
-		/// <param name="member"></param>
-		public void RemoveWatch(StratusComponentMemberInfo member)
-		{
-			if (watchByPath.ContainsKey(member.path))
-			{
-				_watchList.RemoveAll(m => m.path == member.path);
-				watchByPath.Remove(member.path);
-				StratusGameObjectBookmark.UpdateWatchList(true);
-				//if (this.AssertMemberIndex(member))
-			}
-		}
-
-		/// <summary>
-		/// Adds or removes the watch for the given member
-		/// </summary>
-		/// <param name="member"></param>
-		public void ToggleWatch(StratusComponentMemberInfo member)
-		{
-			if (IsWatched(member))
-			{
-				RemoveWatch(member);
-			}
-			else
-			{
-				AddWatch(member);
-			}
-		}
-
-		/// <summary>
-		/// Updates the values of all the favorite members for this GameObject
-		/// </summary>
-		public void UpdateWatchValues()
+		public void UpdateValues(StratusComponentMemberWatchList watchList)
 		{
 			bool valid = true;
-			foreach (var member in _watchList)
+			foreach (var member in watchList.members)
 			{
-				if (!UpdateValue(member))
+				if (HasMember(member))
 				{
-					valid = false;
+					UpdateValue(member);
 				}
 			}
 			if (!valid)
@@ -234,31 +173,6 @@ namespace Stratus
 				Refresh();
 			}
 		}
-
-		/// <summary>
-		/// Clears the watchlist
-		/// </summary>
-		public void ClearWatchList(bool updateBookmark = true)
-		{
-			_watchList.Clear();
-			watchByPath.Clear();
-			if (updateBookmark)
-			{
-				StratusGameObjectBookmark.UpdateWatchList();
-			}
-		}
-
-		/// <summary>
-		/// Clears the values of all watch members
-		/// </summary>
-		public void ClearWatchValues()
-		{
-			foreach (var member in this._watchList)
-			{
-				ClearValue(member);
-			}
-		}
-		#endregion
 
 		/// <summary>
 		/// Updates the values of all the members for this GameObject
@@ -292,7 +206,7 @@ namespace Stratus
 		/// </summary>
 		public bool UpdateValue(StratusComponentMemberInfo member)
 		{
-			if (!componentsByName.ContainsKey(member.componentName))
+			if (!HasMember(member))
 			{
 				return false;
 			}
@@ -307,7 +221,7 @@ namespace Stratus
 		/// </summary>
 		public bool UpdateValue(StratusComponentMemberWatchInfo member)
 		{
-			if (!componentsByName.ContainsKey(member.componentName))
+			if (!HasMember(member))
 			{
 				return false;
 			}
@@ -333,7 +247,6 @@ namespace Stratus
 			this.members = memberReferences.ToArray();
 			this.visibleMembers = this.members.Where(m => !hiddenTypeNames.Contains(m.typeName)).ToArray();
 			this.initialized = true;
-			Debug.Log("Updating member references");
 		}
 
 		/// <summary>
@@ -342,21 +255,14 @@ namespace Stratus
 		/// </summary>
 		public void Refresh()
 		{
-			var validation = ValidateComponents();
+			var validation = Validate();
 			Change change = validation.result;
-			switch (change)
+			if (change != Change.None)
 			{
-				case Change.Components:
-					this.UpdateMemberReferences();
-					onChanged(this, validation);
-					break;
-				case Change.ComponentsAndWatchList:
-					this.UpdateMemberReferences();
-					onChanged(this, validation);
-					break;
-				case Change.None:
-					break;
+				this.Log($"Changes in {gameObject.name}:\n{validation.message}");
+				onChanged(this, validation);
 			}
+
 		}
 		#endregion
 
@@ -387,19 +293,25 @@ namespace Stratus
 
 			this.components = components.ToArray();
 			this.UpdateMemberReferences();
-			this._watchList = new List<StratusComponentMemberWatchInfo>();
 		}
 
 		/// <summary>
 		/// Verifies that the component references for this GameObject are still valid
 		/// </summary>
-		private StratusOperationResult<Change> ValidateComponents()
+		private StratusOperationResult<Change> Validate()
 		{
 			bool watchlistChanged = false;
 			bool changed = false;
 			Change change;
 
 			StringBuilder message = new StringBuilder();
+
+			// Update the name if it's changfed
+			if (_name != gameObject.name)
+			{
+				_name = gameObject.name;
+				message.AppendLine($"GameObject name changed to {_name}");
+			}
 
 			// Check if any components are null
 			foreach (StratusComponentInformation component in this.components)
@@ -408,10 +320,6 @@ namespace Stratus
 				{
 					changed = true;
 					message.AppendLine($"Component {component.name} is now null");
-					//if (component.hasWatchList)
-					//{
-					//	watchlistChanged = true;
-					//}
 				}
 				else
 				{
@@ -424,21 +332,22 @@ namespace Stratus
 			}
 
 			// Check for other component changes
-			Component[] targetComponents = gameObject.GetComponents<Component>();
-			if (this.numberofComponents != targetComponents.Length)
+			Component[] actualComponents = gameObject.GetComponents<Component>();
+			if (this.numberofComponents != actualComponents.Length)
 			{
 				changed = true;
-				message.AppendLine($"The number of components have changed {numberofComponents} -> {targetComponents.Length}");
+				message.AppendLine($"The number of components have changed {numberofComponents} -> {actualComponents.Length}");
 			}
 
 			// If there's noticeable changes, let's add any components that were not there before
 			if (changed)
 			{
 				List<StratusComponentInformation> currentComponents = new List<StratusComponentInformation>();
-				currentComponents.AddRangeWhere((StratusComponentInformation component) => { return component.component != null; }, this.components);
+				currentComponents.AddRangeWhere((StratusComponentInformation component) => { return component.component != null; }, 
+					this.components);
 
 				// If there's no information for this component, let's add it
-				foreach (var component in targetComponents)
+				foreach (var component in actualComponents)
 				{
 					StratusComponentInformation ci = currentComponents.Find(x => x.component == component);
 
@@ -452,6 +361,7 @@ namespace Stratus
 
 				// Now update the list of components
 				this.components = currentComponents.ToArray();
+				this.UpdateMemberReferences();
 			}
 
 			if (changed)

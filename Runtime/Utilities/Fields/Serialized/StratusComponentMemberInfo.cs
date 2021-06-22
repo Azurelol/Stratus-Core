@@ -4,9 +4,8 @@ using UnityEngine;
 
 namespace Stratus
 {
-	public interface IStratusComponentMemberInfo
+	public interface IStratusComponentMemberInfo : IStratusNamed
 	{
-		public string name { get; }
 		public string componentName { get; }
 		public string typeName { get; }
 		public string assemblyQualifiedName { get; }
@@ -17,7 +16,7 @@ namespace Stratus
 	/// Serialized information of a <see cref="MemberInfo"/> of a <see cref="Component"/>
 	/// </summary>
 	[Serializable]
-	public class StratusComponentMemberInfo : IStratusNamed, IStratusComponentMemberInfo
+	public class StratusComponentMemberInfo : IStratusComponentMemberInfo
 	{
 		//------------------------------------------------------------------------/
 		// Fields
@@ -58,12 +57,11 @@ namespace Stratus
 		public string latestValueString { get; private set; }
 		public object latestValue { get; private set; }
 		public bool initialized { get; private set; } = false;
-		string IStratusNamed.name => this.name;
-		string IStratusComponentMemberInfo.name => name;
 		string IStratusComponentMemberInfo.componentName => componentName;
 		string IStratusComponentMemberInfo.typeName => typeName;
 		string IStratusComponentMemberInfo.assemblyQualifiedName => assemblyQualifiedName;
 		string IStratusComponentMemberInfo.path => path;
+		string IStratusNamed.name => name;
 
 		//------------------------------------------------------------------------/
 		// CTOR
@@ -121,9 +119,7 @@ namespace Stratus
 			}
 
 			this.latestValue = value;
-			this.latestValueString = value != null ? value.ToString().Trim() : "NULL";
-
-			Debug.Log($"Updating value of {this} to {latestValueString}");
+			this.latestValueString = value != null ? value.ToString().Trim() : string.Empty;
 			return updated;
 		}
 
@@ -163,7 +159,7 @@ namespace Stratus
 			this.assemblyQualifiedName = member.assemblyQualifiedName;
 		}
 
-		string IStratusComponentMemberInfo.name => name;
+		string IStratusNamed.name => name;
 		string IStratusComponentMemberInfo.componentName => componentName;
 		string IStratusComponentMemberInfo.typeName => typeName;
 		string IStratusComponentMemberInfo.assemblyQualifiedName => assemblyQualifiedName;

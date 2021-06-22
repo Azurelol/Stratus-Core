@@ -54,7 +54,20 @@ namespace Stratus
 		public int propertyCount => properties.Length;
 		public bool hasFields => fieldCount > 0;
 		public bool hasProperties => propertyCount > 0;
-		public Dictionary<string, StratusComponentMemberInfo> membersByName { get; private set; }		
+		public Dictionary<string, StratusComponentMemberInfo> membersByName
+		{
+			get
+			{
+				if (_membersByName == null)
+				{
+					_membersByName = new Dictionary<string, StratusComponentMemberInfo>();
+					_membersByName.AddRangeUnique((StratusComponentMemberInfo member) => member.name, this.memberReferences);
+
+				}
+				return _membersByName;
+			}
+		}
+		private Dictionary<string, StratusComponentMemberInfo> _membersByName;
 		public bool valid => component != null;
 
 		//------------------------------------------------------------------------/
@@ -88,8 +101,7 @@ namespace Stratus
 			this.component = component;
 			this.name = component.GetType().Name;
 			this.InitializeComponentInformation();
-			this.memberReferences = this.CreateAllMemberReferences();
-			this.OnMemberReferencesSet();
+			this.CreateAllMemberReferences();
 		}
 
 		/// <summary>
@@ -196,9 +208,8 @@ namespace Stratus
 		/// Saves all member references for this GameObject
 		/// </summary>
 		/// <returns></returns>
-		private List<StratusComponentMemberInfo> CreateAllMemberReferences()
+		private void CreateAllMemberReferences()
 		{
-			// Make a reference for all members
 			List<StratusComponentMemberInfo> memberReferences = new List<StratusComponentMemberInfo>();
 			for (int f = 0; f < this.fields.Length; ++f)
 			{
@@ -211,7 +222,7 @@ namespace Stratus
 				StratusComponentMemberInfo memberReference = new StratusComponentMemberInfo(this.properties[p], this, p);
 				memberReferences.Add(memberReference);
 			}
-			return memberReferences;
+			this.memberReferences = memberReferences;
 		}
 
 		/// <summary>
@@ -231,13 +242,6 @@ namespace Stratus
 			};
 
 			this.memberReferences.ForEachRemoveInvalid(iterate, validate);
-			this.OnMemberReferencesSet();
-		}
-
-		private void OnMemberReferencesSet()
-		{
-			this.membersByName = new Dictionary<string, StratusComponentMemberInfo>();
-			this.membersByName.AddRangeUnique((StratusComponentMemberInfo member) => member.name, this.memberReferences);
 		}
 
 		/// <summary>

@@ -21,28 +21,42 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		// Fields
 		//------------------------------------------------------------------------/ 
+		private StratusValue<IList<T>> _data;
 		private IList<T> data;
 		private int maxID;
 
 		//------------------------------------------------------------------------/
 		// Properties
 		//------------------------------------------------------------------------/     
-		public T root { get; set; }
-		public event System.Action onModelChanged;
-		public int numberOfDataElements => data.Count;
+		public T root
+		{
+			get
+			{
+				if (_root == null)
+				{
+					BuildRoot();
+				}
+				return _root;
+			}
+		}
+		private T _root;
+
+		#region Events
+		public event Action onModelChanged; 
+		#endregion
 
 		//------------------------------------------------------------------------/
 		// CTOR
 		//------------------------------------------------------------------------/ 
-		public StratusTreeModel(IList<T> data)
+		public StratusTreeModel(StratusValue<IList<T>> data)
 		{
 			this.SetData(data);
 		}
 
-		public StratusTreeModel(IEnumerable<T> data)
-		{
-			this.SetData(data.ToList());
-		}
+		//public StratusTreeModel(IEnumerable<T> data)
+		//{
+		//	this.SetData(data.ToList());
+		//}
 
 		//------------------------------------------------------------------------/
 		// Methods
@@ -51,18 +65,26 @@ namespace Stratus
 		/// Sets the data for this tree model
 		/// </summary>
 		/// <param name="data"></param>
-		public void SetData(IList<T> data)
+		public void SetData(StratusValue<IList<T>> data)
 		{
 			if (data == null)
-				throw new ArgumentNullException("No input data given!");
-
-			this.data = data;
-			if (this.numberOfDataElements > 0)
 			{
-				this.root = StratusTreeElement.ListToTree(this.data);
+				throw new ArgumentNullException("No input data given!");
+			}
+			this._data = data;
+		}
+
+		/// <summary>
+		/// Generates the root element of the model
+		/// </summary>
+		public void BuildRoot()
+		{
+			this.data = _data.value;
+			if (this.data.Count > 0)
+			{
+				this._root = StratusTreeElement.ListToTree(this.data);
 				this.maxID = this.data.Max(d => d.id);
 			}
-
 		}
 
 		/// <summary>
@@ -306,13 +328,4 @@ namespace Stratus
 		}
 
 	}
-
-	#region Tests
-
-
-	#endregion
-
-
-
-
 }

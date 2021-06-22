@@ -43,9 +43,9 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		// Properties
 		//------------------------------------------------------------------------/ 
-		public event System.Action<IList<TreeElementType>> onSelectionChanged;
-		public event System.Action<IList<int>> onSelectionIdsChanged;
-		public event System.Action onTreeChanged;
+		public event Action<IList<TreeElementType>> onSelectionChanged;
+		public event Action<IList<int>> onSelectionIdsChanged;
+		public event Action onTreeChanged;
 		public event Action<IList<TreeViewItem>> onBeforeDroppingDraggedItems;
 		public SearchField search { get; protected set; }
 		public StratusTreeAsset<TreeElementType> treeAsset { get; private set; }
@@ -84,7 +84,12 @@ namespace Stratus
 		//------------------------------------------------------------------------/ 
 		protected override TreeViewItem BuildRoot()
 		{
-			return new StratusTreeViewItem<TreeElementType>(this.treeModel.root.id, hiddenRootDepth, this.treeModel.root.name, this.treeModel.root);
+			this.treeModel.BuildRoot();
+
+			return new StratusTreeViewItem<TreeElementType>(this.treeModel.root.id, 
+				hiddenRootDepth, 
+				this.treeModel.root.name, 
+				this.treeModel.root);
 		}
 
 		protected override IList<TreeViewItem> BuildRows(TreeViewItem root)
@@ -211,11 +216,20 @@ namespace Stratus
 		/// Sets the data for this tree, also initializing it
 		/// </summary>
 		/// <param name="tree"></param>
-		public void SetTree(IList<TreeElementType> tree)
+		public void SetTree(StratusValue<IList<TreeElementType>> tree)
 		{
 			this.treeModel.SetData(tree);
 			this.Reload();
 		}
+
+		///// <summary>
+		///// Sets the data for this tree, also initializing it
+		///// </summary>
+		///// <param name="tree"></param>
+		//public void SetTree(IList<TreeElementType> tree)
+		//{
+		//	SetTree(new StratusValue<IList<TreeElementType>>(tree));
+		//}
 
 		/// <summary>
 		/// Calculates the rect to be used by the search bar
