@@ -44,7 +44,7 @@ namespace Stratus
 		public static float Average(this Vector2 range)
 		{
 			return ((range.x + range.y) / 2f);
-		}			   
+		}
 
 		/// <summary>
 		/// Calculates a random Vector3 starting from this one
@@ -110,6 +110,36 @@ namespace Stratus
 		public static Vector2 YZ(this Vector3 vec)
 		{
 			return new Vector2(vec.y, vec.z);
+		}
+
+		/// <summary>
+		/// Returns a Vector3 with a modified x component
+		/// </summary>
+		/// <param name="vec"></param>
+		/// <returns></returns>
+		public static Vector3 WithX(this Vector3 vec, float x)
+		{
+			return new Vector3(x, vec.y, vec.z);
+		}
+
+		/// <summary>
+		/// Returns a Vector3 with a modified y component
+		/// </summary>
+		/// <param name="vec"></param>
+		/// <returns></returns>
+		public static Vector3 WithY(this Vector3 vec, float y)
+		{
+			return new Vector3(vec.x, y, vec.z);
+		}
+
+		/// <summary>
+		/// Returns a Vector3 with a modified z component
+		/// </summary>
+		/// <param name="vec"></param>
+		/// <returns></returns>
+		public static Vector3 WithZ(this Vector3 vec, float z)
+		{
+			return new Vector3(vec.x, vec.y, z);
 		}
 
 		/// <summary>

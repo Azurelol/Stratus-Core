@@ -123,9 +123,8 @@ namespace Stratus.Editor
 			if (targetInformation == null && target != null)
 			{
 				this.CreateTargetInformation();
+				this.SetTreeView();
 			}
-
-			this.SetTreeView();
 
 			ResetUpdateTimer();
 
@@ -170,22 +169,22 @@ namespace Stratus.Editor
 				switch (this.mode)
 				{
 					case Mode.Inspector:
-						if (inspectorTreeView == null)
-						{
-							SetTreeView();
-						}
+						//if (inspectorTreeView == null)
+						//{
+						//	SetTreeView();
+						//}
 						if (this.hasTarget)
 						{
-							this.inspectorTreeView.TreeViewGUI(rect);
+							this.inspectorTreeView?.TreeViewGUI(rect);
 						}
 						break;
 
 					case Mode.WatchList:
-						if (watchListTreeView == null)
-						{
-							SetTreeView();
-						}
-						this.watchListTreeView.TreeViewGUI(rect);
+						//if (watchListTreeView == null)
+						//{
+						//	SetTreeView();
+						//}
+						this.watchListTreeView?.TreeViewGUI(rect);
 						break;
 				}
 			}
