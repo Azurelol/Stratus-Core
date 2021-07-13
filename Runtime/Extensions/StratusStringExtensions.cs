@@ -43,7 +43,7 @@ namespace Stratus
 		AngleBracket
 	}
 
-	public static partial class Extensions
+	public static class StringExtensions
 	{
 		//--------------------------------------------------------------------/
 		// Fields

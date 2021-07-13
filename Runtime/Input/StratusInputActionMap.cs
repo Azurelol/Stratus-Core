@@ -70,6 +70,17 @@ namespace Stratus
 			Bind(action, a => onAction());
 		}
 
+		public void Bind(T action, Action onAction, InputActionPhase phase)
+		{
+			Bind(action, a =>
+			{
+				if (a.phase == phase)
+				{
+					onAction();
+				}
+			});
+		}
+
 		public override bool HandleInput(InputAction.CallbackContext context)
 		{
 			bool handled = false;
