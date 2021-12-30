@@ -37,6 +37,55 @@ namespace Stratus
 		public static float Round(this float f, int digits = 2) => (float)Math.Round(f, digits, MidpointRounding.AwayFromZero);
 
 		/// <summary>
+		/// Rounds according to the given method
+		/// </summary>
+		public static float Round(this float value, StratusRoundingMethod method)
+		{
+			if (method == StratusRoundingMethod.Default)
+			{
+				return Mathf.RoundToInt(value);
+			}
+
+			const float operand = 1f;
+			const float cutoff = 0.5f;
+
+			switch (method)
+			{
+				case StratusRoundingMethod.Symmetrical:
+					{
+						float modulo = value % operand;
+						bool negative = value < 0;
+
+						float result = negative 
+							? value + modulo
+							: value - modulo;
+
+						if (modulo >= cutoff)
+						{
+							if (negative)
+							{
+								result--;
+							}
+							else
+							{
+								result++;
+							}
+						}
+
+						return result;
+					}
+			}
+			throw new NotImplementedException($"Rounding with method `{method}` not implemented");
+
+		}
+
+		public static int RoundToInt(this float value, StratusRoundingMethod method)
+			=> (int)Round(value, method);
+
+		public static bool IsEven(this int value) => value % 2 == 0;
+		public static bool IsOdd(this int value) => value % 2 != 0;
+
+		/// <summary>
 		/// Converts this value to its percentage (dividing by 100)
 		/// </summary>
 		/// <param name="f"></param>
@@ -71,5 +120,11 @@ namespace Stratus
 		{
 			return $"{(f.FromPercent()):0}%";
 		}
+	}
+
+	public enum StratusRoundingMethod
+	{
+		Default,
+		Symmetrical,
 	}
 }

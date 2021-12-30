@@ -33,25 +33,25 @@ namespace Stratus
 		/// </summary>
 		public string label { get; set; }
 		/// <summary>
-		/// The current value of this parameter
-		/// </summary>
-		public float current => maximum + increment;
-		/// <summary>
 		/// The maximum value of this parameter. Base + modifiers.
 		/// </summary>
 		public float maximum => baseValue + bonusValue;
 		/// <summary>
+		/// The current value of this parameter
+		/// </summary>
+		public float total => maximum + increment;
+		/// <summary>
 		/// The current ratio of the parameter when compared to its maximum as a percentage
 		/// </summary>
-		public float percentage => (current / maximum) * 100.0f;
+		public float percentage => (total / maximum) * 100.0f;
 		/// <summary>
 		/// Whether this parameter's current value is at its maximum value
 		/// </summary>
-		public bool isAtMaximum => current == maximum;
+		public bool isAtMaximum => total == maximum;
 		/// <summary>
 		/// Whether this parameter's current value is at its minimum value
 		/// </summary>
-		public bool isAtMinimum => current == floor;
+		public bool isAtMinimum => total == floor;
 		/// <summary>
 		/// Returns an instance with a value of 1
 		/// </summary>
@@ -110,15 +110,15 @@ namespace Stratus
 
 		public override string ToString()
 		{
-			return $"({baseValue}, {current}, {bonusValue})";
+			return $"({baseValue}, {total}, {bonusValue})";
 		}
 
 		public string ToPercentageString()
 		{
-			return $"{current}/{maximum}";
+			return $"{total}/{maximum}";
 		}
 
-		public static implicit operator float(StratusVariableAttribute attribute) => attribute.current;
+		public static implicit operator float(StratusVariableAttribute attribute) => attribute.total;
 
 		//------------------------------------------------------------------------/
 		// Methods
@@ -156,8 +156,8 @@ namespace Stratus
 
 			lastIncrement = value;
 			increment += value;
-			if (current > maximum) increment = maximum - current;
-			if (current > ceiling) increment = ceiling - current;
+			if (total > maximum) increment = maximum - total;
+			if (total > ceiling) increment = ceiling - total;
 			float percentageGained = percentage - previousPercentage;
 
 			onModified?.Invoke(percentageGained);
@@ -188,7 +188,7 @@ namespace Stratus
 
 			lastIncrement = value;
 			increment -= value;
-			if (current < floor) increment = -maximum;
+			if (total < floor) increment = -maximum;
 			float percentageLost = previousPercentage - percentage;
 			onModified?.Invoke(percentageLost);
 
@@ -234,48 +234,5 @@ namespace Stratus
 		{
 			bonusValue = 0.0f;
 		}
-	}
-
-	/// <summary>
-	/// An event driven variable
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	public abstract class StratusEventDrivenVariableAttribute<T> : StratusVariableAttribute
-	{
-		public StratusEventDrivenVariableAttribute(float value,
-			float floor = 0,
-			float ceiling = float.MaxValue)
-			: base(value, floor, ceiling)
-		{
-			this.label = defaultLabel;
-		}
-
-		public abstract class BaseEvent : StratusEvent
-		{
-			public float value { get; set; }
-		}
-
-		public class IncreaseEvent : BaseEvent
-		{
-		}
-
-		public class DecreaseEvent : BaseEvent
-		{
-		}
-
-		public bool eventConnected { get; private set; }
-
-		public abstract string defaultLabel { get; }
-
-		public void Initialize(MonoBehaviour monoBehaviour)
-		{
-			monoBehaviour.gameObject.Connect<IncreaseEvent>(this.OnIncreaseEvent);
-			monoBehaviour.gameObject.Connect<DecreaseEvent>(this.OnDecreaseEvent);
-			eventConnected = true;
-		}
-
-		private void OnIncreaseEvent(IncreaseEvent e) => Increase(e.value);
-		private void OnDecreaseEvent(DecreaseEvent e) => Decrease(e.value);
-
 	}
 }

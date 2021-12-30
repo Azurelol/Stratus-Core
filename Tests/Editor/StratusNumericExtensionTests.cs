@@ -37,7 +37,7 @@ namespace Stratus.Editor.Tests
 		[TestCase(5.54444f, 5.54f)]
 		[TestCase(5.55555f, 5.55f)]
 		[TestCase(5.58888f, 5.58f)]
-		public void TestRound(float value, float expected,  int decimalPlaces = 2)
+		public void RoundsByDecimalPlaces(float value, float expected,  int decimalPlaces = 2)
 		{
 			Assert.AreEqual(expected, value.Round(decimalPlaces));
 		}
@@ -50,10 +50,10 @@ namespace Stratus.Editor.Tests
 		[TestCase(-75f, -0.75f)]
 		[TestCase(-150f, -1.5f)]
 		[TestCase(-350f, -3.5f)]
-		public void TestToFromPercent(float value, float percentage)
+		public void ConvertsValueFromPercentage(float value, float expected)
 		{
 			float valueToPercent = value.ToPercent();
-			Assert.AreEqual(percentage, valueToPercent);
+			Assert.AreEqual(expected, valueToPercent);
 			Assert.AreEqual(valueToPercent.FromPercent(), value);
 		}
 
@@ -64,6 +64,17 @@ namespace Stratus.Editor.Tests
 			float valueAsPercent = value.ToPercent();
 			Assert.AreEqual("350.00%", valueAsPercent.FromPercentString());
 			Assert.AreEqual("350%", valueAsPercent.FromPercentRoundedString());
+		}
+
+		[TestCase(1f, 1)]
+		[TestCase(1.3f, 1)]
+		[TestCase(1.5f, 2)]
+		[TestCase(-1.5f, -2)]
+		[TestCase(1.6f, 2)]
+		[TestCase(-1.6f, -2)]
+		public void RoundsIntegerSymmetrically(float value, int expected)
+		{
+			Assert.AreEqual(expected, value.RoundToInt(StratusRoundingMethod.Symmetrical));
 		}
 
 		[Test]
