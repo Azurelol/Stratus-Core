@@ -41,5 +41,13 @@ namespace Stratus
 			return enumDisplayNames.GetValueOrGenerate(enumType, Enum.GetNames);
 		}
 
+		public static Dictionary<TEnum, TValue> Dictionary<TEnum, TValue>(TValue defaultValue = default)
+			where TEnum : Enum
+		{
+			Dictionary<TEnum, TValue> result = new Dictionary<TEnum, TValue>();
+			Values<TEnum>().ForEach(e => result.Add(e, defaultValue));
+			return result;
+		}
+
 	}
 }

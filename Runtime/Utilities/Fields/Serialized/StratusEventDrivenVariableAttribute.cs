@@ -6,14 +6,13 @@ namespace Stratus
 	/// An event driven variable
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public abstract class StratusEventDrivenVariableAttribute<T> : StratusVariableAttribute
+	public abstract class StratusEventDrivenVariableAttribute<T> : StratusDefaultVariable
 	{
 		public StratusEventDrivenVariableAttribute(float value,
 			float floor = 0,
 			float ceiling = float.MaxValue)
 			: base(value, floor, ceiling)
 		{
-			this.label = defaultLabel;
 		}
 
 		public abstract class BaseEvent : StratusEvent

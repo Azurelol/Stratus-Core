@@ -2,60 +2,81 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.Serialization;
 
 namespace Stratus
 {
+	public abstract class StratusVariable
+	{
+		[SerializeField, FormerlySerializedAs("baseValue")]
+		private float _baseValue;
+
+		/// <summary>
+		/// The base value of this parameter
+		/// </summary>
+		public float baseValue
+		{
+			get => _baseValue;
+		}
+
+		protected StratusVariable(float baseValue)
+		{
+			this._baseValue = baseValue;
+		}
+
+		public void IncrementBase(float value)
+		{
+			_baseValue += value;
+		}
+	}
+
 	[Serializable]
-	public class StratusVariableAttribute
+	public class StratusDefaultVariable : StratusVariable
 	{
 		//------------------------------------------------------------------------/
 		// Fields
 		//------------------------------------------------------------------------/
-		[SerializeField]
-		private float baseValue;
+		[SerializeField, FormerlySerializedAs("increment")]
+		private float _increment;
+		[SerializeField, FormerlySerializedAs("bonusValue")]
+		private float _bonusValue;
 
-		[SerializeField]
-		private float increment;
-
-		[SerializeField]
-		private float bonusValue;
-
-		[SerializeField]
+		[SerializeField, FormerlySerializedAs("floor")]
 		private float floor;
-		[SerializeField]
+		[SerializeField, FormerlySerializedAs("ceiling")]
 		private float ceiling;
 
 		//------------------------------------------------------------------------/
 		// Properties
 		//------------------------------------------------------------------------/
-		/// <summary>
-		/// Label for this attribute
-		/// </summary>
-		public string label { get; set; }
+		public float bonusValue => _bonusValue;
+		public float increment => _increment;
+
 		/// <summary>
 		/// The maximum value of this parameter. Base + modifiers.
 		/// </summary>
-		public float maximum => baseValue + bonusValue;
+		public float maximum => baseValue + _bonusValue;
 		/// <summary>
 		/// The current value of this parameter
 		/// </summary>
-		public float total => maximum + increment;
+		public float current => maximum + _increment;
+
 		/// <summary>
 		/// The current ratio of the parameter when compared to its maximum as a percentage
 		/// </summary>
-		public float percentage => (total / maximum) * 100.0f;
+		public float percentage => (current / maximum) * 100.0f;
 		/// <summary>
 		/// Whether this parameter's current value is at its maximum value
 		/// </summary>
-		public bool isAtMaximum => total == maximum;
+		public bool isAtMaximum => current == maximum;
 		/// <summary>
 		/// Whether this parameter's current value is at its minimum value
 		/// </summary>
-		public bool isAtMinimum => total == floor;
+		public bool isAtMinimum => current == floor;
 		/// <summary>
 		/// Returns an instance with a value of 1
 		/// </summary>
-		public static StratusVariableAttribute one => new StratusVariableAttribute(1f);
+		public static StratusDefaultVariable one => new StratusDefaultVariable(1f);
 		/// <summary>
 		/// If locked, prevents modifications
 		/// </summary>
@@ -93,32 +114,32 @@ namespace Stratus
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="value">The base value of the parameter</param>
+		/// <param name="baseVaue">The base value of the parameter</param>
 		/// <param name="floor">The minimum value for this parameter</param>
-		public StratusVariableAttribute(float value, float floor = 0.0f, float ceiling = float.MaxValue)
+		public StratusDefaultVariable(float baseValue, float floor = 0.0f, float ceiling = float.MaxValue)
+			: base(baseValue)
 		{
-			this.baseValue = value;
 			this.floor = floor;
 			this.ceiling = ceiling;
-			this.bonusValue = 0.0f;
+			this._bonusValue = 0.0f;
 			Reset();
 		}
 
-		public StratusVariableAttribute() : this(0f)
+		public StratusDefaultVariable() : this(0f)
 		{
 		}
 
 		public override string ToString()
 		{
-			return $"({baseValue}, {total}, {bonusValue})";
+			return $"({baseValue}, {current}, {bonusValue})";
 		}
 
 		public string ToPercentageString()
 		{
-			return $"{total}/{maximum}";
+			return $"{current}/{maximum}";
 		}
 
-		public static implicit operator float(StratusVariableAttribute attribute) => attribute.total;
+		public static implicit operator float(StratusDefaultVariable attribute) => attribute.current;
 
 		//------------------------------------------------------------------------/
 		// Methods
@@ -128,7 +149,7 @@ namespace Stratus
 		/// </summary>
 		public void Reset()
 		{
-			increment = 0;
+			_increment = 0;
 		}
 
 		/// <summary>
@@ -155,9 +176,9 @@ namespace Stratus
 			float previousPercentage = percentage;
 
 			lastIncrement = value;
-			increment += value;
-			if (total > maximum) increment = maximum - total;
-			if (total > ceiling) increment = ceiling - total;
+			_increment += value;
+			if (current > maximum) _increment = maximum - current;
+			if (current > ceiling) _increment = ceiling - current;
 			float percentageGained = percentage - previousPercentage;
 
 			onModified?.Invoke(percentageGained);
@@ -187,8 +208,8 @@ namespace Stratus
 			float previousPercentage = percentage;
 
 			lastIncrement = value;
-			increment -= value;
-			if (total < floor) increment = -maximum;
+			_increment -= value;
+			if (current < floor) _increment = -maximum;
 			float percentageLost = previousPercentage - percentage;
 			onModified?.Invoke(percentageLost);
 
@@ -205,7 +226,7 @@ namespace Stratus
 		/// <param name="bonus"></param>
 		public void AddBonus(float bonus)
 		{
-			this.bonusValue += bonus;
+			this._bonusValue += bonus;
 		}
 
 		/// <summary>
@@ -214,7 +235,15 @@ namespace Stratus
 		/// <param name="modifier"></param>
 		public void SetBonus(float modifier)
 		{
-			this.bonusValue = modifier;
+			this._bonusValue = modifier;
+		}
+
+		/// <summary>
+		/// Clears all temporary modifiers for this parameter
+		/// </summary>
+		public void ClearBonus()
+		{
+			_bonusValue = 0.0f;
 		}
 
 		/// <summary>
@@ -223,16 +252,8 @@ namespace Stratus
 		/// <param name="value"></param>
 		public void DecreaseToFloor()
 		{
-			float value = maximum - Math.Abs(increment);
+			float value = maximum - Math.Abs(_increment);
 			Decrease(value);
-		}
-
-		/// <summary>
-		/// Clears all modifiers for this parameter
-		/// </summary>
-		public void ClearBonus()
-		{
-			bonusValue = 0.0f;
 		}
 	}
 }
