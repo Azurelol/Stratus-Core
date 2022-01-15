@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 
 using NUnit.Framework;
+using System.Linq;
 
 using UnityEngine;
 
@@ -11,7 +12,7 @@ namespace Stratus.Editor.Tests
 {
 	public class StratusEnumTests
 	{
-		private enum MockEnum
+		public enum MockEnum
 		{
 			A,
 			B,
@@ -19,7 +20,7 @@ namespace Stratus.Editor.Tests
 		}
 
 		[Test]
-		public void TestValues()
+		public void GetsValues()
 		{
 			MockEnum[] values = StratusEnum.Values<MockEnum>();
 			Assert.True(values.Length == 3);
@@ -29,7 +30,7 @@ namespace Stratus.Editor.Tests
 		}
 
 		[Test]
-		public void TestValue()
+		public void GetsValueByIndex()
 		{
 			MockEnum[] values = StratusEnum.Values<MockEnum>();
 			for (int i = 0; i < values.Length; ++i)
@@ -39,7 +40,7 @@ namespace Stratus.Editor.Tests
 		}
 
 		[Test]
-		public void TestNames()
+		public void GetsNames()
 		{
 			MockEnum[] values = StratusEnum.Values<MockEnum>();
 			string[] names = StratusEnum.Names<MockEnum>();
@@ -47,6 +48,30 @@ namespace Stratus.Editor.Tests
 			{
 				Assert.AreEqual(names[i], values[i].ToString());
 			}
+		}
+
+		public enum MockFlags
+		{
+			None = 0,
+			A = 1,
+			B = 2,
+			C = 4,
+			All = A | B | C
+		}
+
+		[TestCase(MockFlags.None)]
+		[TestCase(MockFlags.A, MockFlags.A)]
+		[TestCase(MockFlags.B, MockFlags.B)]
+		[TestCase(MockFlags.C, MockFlags.C)]
+		[TestCase(MockFlags.A | MockFlags.B, MockFlags.A, MockFlags.B)]
+		[TestCase(MockFlags.B | MockFlags.A, MockFlags.A, MockFlags.B)]
+		[TestCase(MockFlags.C | MockFlags.A, MockFlags.A, MockFlags.C)]
+		[TestCase(MockFlags.All, MockFlags.A, MockFlags.B, MockFlags.C)]
+		public void GetsFlags(MockFlags value, params MockFlags[] flags)
+		{
+			MockFlags[] expected = StratusEnum.Flags(value).ToArray();
+			Assert.AreEqual(expected.Length, flags.Length);
+			Assert.AreEqual(expected, flags);
 		}
 	}
 

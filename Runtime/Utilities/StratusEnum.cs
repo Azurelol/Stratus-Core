@@ -41,6 +41,24 @@ namespace Stratus
 			return enumDisplayNames.GetValueOrGenerate(enumType, Enum.GetNames);
 		}
 
+		public static IEnumerable<TEnum> Flags<TEnum>(TEnum _value) where TEnum : Enum
+		{
+			ulong flag = 1;
+			foreach (var value in Enum.GetValues(_value.GetType()).Cast<TEnum>())
+			{
+				ulong bits = Convert.ToUInt64(value);
+				while (flag < bits)
+				{
+					flag <<= 1;
+				}
+
+				if (flag == bits && _value.HasFlag(value))
+				{
+					yield return value;
+				}
+			}
+		}
+
 		public static Dictionary<TEnum, TValue> Dictionary<TEnum, TValue>(TValue defaultValue = default)
 			where TEnum : Enum
 		{
