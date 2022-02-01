@@ -60,6 +60,15 @@ namespace Stratus
 		{
 		}
 
+		public override string ToString()
+		{
+			if (message.IsNullOrEmpty())
+			{
+				return $"{valid} ({result})";
+			}
+			return base.ToString();
+		}
+
 		public static implicit operator T(StratusOperationResult<T> result) => result.result;
 		public static implicit operator StratusOperationResult<T>(T value) => new StratusOperationResult<T>(true, value);
 		public static implicit operator StratusOperationResult<T>(bool valid) => new StratusOperationResult<T>(valid, default, null);

@@ -17,16 +17,12 @@ namespace Stratus
 		public float baseValue
 		{
 			get => _baseValue;
+			set => _baseValue = value;
 		}
 
 		protected StratusVariable(float baseValue)
 		{
 			this._baseValue = baseValue;
-		}
-
-		public void IncrementBase(float value)
-		{
-			_baseValue += value;
 		}
 	}
 
@@ -57,22 +53,22 @@ namespace Stratus
 		/// </summary>
 		public float maximum => baseValue + _bonusValue;
 		/// <summary>
-		/// The current value of this parameter
+		/// The current, total value of this parameter
 		/// </summary>
-		public float current => maximum + _increment;
+		public float total => maximum + _increment;
 
 		/// <summary>
 		/// The current ratio of the parameter when compared to its maximum as a percentage
 		/// </summary>
-		public float percentage => (current / maximum) * 100.0f;
+		public float percentage => (total / maximum) * 100.0f;
 		/// <summary>
 		/// Whether this parameter's current value is at its maximum value
 		/// </summary>
-		public bool isAtMaximum => current == maximum;
+		public bool isAtMaximum => total == maximum;
 		/// <summary>
 		/// Whether this parameter's current value is at its minimum value
 		/// </summary>
-		public bool isAtMinimum => current == floor;
+		public bool isAtMinimum => total == floor;
 		/// <summary>
 		/// Returns an instance with a value of 1
 		/// </summary>
@@ -131,15 +127,15 @@ namespace Stratus
 
 		public override string ToString()
 		{
-			return $"({baseValue}, {current}, {bonusValue})";
+			return $"({baseValue}, {total}, {bonusValue})";
 		}
 
 		public string ToPercentageString()
 		{
-			return $"{current}/{maximum}";
+			return $"{total}/{maximum}";
 		}
 
-		public static implicit operator float(StratusDefaultVariable attribute) => attribute.current;
+		public static implicit operator float(StratusDefaultVariable attribute) => attribute.total;
 
 		//------------------------------------------------------------------------/
 		// Methods
@@ -177,8 +173,8 @@ namespace Stratus
 
 			lastIncrement = value;
 			_increment += value;
-			if (current > maximum) _increment = maximum - current;
-			if (current > ceiling) _increment = ceiling - current;
+			if (total > maximum) _increment = maximum - total;
+			if (total > ceiling) _increment = ceiling - total;
 			float percentageGained = percentage - previousPercentage;
 
 			onModified?.Invoke(percentageGained);
@@ -209,7 +205,7 @@ namespace Stratus
 
 			lastIncrement = value;
 			_increment -= value;
-			if (current < floor) _increment = -maximum;
+			if (total < floor) _increment = -maximum;
 			float percentageLost = previousPercentage - percentage;
 			onModified?.Invoke(percentageLost);
 
