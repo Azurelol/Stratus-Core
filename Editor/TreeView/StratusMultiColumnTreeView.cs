@@ -68,7 +68,7 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		// CTOR
 		//------------------------------------------------------------------------/
-		public StratusMultiColumnTreeView(TreeViewState state, StratusValue<IList<TreeElementType>> data)
+		public StratusMultiColumnTreeView(TreeViewState state, StratusProvider<IList<TreeElementType>> data)
 			: base(state, new StratusTreeModel<TreeElementType>(data))
 		{
 			this.columns = this.BuildColumns();
@@ -78,7 +78,7 @@ namespace Stratus.Editor
 		}
 
 		public StratusMultiColumnTreeView(TreeViewState state, IEnumerable<TreeElementType> data)
-			: this(state, new StratusValue<IList<TreeElementType>>(data.ToList()))
+			: this(state, new StratusProvider<IList<TreeElementType>>(data.ToList()))
 		{
 		}
 

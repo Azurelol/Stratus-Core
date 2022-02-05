@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 
 namespace Stratus
 {
-	public abstract class StratusVariable
+	public abstract class StratusValueBase
 	{
 		[SerializeField, FormerlySerializedAs("baseValue")]
 		private float _baseValue;
@@ -20,14 +20,14 @@ namespace Stratus
 			set => _baseValue = value;
 		}
 
-		protected StratusVariable(float baseValue)
+		protected StratusValueBase(float baseValue)
 		{
 			this._baseValue = baseValue;
 		}
 	}
 
 	[Serializable]
-	public class StratusDefaultVariable : StratusVariable
+	public class StratusValue : StratusValueBase
 	{
 		//------------------------------------------------------------------------/
 		// Fields
@@ -72,7 +72,7 @@ namespace Stratus
 		/// <summary>
 		/// Returns an instance with a value of 1
 		/// </summary>
-		public static StratusDefaultVariable one => new StratusDefaultVariable(1f);
+		public static StratusValue one => new StratusValue(1f);
 		/// <summary>
 		/// If locked, prevents modifications
 		/// </summary>
@@ -112,7 +112,7 @@ namespace Stratus
 		/// </summary>
 		/// <param name="baseVaue">The base value of the parameter</param>
 		/// <param name="floor">The minimum value for this parameter</param>
-		public StratusDefaultVariable(float baseValue, float floor = 0.0f, float ceiling = float.MaxValue)
+		public StratusValue(float baseValue, float floor = 0.0f, float ceiling = float.MaxValue)
 			: base(baseValue)
 		{
 			this.floor = floor;
@@ -121,7 +121,7 @@ namespace Stratus
 			Reset();
 		}
 
-		public StratusDefaultVariable() : this(0f)
+		public StratusValue() : this(0f)
 		{
 		}
 
@@ -135,7 +135,7 @@ namespace Stratus
 			return $"{total}/{maximum}";
 		}
 
-		public static implicit operator float(StratusDefaultVariable attribute) => attribute.total;
+		public static implicit operator float(StratusValue attribute) => attribute.total;
 
 		//------------------------------------------------------------------------/
 		// Methods

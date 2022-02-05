@@ -33,9 +33,6 @@ namespace Stratus
 		/// <summary>
 		/// Finds the element of an array given a predicate
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="array"></param>
-		/// <param name="match"></param>
 		/// <returns></returns>
 		public static T Find<T>(this T[] array, Predicate<T> predicate)
 		{
@@ -45,10 +42,7 @@ namespace Stratus
 		/// <summary>
 		/// Sorts the elements of an array
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="array"></param>
-		/// <param name="comparer"></param>
-		public static void Sort<T>(this T[] array, IComparer<T> comparer)
+		public static void SortInPlace<T>(this T[] array, IComparer<T> comparer)
 		{
 			Array.Sort(array, comparer);
 		}
@@ -56,12 +50,29 @@ namespace Stratus
 		/// <summary>
 		/// Sorts the elements of an array
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="array"></param>
-		/// <param name="comparer"></param>
-		public static void Sort<T>(this T[] array, Func<T, T, int> comparer)
+		public static void SortInPlace<T>(this T[] array, Func<T, T, int> comparer)
 		{
 			Array.Sort(array, Comparer<T>.Create((x, y) => comparer(x, y)));
+		}
+
+		/// <summary>
+		/// Returns a copy of the given array
+		/// </summary>
+		public static T[] CopyArray<T>(this T[] source)
+		{
+			T[] copy = new T[source.Length];
+			Array.Copy(source, copy, source.Length);
+			return copy;
+		}
+
+		/// <summary>
+		/// Sorts the elements of an array, returning a copy
+		/// </summary>
+		public static T[] Sort<T>(this T[] array, Func<T, T, int> comparer)
+		{
+			T[] sorted = array.CopyArray();
+			Array.Sort(sorted, Comparer<T>.Create((x, y) => comparer(x, y)));
+			return sorted;
 		}
 
 		/// <summary>
@@ -69,7 +80,7 @@ namespace Stratus
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="array"></param>
-		public static void Sort<T>(this T[] array) where T : IComparable
+		public static void SortInPlace<T>(this T[] array) where T : IComparable
 		{
 			Array.Sort(array, (a, b) => a.CompareTo(b));
 		}

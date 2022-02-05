@@ -21,7 +21,7 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		// Fields
 		//------------------------------------------------------------------------/ 
-		private StratusValue<IList<T>> _data;
+		private StratusProvider<IList<T>> _data;
 		private IList<T> data;
 		private int maxID;
 
@@ -48,7 +48,7 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		// CTOR
 		//------------------------------------------------------------------------/ 
-		public StratusTreeModel(StratusValue<IList<T>> data)
+		public StratusTreeModel(StratusProvider<IList<T>> data)
 		{
 			this.SetData(data);
 		}
@@ -65,7 +65,7 @@ namespace Stratus
 		/// Sets the data for this tree model
 		/// </summary>
 		/// <param name="data"></param>
-		public void SetData(StratusValue<IList<T>> data)
+		public void SetData(StratusProvider<IList<T>> data)
 		{
 			if (data == null)
 			{

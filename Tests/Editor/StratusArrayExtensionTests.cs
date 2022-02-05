@@ -39,13 +39,13 @@ namespace Stratus.Editor.Tests
 			// Custom comparer
 			{
 				float[] values = new float[] { d, b, a, c };
-				values.Sort((x, y) => x > y ? 1 : x < y ? -1 : 0);
+				values.SortInPlace((x, y) => x > y ? 1 : x < y ? -1 : 0);
 				Assert.AreEqual(new float[] { a, b, c, d }, values);
 			}
 			// Default (from interface)
 			{
 				float[] values = new float[] { d, b, a, c };
-				values.Sort();
+				values.SortInPlace();
 				Assert.AreEqual(new float[] { a, b, c, d }, values);
 			}
 		}

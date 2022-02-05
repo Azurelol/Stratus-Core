@@ -216,7 +216,7 @@ namespace Stratus
 		/// Sets the data for this tree, also initializing it
 		/// </summary>
 		/// <param name="tree"></param>
-		public void SetTree(StratusValue<IList<TreeElementType>> tree)
+		public void SetTree(StratusProvider<IList<TreeElementType>> tree)
 		{
 			this.treeModel.SetData(tree);
 			this.Reload();

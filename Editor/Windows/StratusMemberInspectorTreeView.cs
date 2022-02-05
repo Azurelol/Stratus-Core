@@ -222,7 +222,7 @@ namespace Stratus.Editor
 		public StratusComponentMemberWatchList watchList { get; private set; }
 
 		public StratusMemberInspectorWatchListTreeView(TreeViewState state, StratusComponentMemberWatchList watchList)
-			: base(state, new StratusValue<IList<StratusComponentMemberWatchTreeElement>>(() => StratusComponentMemberWatchTreeElement.Generate(watchList)))
+			: base(state, new StratusProvider<IList<StratusComponentMemberWatchTreeElement>>(() => StratusComponentMemberWatchTreeElement.Generate(watchList)))
 		{
 			this.watchList = watchList;
 			this.watchList.onUpdated += this.Reload;

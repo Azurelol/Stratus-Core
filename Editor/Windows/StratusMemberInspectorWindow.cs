@@ -329,7 +329,7 @@ namespace Stratus.Editor
 						}
 						else
 						{
-							this.inspectorTreeView.SetTree(new StratusValue<IList<StratusMemberInspectorTreeElement>>(members));
+							this.inspectorTreeView.SetTree(new StratusProvider<IList<StratusMemberInspectorTreeElement>>(members));
 						}
 
 						this.inspectorTreeView.DisableColumn(Column.GameObject);
