@@ -21,6 +21,11 @@ namespace Stratus
 		public int current { get; private set; }
 
 		/// <summary>
+		/// The remaining amount
+		/// </summary>
+		public int remaining => total - current;
+
+		/// <summary>
 		/// Whether the counter has been filled
 		/// </summary>
 		public bool isAtLimit

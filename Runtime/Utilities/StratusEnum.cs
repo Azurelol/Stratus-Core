@@ -66,6 +66,5 @@ namespace Stratus
 			Values<TEnum>().ForEach(e => result.Add(e, defaultValue));
 			return result;
 		}
-
 	}
 }
