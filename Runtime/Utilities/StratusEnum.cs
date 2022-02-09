@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace Stratus
 {
@@ -11,7 +12,7 @@ namespace Stratus
 		private static Dictionary<Type, string[]> enumDisplayNames { get; set; } = new Dictionary<Type, string[]>();
 		private static Dictionary<Type, Array> enumValues { get; set; } = new Dictionary<Type, Array>();
 
-		public static T[] Values<T>() where T: Enum
+		public static T[] Values<T>() where T : Enum
 		{
 			return Enum.GetValues(typeof(T)).Cast<T>().ToArray();
 		}
@@ -65,6 +66,64 @@ namespace Stratus
 			Dictionary<TEnum, TValue> result = new Dictionary<TEnum, TValue>();
 			Values<TEnum>().ForEach(e => result.Add(e, defaultValue));
 			return result;
+		}
+
+
+		// Maps the attributes of an enum
+		private static Dictionary<Type, Dictionary<Enum, Dictionary<Type, Attribute>>>
+			enumValueAttributesByType = new Dictionary<Type, Dictionary<Enum, Dictionary<Type, Attribute>>>();
+
+		// Cached version, ho!
+		public static TAttribute GetAttributeCached<TEnum, TAttribute>(this TEnum value)
+			where TEnum : Enum
+			where TAttribute : Attribute
+		{
+			Type enumType = typeof(TEnum);
+			Type attrType = typeof(TAttribute);
+			TryAddToAttributeCache<TEnum>(enumType);
+			return enumValueAttributesByType[enumType][value][attrType] as TAttribute;
+		}
+
+		public static Dictionary<TEnum, TAttribute> GetAttributeMap<TEnum, TAttribute>()
+			where TEnum : Enum
+			where TAttribute : Attribute
+		{
+			Type enumType = typeof(TEnum);
+			Type attrType = typeof(TAttribute);
+			TryAddToAttributeCache<TEnum>(enumType);
+			Dictionary<TEnum, TAttribute> map = new Dictionary<TEnum, TAttribute>();
+			foreach (var kvp in enumValueAttributesByType[enumType])
+			{
+				TEnum value = (TEnum)kvp.Key;
+				if (!kvp.Value.ContainsKey(attrType))
+				{
+					continue;
+				}
+				TAttribute attr = kvp.Value[attrType] as TAttribute;
+				map.Add(value, attr);
+			}
+			return map;
+		}
+
+		private static void TryAddToAttributeCache<TEnum>(Type enumType) where TEnum : Enum
+		{
+			if (!enumValueAttributesByType.ContainsKey(enumType))
+			{
+				// Add the enum type
+				enumValueAttributesByType.Add(enumType, new Dictionary<Enum, Dictionary<Type, Attribute>>());
+				// Add all its values and their attributes
+				foreach (var v in Values<TEnum>())
+				{
+					// Add the value...
+					enumValueAttributesByType[enumType].Add(v, new Dictionary<Type, Attribute>());
+					// and its attributes
+					var valueMemberInfo = enumType.GetMember(v.ToString()).First();
+					foreach (var attr in valueMemberInfo.GetCustomAttributes())
+					{
+						enumValueAttributesByType[enumType][v].Add(attr.GetType(), attr);
+					}
+				}
+			}
 		}
 	}
 }
