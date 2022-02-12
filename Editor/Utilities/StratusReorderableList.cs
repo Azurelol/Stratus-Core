@@ -228,7 +228,7 @@ namespace Stratus.Editor
 				string[] typeNames = Utilities.StratusReflection.GetSubclassNames(baseType);
 				menu.AddItems(typeNames, (int index) =>
 				{
-					serializedProperty.asList.Add(Utilities.StratusReflection.Instantiate(Utilities.StratusReflection.GetSubclass(baseType)[index]));
+					serializedProperty.asList.Add(Utilities.StratusReflection.Instantiate(Utilities.StratusReflection.SubclassesOf(baseType)[index]));
 				});
 				menu.ShowAsContext();
 			};

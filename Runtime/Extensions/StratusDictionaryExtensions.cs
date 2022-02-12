@@ -291,6 +291,21 @@ namespace Stratus
 			return result;
 		}
 
+		public static Dictionary<K2, List<K1>> Bucket<K1, V1, K2>(this Dictionary<K1, V1> source, Func<KeyValuePair<K1, V1>, K2> mapper)
+		{
+			Dictionary<K2, List<K1>> result = new Dictionary<K2, List<K1>>();
+			foreach(var kvp in source)
+			{
+				K2 key = mapper(kvp);
+				if (!result.ContainsKey(key))
+				{
+					result.Add(key, new List<K1>());
+				}
+				result[key].Add(kvp.Key);
+			}
+			return result;
+		}
+
 
 	}
 }

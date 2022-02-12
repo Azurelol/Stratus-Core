@@ -147,7 +147,7 @@ namespace Stratus.Utilities
 			string[] typeNames;
 			if (!subclassNames.ContainsKey(baseType))
 			{
-				Type[] types = GetSubclass(baseType, includeAbstract);
+				Type[] types = SubclassesOf(baseType, includeAbstract);
 				//Type[] types = Assembly.GetAssembly(baseType).GetTypes();
 				typeNames = (from Type type in types where type.IsSubclassOf(baseType) && !type.IsAbstract select type.Name).ToArray();
 				subclassNames.Add(baseType, typeNames);
@@ -161,9 +161,9 @@ namespace Stratus.Utilities
 		/// </summary>
 		/// <param name="includeAbstract"></param>
 		/// <returns></returns>
-		public static Type[] GetSubclass<ClassType>(bool includeAbstract = false)
+		public static Type[] SubclassesOf<TClass>(bool includeAbstract = false)
 		{
-			return GetSubclass(typeof(ClassType), includeAbstract);
+			return SubclassesOf(typeof(TClass), includeAbstract);
 		}
 
 		/// <summary>
@@ -172,7 +172,7 @@ namespace Stratus.Utilities
 		/// <typeparam name="ClassType"></typeparam>
 		/// <param name="includeAbstract"></param>
 		/// <returns></returns>
-		public static Type[] GetSubclass(Type baseType, bool includeAbstract = false)
+		public static Type[] SubclassesOf(Type baseType, bool includeAbstract = false)
 		{
 			// Done the first time this type is queried, in order to cache
 			// Abstract
@@ -245,7 +245,7 @@ namespace Stratus.Utilities
 			if (!interfacesImplementationsByBaseType[interfaceType].ContainsKey(baseType))
 			{
 				Type[] implementedTypes = (from Type t
-										   in GetSubclass(baseType)
+										   in SubclassesOf(baseType)
 										   where t.IsSubclassOf(baseType) && t.GetInterfaces().Contains((interfaceType))
 										   select t).ToArray();
 				interfacesImplementationsByBaseType[interfaceType].Add(baseType, implementedTypes);
@@ -282,7 +282,34 @@ namespace Stratus.Utilities
 			return interfaceImplementations[interfaceType];
 		}
 
+		/// <summary>
+		/// Retrieves the <see cref="Type"/>s of all classes inheriting from <paramref name="baseType"/> that
+		/// implement the interface <paramref name="interfaceType"/>
+		/// </summary>
 
+		public static IEnumerable<Type> GetInterfaceImplementations(Type baseType, Type interfaceType, Type[] interfaceParameters = null)
+		{
+			Type[] subClasses = SubclassesOf(baseType);
+			foreach (var subClass in subClasses)
+			{
+				if (GetInterfaces(subClass, interfaceType)
+					.Any(t =>
+					{
+						if (t.Equals(interfaceType))
+						{
+							if (interfaceParameters != null)
+							{
+								return t.GenericTypeArguments == interfaceParameters;
+							}
+							return true;
+						}
+						return false;
+					}))
+				{
+					yield return subClass;
+				}				
+			}
+		}
 
 		/// <summary>
 		/// Gets the loadable types for a given assembly
@@ -409,7 +436,7 @@ namespace Stratus.Utilities
 		{
 			ClassList list = new ClassList();
 
-			Type[] classes = StratusReflection.GetSubclass<ClassType>();
+			Type[] classes = StratusReflection.SubclassesOf<ClassType>();
 			foreach (Type e in classes)
 			{
 				string name = e.FullName.Replace('+', '.');
@@ -481,6 +508,16 @@ namespace Stratus.Utilities
 			//return Expression.Lambda<Func<object>>(Expression.New(t)).Compile();
 
 			return (T)FormatterServices.GetUninitializedObject(t);
+		}
+
+		public static IEnumerable<object> Instantiate(params Type[] types)
+		{
+			return types.Select(t => Instantiate(t));
+		}
+
+		public static IEnumerable<T> Instantiate<T>(params Type[] types)
+		{
+			return Instantiate(types).Select(obj => (T)obj);
 		}
 
 		/// <summary>

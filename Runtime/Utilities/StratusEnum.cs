@@ -125,5 +125,10 @@ namespace Stratus
 				}
 			}
 		}
+
+		public static TEnum GetHighestValue<TEnum>(params TEnum[] values)
+		{
+			return values.Max();
+		}
 	}
 }

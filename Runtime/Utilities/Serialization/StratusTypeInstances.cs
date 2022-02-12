@@ -18,7 +18,7 @@ namespace Stratus
 		public StratusSubclassInstancer()
 		{
 			baseType = typeof(T);
-			types = Utilities.StratusReflection.GetSubclass<T>();
+			types = Utilities.StratusReflection.SubclassesOf<T>();
 			instances = types.ToDictionaryFromKey((Type t) => (T)Activator.CreateInstance(t));
 		}
 

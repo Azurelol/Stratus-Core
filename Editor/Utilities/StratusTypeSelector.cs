@@ -30,7 +30,7 @@ namespace Stratus
 		public StratusTypeSelector(Type baseType, bool includeAbstract, bool sortAlphabetically = false)
 		{
 			this.baseType = baseType;
-			this.subTypes = new StratusDropdownList<Type>(StratusReflection.GetSubclass(baseType), Name);
+			this.subTypes = new StratusDropdownList<Type>(StratusReflection.SubclassesOf(baseType), Name);
 			if (sortAlphabetically)
 			{
 				this.subTypes.Sort();
@@ -59,13 +59,13 @@ namespace Stratus
 		}
 
 		public StratusTypeSelector(Type baseType, Predicate<Type> predicate, bool includeAbstract, bool sortAlphabetically = true)
-			: this(StratusReflection.GetSubclass(baseType).Where(x => predicate(x)).ToArray(), includeAbstract, sortAlphabetically)
+			: this(StratusReflection.SubclassesOf(baseType).Where(x => predicate(x)).ToArray(), includeAbstract, sortAlphabetically)
 		{
 		}
 
 		public static StratusTypeSelector FilteredSelector(Type baseType, Type excludedType, bool includeAbstract, bool sortAlphabetically = true)
 		{
-			Type[] types = StratusReflection.GetSubclass(baseType).Where(x => !x.IsSubclassOf(excludedType)).ToArray();
+			Type[] types = StratusReflection.SubclassesOf(baseType).Where(x => !x.IsSubclassOf(excludedType)).ToArray();
 			return new StratusTypeSelector(types, includeAbstract, sortAlphabetically);
 		}
 
