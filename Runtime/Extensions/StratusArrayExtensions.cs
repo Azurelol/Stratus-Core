@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Stratus
 {
-	public static partial class Extensions
+	public static class ArrayExtensions
 	{
 		/// <summary>
 		/// Finds the index of the given element in the array
@@ -276,6 +276,31 @@ namespace Stratus
 		public static void ReverseInPlace<T>(this T[] array)
 		{
 			Array.Reverse(array);
+		}
+
+		/// <summary>
+		/// Compares two arrays to determine whether they have equal values
+		/// </summary>
+		public static bool IsEqualInValues<T>(this T[] first, T[] second)
+		{
+			if (first.Length != second.Length)
+			{
+				return false;
+			}
+
+			var a = first.CopyArray();
+			var b = second.CopyArray();
+			Array.Sort(a);
+			Array.Sort(b);
+
+			for(int i = 0; i < a.Length; ++i)
+			{
+				if (!a[i].Equals(b[i]))
+				{
+					return false;
+				}
+			}
+			return true;
 		}
 	}
 }

@@ -52,7 +52,7 @@ namespace Stratus
 			{ "String[]",   "string[]"  },
 			{ "Char[]",     "char[]"    },
 			{ "Boolean[]",  "bool[]"    },
-		}; 
+		};
 		#endregion
 
 		/// <summary>
@@ -330,7 +330,17 @@ namespace Stratus
 			}
 
 			return allTypes;
-		}				
+		}
+
+		public static object Instantiate(this Type type, params object[] parameters)
+		{
+			return StratusReflection.Instantiate(type, parameters);
+		}
+
+		public static T Instantiate<T>(this Type type, params object[] parameters)
+		{
+			return (T)Instantiate(type, parameters);
+		}
 	}
 
 }

@@ -84,6 +84,7 @@ namespace Stratus.Utilities
 		private static Dictionary<Type, Type[]> subclasses { get; set; } = new Dictionary<Type, Type[]>();
 		private static Dictionary<Type, string[]> subclassNames { get; set; } = new Dictionary<Type, string[]>();
 		private static Dictionary<Type, Type[]> subclassesIncludeAbstract { get; set; } = new Dictionary<Type, Type[]>();
+		private static Dictionary<Type, Type[]> genericTypeDefiniions { get; set; } = new Dictionary<Type, Type[]>();
 		private static Dictionary<Type, Dictionary<Type, Type[]>> interfacesImplementationsByBaseType { get; set; } = new Dictionary<Type, Dictionary<Type, Type[]>>();
 		private static Dictionary<Type, Type[]> interfaceImplementations { get; set; } = new Dictionary<Type, Type[]>();
 
@@ -307,8 +308,64 @@ namespace Stratus.Utilities
 					}))
 				{
 					yield return subClass;
-				}				
+				}
 			}
+		}
+
+		/// <summary>
+		/// For a given generic, returns all the types that use its definition.
+		/// </summary>
+		public static Type[] TypesDefinedFromGeneric(Type genericType)
+		{
+			if (!genericTypeDefiniions.ContainsKey(genericType))
+			{
+				List<Type> result = new List<Type>();
+
+				foreach (Assembly assembly in allAssemblies)
+				{
+					Type[] implementedTypes = (from Type t
+											   in assembly.GetTypes()
+											   where t.BaseType != null &&
+												t.BaseType.IsGenericType &&
+												t.BaseType.GetGenericTypeDefinition() == genericType
+											   select t).ToArray();
+
+					result.AddRange(implementedTypes);
+				}
+				genericTypeDefiniions.Add(genericType, result.ToArray());
+			}
+
+			return genericTypeDefiniions[genericType];
+		}
+
+		/// <summary>
+		/// For a given generic type, returns all the types that use its definition,
+		/// mapped by the parameter. For example:
+		/// [int : DerivedInt1, DerivedInt2>
+		/// [bool : DerivedBool1, DerivedBool2]
+		/// </summary>
+		public static Dictionary<Type, Type[]> TypeDefinitionParameterMap(Type baseType)
+		{
+			if (!baseType.IsGenericType)   
+			{
+				throw new ArgumentException($"The given type {baseType} is not generic!");
+			}
+			Dictionary<Type, List<Type>> result = new Dictionary<Type, List<Type>>();
+			Type[] definitions = TypesDefinedFromGeneric(baseType);
+			foreach (var type in definitions)
+			{
+				var typeArgs = type.BaseType.GenericTypeArguments;
+				if (typeArgs.Length == 1)
+				{
+					Type paramType = typeArgs[0];
+					if (!result.ContainsKey(paramType))
+					{
+						result.Add(paramType, new List<Type>());
+					}
+					result[paramType].Add(type);
+				}
+			}
+			return result.ToDictionary(kp => kp.Key, kp => kp.Value.ToArray());
 		}
 
 		/// <summary>
@@ -477,7 +534,6 @@ namespace Stratus.Utilities
 			}
 		}
 
-
 		public static object Instantiate(Type t)
 		{
 			if (t == typeof(string))
@@ -505,19 +561,23 @@ namespace Stratus.Utilities
 			{
 				return (T)Activator.CreateInstance(t);
 			}
-			//return Expression.Lambda<Func<object>>(Expression.New(t)).Compile();
 
 			return (T)FormatterServices.GetUninitializedObject(t);
 		}
 
-		public static IEnumerable<object> Instantiate(params Type[] types)
+		public static object Instantiate(Type type, params object[] parameters)
+		{
+			return Activator.CreateInstance(type, parameters);
+		}
+
+		public static IEnumerable<object> InstantiateRange(params Type[] types)
 		{
 			return types.Select(t => Instantiate(t));
 		}
 
-		public static IEnumerable<T> Instantiate<T>(params Type[] types)
+		public static IEnumerable<T> InstantiateRange<T>(params Type[] types)
 		{
-			return Instantiate(types).Select(obj => (T)obj);
+			return InstantiateRange(types).Select(obj => (T)obj);
 		}
 
 		/// <summary>
