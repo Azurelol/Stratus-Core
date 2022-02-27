@@ -5,31 +5,31 @@ using System;
 
 namespace Stratus
 {
-	public class StratusDictionary<KeyType, ValueType> : Dictionary<KeyType, ValueType>
+	public class StratusDictionary<TKey, TValue> : Dictionary<TKey, TValue>
 	{
-		private Func<ValueType, KeyType> keyFunction;
+		private Func<TValue, TKey> keyFunction;
 
-		public StratusDictionary(Func<ValueType, KeyType> keyFunction,
+		public StratusDictionary(Func<TValue, TKey> keyFunction,
 								 int capacity = 0,
-								 IEqualityComparer<KeyType> comparer = null)
+								 IEqualityComparer<TKey> comparer = null)
 								 : base(capacity, comparer)
 		{
 			this.keyFunction = keyFunction;
 		}
 
-		public StratusDictionary(Func<ValueType, KeyType> keyFunction, 
-								IEnumerable<ValueType> values,
+		public StratusDictionary(Func<TValue, TKey> keyFunction, 
+								IEnumerable<TValue> values,
 								 int capacity = 0,
-								 IEqualityComparer<KeyType> comparer = null)
+								 IEqualityComparer<TKey> comparer = null)
 								 : this(keyFunction, capacity, comparer)
 		{
 			AddRange(values);
 		}
 
 
-		public bool Add(ValueType value)
+		public bool Add(TValue value)
 		{
-			KeyType key = keyFunction(value);
+			TKey key = keyFunction(value);
 			if (ContainsKey(key))
 			{
 				StratusDebug.LogError($"Value with key '{key}' already exists in this collection!");
@@ -39,7 +39,7 @@ namespace Stratus
 			return true;
 		}
 
-		public int AddRange(IEnumerable<ValueType> values)
+		public int AddRange(IEnumerable<TValue> values)
 		{
 			if (values == null)
 			{
@@ -47,7 +47,7 @@ namespace Stratus
 			}
 
 			int failCount = 0;
-			foreach (ValueType value in values)
+			foreach (TValue value in values)
 			{
 				if (!Add(value))
 				{
@@ -57,9 +57,9 @@ namespace Stratus
 			return failCount;
 		}
 
-		public bool Remove(ValueType value)
+		public bool Remove(TValue value)
 		{
-			KeyType key = keyFunction(value);
+			TKey key = keyFunction(value);
 			if (!ContainsKey(key))
 			{
 				return false;
@@ -68,7 +68,7 @@ namespace Stratus
 			return true;
 		}
 
-		public ValueType GetValueOrDefault(KeyType key)
+		public TValue GetValueOrDefault(TKey key)
 		{
 			return ContainsKey(key) ? this[key] : default;
 		}
