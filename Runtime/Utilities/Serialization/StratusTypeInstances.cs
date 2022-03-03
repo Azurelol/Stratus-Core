@@ -12,6 +12,7 @@ namespace Stratus
 	public class StratusSubclassInstancer<T> where T : class
 	{
 		public Type baseType { get; private set; }
+
 		private Type[] types;
 		private Dictionary<Type, T> instances;
 
@@ -21,6 +22,8 @@ namespace Stratus
 			types = Utilities.StratusReflection.SubclassesOf<T>();
 			instances = types.ToDictionaryFromKey((Type t) => (T)Activator.CreateInstance(t));
 		}
+
+		public IEnumerable<T> GetAll() => instances.Values;
 
 		public U Get<U>() where U : T
 		{

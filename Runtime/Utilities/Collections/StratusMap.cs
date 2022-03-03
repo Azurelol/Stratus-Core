@@ -1,50 +1,108 @@
 ﻿using System.Collections.Generic;
 using System;
+using System.Linq;
+using System.Collections;
 
 namespace Stratus.Collections
 {
-	public abstract class StratusMap<TKey, TValue> : List<TValue>
+	public interface IReadOnlyStratusMap<TKey, TValue> : IEnumerable<TValue>
 	{
+		int Count { get; }
+		bool Contains(TKey key);
+		bool Contains(TValue value);
+		TValue Get(TKey key);
+	}
+
+	/// <summary>
+	/// A collection that serializes the <see cref="List{TValue}"/>, generates the <see cref="Dictionary{TKey, TValue}"/> during runtime
+	/// </summary>
+	/// <typeparam name="TKey">The key type used for the dictionary</typeparam>
+	/// <typeparam name="TValue">The value type</typeparam>
+	public abstract class StratusMap<TKey, TValue> : IEnumerable<TValue>, IReadOnlyStratusMap<TKey, TValue>
+	{
+		private List<TValue> _list = new List<TValue>();
+		[NonSerialized]
+		private Dictionary<TKey, TValue> _dictionary;
+
+		#region Properties
 		private Dictionary<TKey, TValue> lookup
 		{
 			get
 			{
-				if (_lookup == null)
+				if (_dictionary == null)
 				{
 					GenerateLookup();
 				}
-				return _lookup;
+				return _dictionary;
 			}
 		}
+		public int Count => _list.Count;
+		#endregion
 
-		[NonSerialized]
-		private Dictionary<TKey, TValue> _lookup;
-
-		public new void Add(TValue item)
+		public bool Add(TValue value)
 		{
-			base.Add(item);
+			TKey key = GetKey(value);
+			if (Contains(key))
+			{
+				return false;
+			}
+
+			_list.Add(value);
+			lookup.Add(key, value);
+			return true;
 		}
-		public new void AddRange(IEnumerable<TValue> collection)
+
+		public TValue this[TKey key] => lookup[key];
+
+		public bool AddRange(IEnumerable<TValue> collection)
 		{
-			base.AddRange(collection);
+			if (collection.Any(x => Contains(x)))
+			{
+				return false;
+			}
+
+			_list.AddRange(collection);
+			lookup.AddRange(GetKey, collection);
+			return true;
+		}
+
+		public bool Contains(TValue value)
+		{
+			return Contains(GetKey(value));
 		}
 
 		public bool Contains(TKey key)
 		{
-			return _lookup.ContainsKey(key);
+			return lookup.ContainsKey(key);
 		}
 
 		public TValue Get(TKey key)
 		{
-			return _lookup.GetValueOrDefault(key);
+			return lookup.GetValueOrDefault(key);
+		}
+
+		public void Clear()
+		{
+			_list?.Clear();
+			lookup?.Clear();
 		}
 
 		private void GenerateLookup()
 		{
-			_lookup = new Dictionary<TKey, TValue>();
+			_dictionary = new Dictionary<TKey, TValue>();
 		}
 
 		protected abstract TKey GetKey(TValue value);
+
+		public IEnumerator<TValue> GetEnumerator()
+		{
+			return ((IEnumerable<TValue>)this._list).GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return ((IEnumerable)this._list).GetEnumerator();
+		}
 	}
 
 	/// <summary>

@@ -155,5 +155,13 @@ namespace Stratus
 			return index <= source.Count - 1;
 		}
 
+		/// <summary>
+		/// Checks if the list contains any of the given values
+		/// </summary>
+		public static bool ContainsAny<T>(this IList<T> list, IEnumerable<T> values)
+		{
+			return values.Any(x => list.Contains(x));
+		}
+
 	}
 }
