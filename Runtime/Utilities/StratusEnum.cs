@@ -131,21 +131,4 @@ namespace Stratus
 			return values.Max();
 		}
 	}
-
-
-	public class StratusConstraint<T>
-	{
-		public T[] choices { get; private set; }
-		public bool any => choices.IsNullOrEmpty();
-
-		public StratusConstraint()
-		{
-		}
-
-		public StratusConstraint<T> Choose(params T[] choices)
-		{
-			this.choices = choices;
-			return this;
-		}
-	}
 }
