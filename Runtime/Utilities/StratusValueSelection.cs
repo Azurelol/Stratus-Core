@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Stratus
 {
@@ -7,7 +9,7 @@ namespace Stratus
 	/// or that requires the user to select one of the possible values (> 1 value).
 	/// </summary>
 	/// <typeparam name="TValue"></typeparam>
-	public class StratusValueSelection<TValue>
+	public class StratusValueSelection<TValue> 
 	{
 		public virtual TValue[] values { get; private set; }
 		public TValue selection { get; private set; }
@@ -18,6 +20,11 @@ namespace Stratus
 		{
 		}
 
+		public StratusValueSelection(IEnumerable<TValue> values)
+			: this(values.ToArray())
+		{
+		}
+
 		public StratusValueSelection(params TValue[] values)
 		{
 			this.values = values;
@@ -25,11 +32,9 @@ namespace Stratus
 			{
 				Select(values[0]);
 			}
-			else
-			{
-
-			}
 		}
+
+		public bool Contains(params TValue[] values) => values.ContainsAll(values);
 
 		public void Select(TValue value)
 		{

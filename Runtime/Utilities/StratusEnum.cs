@@ -130,5 +130,11 @@ namespace Stratus
 		{
 			return values.Max();
 		}
+
+		public static bool GreaterOrEqualThan<TEnum>(TEnum first, TEnum second)
+			where TEnum : Enum
+		{
+			return ((int)(object)first) >= ((int)(object)second);
+		}
 	}
 }

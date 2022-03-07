@@ -12,10 +12,10 @@ namespace Stratus
 		Value
 	}
 
-	public class StratusProvider<T>
+	public class StratusProvider<TValue>
 	{
 		public StratusProviderSource source { get; private set; }
-		public T value
+		public TValue value
 		{
 			get
 			{
@@ -30,12 +30,12 @@ namespace Stratus
 			}
 		}
 
-		private T _value;
-		private Func<T> _getter;
+		private TValue _value;
+		private Func<TValue> _getter;
 
 		public bool valid => source != StratusProviderSource.Invalid;
 
-		public StratusProvider(Func<T> getter)
+		public StratusProvider(Func<TValue> getter)
 		{
 			if (getter == null)
 			{
@@ -46,7 +46,7 @@ namespace Stratus
 			this.source = StratusProviderSource.Reference;
 		}
 
-		public StratusProvider(T value)
+		public StratusProvider(TValue value)
 		{
 			if (value == null)
 			{
@@ -57,7 +57,7 @@ namespace Stratus
 			this.source = StratusProviderSource.Value;
 		}
 
-		public static implicit operator StratusProvider<T>(T value) => new StratusProvider<T>(value);
+		public static implicit operator StratusProvider<TValue>(TValue value) => new StratusProvider<TValue>(value);
 	}
 
 }

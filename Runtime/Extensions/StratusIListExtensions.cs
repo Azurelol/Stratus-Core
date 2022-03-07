@@ -163,5 +163,13 @@ namespace Stratus
 			return values.Any(x => list.Contains(x));
 		}
 
+		/// <summary>
+		/// Checks if the list contains any of the given values
+		/// </summary>
+		public static bool ContainsAll<T>(this IList<T> list, IEnumerable<T> values)
+		{
+			return values.All(x => list.Contains(x));
+		}
+
 	}
 }

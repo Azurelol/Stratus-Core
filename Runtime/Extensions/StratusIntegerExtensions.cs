@@ -52,6 +52,14 @@ namespace Stratus
 				yield return func(i);
 			}
 		}
+
+		public static IEnumerable<T> For<T>(this int x, Func<T> func)
+		{
+			for (int i = 0; i < x; ++i)
+			{
+				yield return func();
+			}
+		}
 	}
 
 }
