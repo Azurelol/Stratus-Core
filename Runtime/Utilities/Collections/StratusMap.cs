@@ -37,6 +37,8 @@ namespace Stratus.Collections
 			}
 		}
 		public int Count => _list.Count;
+		public IReadOnlyList<TValue> Values => _list;
+		public IReadOnlyCollection<TKey> Keys => lookup.Keys;
 		#endregion
 
 		public bool Add(TValue value)
@@ -49,6 +51,32 @@ namespace Stratus.Collections
 
 			_list.Add(value);
 			lookup.Add(key, value);
+			return true;
+		}
+
+		public bool Remove(TValue value)
+		{
+			TKey key = GetKey(value);
+			if (!Contains(key))
+			{
+				return false;
+			}
+
+			_list.Remove(value);
+			lookup.Remove(key);
+			return true;
+		}
+
+		public bool Remove(TKey key)
+		{
+			if (!Contains(key))
+			{
+				return false;
+			}
+
+			TValue value = lookup[key];
+			_list.Remove(value);
+			lookup.Remove(key);
 			return true;
 		}
 

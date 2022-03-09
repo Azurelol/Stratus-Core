@@ -11,10 +11,9 @@ namespace Stratus
 	/// <typeparam name="T"></typeparam>
 	public class StratusSubclassInstancer<T> where T : class
 	{
-		public Type baseType { get; private set; }
-
 		private Type[] types;
 		private Dictionary<Type, T> instances;
+		public Type baseType { get; private set; }
 
 		public StratusSubclassInstancer()
 		{
@@ -34,7 +33,5 @@ namespace Stratus
 		{
 			return instances.GetValueOrDefault(type);
 		}
-
 	}
-
 }

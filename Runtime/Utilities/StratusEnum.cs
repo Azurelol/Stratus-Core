@@ -42,6 +42,9 @@ namespace Stratus
 			return enumDisplayNames.GetValueOrGenerate(enumType, Enum.GetNames);
 		}
 
+		/// <summary>
+		/// </summary>
+		/// <returns>All the flags of the given enum value. If there's no flags, returns itself.</returns>
 		public static IEnumerable<TEnum> Flags<TEnum>(TEnum _value) where TEnum : Enum
 		{
 			ulong flag = 1;
@@ -58,6 +61,11 @@ namespace Stratus
 					yield return value;
 				}
 			}
+		}
+
+		public static bool HasFlags<TEnum>(TEnum value) where TEnum : Enum
+		{
+			return Flags(value).Count() > 1;
 		}
 
 		public static Dictionary<TEnum, TValue> Dictionary<TEnum, TValue>(TValue defaultValue = default)

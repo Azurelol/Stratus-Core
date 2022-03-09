@@ -231,7 +231,7 @@ namespace Stratus
 		}
 
 		/// <summary>
-		/// Returns the value from the dictionary if present, otherwise adds it (from a value function)
+		/// Returns the value from the dictionary if present, otherwise the default
 		/// </summary>
 		public static Value GetValueOrDefault<Key, Value>(this Dictionary<Key, Value> dictionary, Key key, Value defaultValue = default)
 		{
