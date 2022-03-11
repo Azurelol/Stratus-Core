@@ -570,6 +570,11 @@ namespace Stratus.Utilities
 			return Activator.CreateInstance(type, parameters);
 		}
 
+		public static T Instantiate<T>(params object[] parameters)
+		{
+			return (T)Instantiate(typeof(T), parameters);
+		}
+
 		public static IEnumerable<object> InstantiateRange(params Type[] types)
 		{
 			return types.Select(t => Instantiate(t));

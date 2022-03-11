@@ -279,7 +279,7 @@ namespace Stratus
 		public static Dictionary<Key, List<Value>> ToDictionaryOfList<Key, Value>(this IEnumerable<Value> values, Func<Value, Key> selector)
 		{
 			Dictionary<Key, List<Value>> result = new Dictionary<Key, List<Value>>();
-			foreach(var value in values)
+			foreach (var value in values)
 			{
 				Key key = selector(value);
 				if (!result.ContainsKey(key))
@@ -294,7 +294,7 @@ namespace Stratus
 		public static Dictionary<K2, List<K1>> Bucket<K1, V1, K2>(this Dictionary<K1, V1> source, Func<KeyValuePair<K1, V1>, K2> mapper)
 		{
 			Dictionary<K2, List<K1>> result = new Dictionary<K2, List<K1>>();
-			foreach(var kvp in source)
+			foreach (var kvp in source)
 			{
 				K2 key = mapper(kvp);
 				if (!result.ContainsKey(key))
@@ -302,6 +302,16 @@ namespace Stratus
 					result.Add(key, new List<K1>());
 				}
 				result[key].Add(kvp.Key);
+			}
+			return result;
+		}
+
+		public static Dictionary<TKey, TValue2> TransformValues<TKey, TValue1, TValue2>(this Dictionary<TKey, TValue1> source, Func<TValue1, TValue2> convert)
+		{
+			Dictionary<TKey, TValue2> result = new Dictionary<TKey, TValue2>();
+			foreach (var kvp in source)
+			{
+				result.Add(kvp.Key, convert(kvp.Value));
 			}
 			return result;
 		}
