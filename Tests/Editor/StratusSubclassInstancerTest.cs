@@ -21,7 +21,7 @@ namespace Stratus.Editor.Tests
 		[Test]
 		public void TestSubclassInstancer()
 		{
-			var instancer = new StratusSubclassInstancer<A>();
+			var instancer = new StratusTypeInstancer<A>();
 			Assert.Null(instancer.Get<A>());
 			Assert.NotNull(instancer.Get<B>());
 			Assert.NotNull(instancer.Get<B1>());

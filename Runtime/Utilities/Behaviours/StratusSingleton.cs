@@ -32,13 +32,16 @@ namespace Stratus
 						return null;
 					}
 
-					_instance = (T)Activator.CreateInstance(typeof(T)); //  new T();
-
+					// Instantiate the nested object
+					_instance = (T)Activator.CreateInstance(typeof(T));
 				}
 
 				return _instance;
 			}
 		}
+
+		private static StratusSingleton<T> singleton;
+
 		/// <summary>
 		/// Whether this singleton has been instantiated
 		/// </summary>

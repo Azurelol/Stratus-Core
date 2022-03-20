@@ -9,13 +9,13 @@ namespace Stratus
 	/// Used for managing default instances of the subclasses of a given class
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public class StratusSubclassInstancer<T> where T : class
+	public class StratusTypeInstancer<T> where T : class
 	{
 		private Type[] types;
 		private Dictionary<Type, T> instances;
 		public Type baseType { get; private set; }
 
-		public StratusSubclassInstancer()
+		public StratusTypeInstancer()
 		{
 			baseType = typeof(T);
 			types = Utilities.StratusReflection.SubclassesOf<T>();

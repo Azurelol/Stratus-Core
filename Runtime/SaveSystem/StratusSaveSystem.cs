@@ -6,6 +6,7 @@ using UnityEngine;
 using System.Collections;
 using Stratus.Utilities;
 using System.Linq;
+using Stratus.Serialization;
 
 namespace Stratus
 {

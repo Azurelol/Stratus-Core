@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using Stratus.Serialization;
 
 namespace Stratus
 {

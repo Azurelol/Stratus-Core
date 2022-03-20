@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Stratus.Serialization;
+
+using System;
 
 using UnityEngine;
 

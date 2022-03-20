@@ -4,6 +4,8 @@ using System.Reflection;
 
 using NUnit.Framework;
 
+using Stratus.Serialization;
+
 using UnityEngine;
 
 namespace Stratus.Editor.Tests

@@ -1,14 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System;
 
-namespace Stratus
+namespace Stratus.Serialization
 {
 	/// <summary>
 	/// Base class for variables serialized using Unity''s Prefs system
 	/// </summary>
-	public abstract class StratusPrefsVariable 
+	public abstract class StratusPrefsVariable
 	{
 		//------------------------------------------------------------------------/
 		// Declarations
@@ -25,7 +24,7 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		// Properties
 		//------------------------------------------------------------------------/
-		public string key { get; private set; }		
+		public string key { get; private set; }
 		public VariableType type { get; private set; }
 
 		//------------------------------------------------------------------------/
@@ -37,7 +36,7 @@ namespace Stratus
 			this.type = type;
 		}
 
-		public StratusPrefsVariable(Type key, VariableType type) 
+		public StratusPrefsVariable(Type key, VariableType type)
 			: this(key.GetNiceFullName(), type)
 		{
 		}
@@ -149,70 +148,6 @@ namespace Stratus
 			}
 
 			return VariableType.Object;
-		}
-	}
-
-	/// <summary>
-	/// A variable saved using PlayerPrefs
-	/// </summary>
-	public class StratusPlayerPrefsVariable : StratusPrefsVariable
-	{
-		public StratusPlayerPrefsVariable(string key, VariableType type) : base(key, type)
-		{
-		}
-
-		public StratusPlayerPrefsVariable(Type key, VariableType type) : base(key, type)
-		{
-		}
-
-		public override bool GetBool()
-		{
-			return PlayerPrefs.GetInt(key) == 0 ? true : false;
-		}
-
-		public override float GetFloat()
-		{
-			return PlayerPrefs.GetFloat(key);
-		}
-
-		public override int GetInt()
-		{
-			return PlayerPrefs.GetInt(key);
-		}
-
-		public override string GetString()
-		{
-			return PlayerPrefs.GetString(key);
-		}
-
-		public override void SetBool(bool value)
-		{
-			PlayerPrefs.SetInt(key, value ? 0 : 1);
-		}
-
-		public override void SetFloat(float value)
-		{
-			PlayerPrefs.SetFloat(key, value);
-		}
-
-		public override void SetInt(int value)
-		{
-			PlayerPrefs.SetInt(key, value);
-		}
-
-		public override void SetString(string value)
-		{
-			PlayerPrefs.SetString(key, value);
-		}
-
-		public override void Delete()
-		{
-			PlayerPrefs.DeleteKey(key);
-		}
-
-		public override bool Exists()
-		{
-			return PlayerPrefs.HasKey(key);
 		}
 	}
 
