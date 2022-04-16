@@ -11,27 +11,35 @@ namespace Stratus
 	/// <typeparam name="T"></typeparam>
 	public class StratusTypeInstancer<T> where T : class
 	{
-		private Type[] types;
-		private Dictionary<Type, T> instances;
+		[Serializable]
+		public class Reference
+		{
+			public string typeName;
+		}
+
+		private Lazy<Type[]> _types;
+		private Lazy<Dictionary<Type, T>> _instances;
+
 		public Type baseType { get; private set; }
+		public Type[] types => _types.Value;
 
 		public StratusTypeInstancer()
 		{
 			baseType = typeof(T);
-			types = Utilities.StratusReflection.SubclassesOf<T>();
-			instances = types.ToDictionaryFromKey((Type t) => (T)Activator.CreateInstance(t));
+			_types = new Lazy<Type[]>(() => Utilities.StratusReflection.SubclassesOf<T>());
+			_instances = new Lazy<Dictionary<Type, T>>(() => types.ToDictionaryFromKey((Type t) => (T)Activator.CreateInstance(t)));
 		}
 
-		public IEnumerable<T> GetAll() => instances.Values;
+		public IEnumerable<T> GetAll() => _instances.Value.Values;
 
 		public U Get<U>() where U : T
 		{
-			return (U)instances.GetValueOrDefault(typeof(U));
+			return (U)_instances.Value.GetValueOrDefault(typeof(U));
 		}
 
 		public T Get(Type type)
 		{
-			return instances.GetValueOrDefault(type);
+			return _instances.Value.GetValueOrDefault(type);
 		}
 	}
 }
