@@ -131,5 +131,13 @@ namespace Stratus
 		{
 			return stack.Count > 0 ? stack.Pop() : default;
 		}
+
+		/// <summary>
+		/// Compares two arrays to determine whether they have equal values
+		/// </summary>
+		public static StratusOperationResult IsEqualInValues<T>(this ICollection<T> first, ICollection<T> second)
+		{
+			return first.ToArray().IsEqualInValues(second.ToArray());
+		}
 	}
 }

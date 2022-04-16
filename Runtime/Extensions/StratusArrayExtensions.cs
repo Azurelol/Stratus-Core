@@ -281,11 +281,11 @@ namespace Stratus
 		/// <summary>
 		/// Compares two arrays to determine whether they have equal values
 		/// </summary>
-		public static bool IsEqualInValues<T>(this T[] first, T[] second)
+		public static StratusOperationResult IsEqualInValues<T>(this T[] first, T[] second)
 		{
 			if (first.Length != second.Length)
 			{
-				return false;
+				return new StratusOperationResult(false, $"The first collection is of size {first.Length} while the second is of size{second.Length}.");
 			}
 
 			var a = first.CopyArray();
@@ -297,7 +297,7 @@ namespace Stratus
 			{
 				if (!a[i].Equals(b[i]))
 				{
-					return false;
+					return new StratusOperationResult(false, $"After sorting, the first collection has item {a[i]} while the second has {b[i]}");
 				}
 			}
 			return true;
