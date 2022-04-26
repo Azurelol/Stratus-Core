@@ -1,6 +1,4 @@
-﻿#define STRATUS_IMPORT_LINQ_EXTENSIONS
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +7,11 @@ namespace Stratus
 {
 	public static partial class Extensions
 	{
-		#region STRATUS_IMPORT_LINQ_EXTENSIONS
+#if !UNITY_2021_1_OR_NEWER
 		public static HashSet<T> ToHashSet<T>(this IEnumerable<T> source)
 		{
 			return new HashSet<T>(source);
-		}
-		#endregion
+		} 
+#endif
 	}
-
 }
