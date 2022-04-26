@@ -2,7 +2,7 @@ Stratus is a C# gameplay scripting framework for facilitating the composition of
 
 MIT License
 
-Copyright (c) 2020 Christian Sagel
+Copyright (c) 2020-2022 Christian Sagel
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
