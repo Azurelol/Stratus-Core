@@ -8,14 +8,19 @@ namespace Stratus.Editor.Tests
 {
 	public abstract class StratusTest
 	{
-		public void AssertResult(StratusOperationResult result)
+		public void AssertSuccess(StratusOperationResult result)
 		{
 			Assert.True(result.valid, result.message);
 		}
 
-		public void AssertCollections<T>(ICollection<T> first, ICollection<T> second)
+		public void AssertFailure(StratusOperationResult result)
 		{
-			AssertResult(first.IsEqualInValues(second));
+			Assert.False(result.valid, result.message);
+		}
+
+		public void AssertEquality<T>(ICollection<T> first, ICollection<T> second)
+		{
+			AssertSuccess(first.IsEqualInValues(second));
 		}
 	}
 }
