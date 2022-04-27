@@ -269,19 +269,19 @@ namespace Stratus
         /// <summary>
         /// Returns the cell range given an origin
         /// </summary>
-        public static Dictionary<Vector3Int, float> GetRange(Vector3Int origin, 
-            int n, 
+        public static StratusGridRange GetRange(Vector3Int origin,
+            StratusSearchRangeArguments range, 
             GridLayout.CellLayout layout,
             Predicate<Vector3Int> predicate)
         {
-            Dictionary<Vector3Int, float> result = null;
+            StratusGridRange result = null;
             switch (layout)
             {
                 case GridLayout.CellLayout.Rectangle:
-                    result = GetRangeRectangle(origin, n, predicate);
+                    result = GetRangeRectangle(origin, range.maximum, predicate);
                     break;
                 case GridLayout.CellLayout.Hexagon:
-                    result = GetRangeHexOffset(origin, n, predicate);
+                    result = GetRangeHexOffset(origin, range.maximum, predicate);
                     break;
                 case GridLayout.CellLayout.Isometric:
                     break;
@@ -296,11 +296,11 @@ namespace Stratus
         /// <summary>
         /// Returns the cell range given an origin and a range
         /// </summary>
-        /// <param name="origin"></param>
-        /// <param name="n"></param>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
-        public static Dictionary<Vector3Int, float> GetRangeRectangle(Vector3Int origin, int n, Predicate<Vector3Int> predicate = null)
+        /// <param name="origin">The origin, from which to search from</param>
+        /// <param name="n">The search range from the origin</param>
+        /// <param name="predicate">A predicate that validates whether a given cell is traversible</param>
+        /// <returns>A dictionary of all the elements in range along with the cost to traverse to them </returns>
+        public static StratusGridRange GetRangeRectangle(Vector3Int origin, int n, Predicate<Vector3Int> predicate = null)
         {
             GridSearch.RangeSearch search
                 = new GridSearch.RangeSearch()
@@ -312,7 +312,8 @@ namespace Stratus
                     range = n,
                     startElement = origin
                 };
-            return search.SearchWithCosts();
+
+            return new StratusGridRange(search.SearchWithCosts());
         }
 
         /// <summary>
@@ -322,7 +323,7 @@ namespace Stratus
         /// <param name="n"></param>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        public static Dictionary<Vector3Int, float> GetRangeHexOffset(Vector3Int origin, int n, Predicate<Vector3Int> predicate = null)
+        public static StratusGridRange GetRangeHexOffset(Vector3Int origin, int n, Predicate<Vector3Int> predicate = null)
         {
             GridSearch.RangeSearch search
             = new GridSearch.RangeSearch()
@@ -334,27 +335,7 @@ namespace Stratus
                 range = n,
                 startElement = origin
             };
-            var result = search.SearchWithCosts();
-            return result;
-
-            //List<Vector3Int> result = new List<Vector3Int>();
-            //Vector3Int originc = OffsetToCube(origin);
-
-            //for(int x = -n; x <= n; ++x)
-            //{
-            //    for(int y = Math.Max(- n, -x-n); y <= Math.Min(n, -x+n); ++y)
-            //    {
-            //        int z = -x - y;
-            //        Vector3Int cellC = originc + new Vector3Int(x, y, z);
-            //        Vector3Int cell = CubeToOffset(cellC);
-            //        if (predicate == null || predicate(cell))
-            //        {
-            //            result.Add(cell);
-            //        }
-            //    }
-            //}
-
-            //return result.ToArray();
+            return new StratusGridRange(search.SearchWithCosts());
         }
 
         //-------------------------------------------------------------------------/

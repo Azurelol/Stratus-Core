@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Stratus
 {
@@ -205,7 +206,7 @@ namespace Stratus
 		public class PathSearch : GoalSearch
 		{
 			public ElementType[] Search()
-			{		
+			{
 				PriorityQueue openList = new PriorityQueue(0);
 				int currentIteration = 0;
 				var startingNode = new Node(null, startElement, 0f);
@@ -288,6 +289,9 @@ namespace Stratus
 				return result.ToArray();
 			}
 
+			/// <summary>
+			/// </summary>
+			/// <returns>A dictionary of all the elements in range along with the cost to traverse to them </returns>
 			public Dictionary<ElementType, float> SearchWithCosts()
 			{
 				Node[] nodes = GetNodes();
@@ -420,7 +424,7 @@ namespace Stratus
 		/// <param name="args"></param>
 		/// <param name="frontierPredicate"></param>
 		/// <returns></returns>
-		private static Dictionary<Node, Node> BuildBFSMap(SearchBase args, 
+		private static Dictionary<Node, Node> BuildBFSMap(SearchBase args,
 			Predicate<Node> goalFunction,
 			Predicate<Node> frontierPredicate)
 		{
