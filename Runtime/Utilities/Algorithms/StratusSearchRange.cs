@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -50,6 +51,7 @@ namespace Stratus
 
 		public int minimum { get; }
 		public int maximum { get; }
+		public Func<Vector3Int, float> traversalCostFunction { get; set; }
 
 		public static implicit operator StratusSearchRangeArguments(Vector2Int vec)  => 
 			new StratusSearchRangeArguments(vec.x, vec.y);

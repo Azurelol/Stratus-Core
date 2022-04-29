@@ -10,12 +10,12 @@ namespace Stratus.Editor.Tests
 	{
 		public void AssertContains<T, V>(T key, IReadOnlyDictionary<T, V> dictionary)
 		{
-			Assert.True(dictionary.ContainsKey(key));
+			Assert.True(dictionary.ContainsKey(key), $"Dictionary contains {dictionary.ToStringJoin()}");
 		}
 
 		public void AssertContainsExactly<T, V>(IReadOnlyDictionary<T, V> dictionary, params T[] keys)
 		{
-			Assert.AreEqual(keys.Length, dictionary.Count);
+			Assert.AreEqual(keys.Length, dictionary.Count, $"Dictionary contains {dictionary.ToStringJoin()}");
 			foreach(var key in keys)
 			{
 				AssertContains(key, dictionary);

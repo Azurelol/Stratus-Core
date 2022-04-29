@@ -14,6 +14,16 @@ namespace Stratus
 		Unexplored
 	}
 
+	public enum StratusTraversableStatus
+	{
+		Free,
+		Occupied,
+		Blocked,
+		Unavailable
+	}
+
+	public delegate StratusTraversableStatus StratusTraversalPredicate<TElement>(TElement element);
+
 	/// <summary>
 	/// This planner uses A* to do a search for a valid path of actions that will lead
 	/// to the desired state.
@@ -141,6 +151,8 @@ namespace Stratus
 			}
 		}
 
+		
+
 		/// <summary>
 		/// Base class for searches
 		/// </summary>
@@ -159,19 +171,17 @@ namespace Stratus
 			/// </summary>
 			public Func<ElementType, ElementType, float> distanceFunction { get; set; }
 			/// <summary>
-			/// If provided, a function that checks whether the given cell is traversable
+			/// A function to calculate the cost of traversing the given element
 			/// </summary>
-			public Predicate<ElementType> traversableFunction { get; set; }
+			public Func<ElementType, float> traversalCostFunction { get; set; }
+			/// <summary>
+			/// If provided, a function that checks whether the given element is traversable
+			/// </summary>
+			public StratusTraversalPredicate<ElementType> traversableFunction { get; set; }
 			/// <summary>
 			/// A function to gather the neighbors of a cell
 			/// </summary>
 			public Func<ElementType, ElementType[]> neighborFunction { get; set; }
-
-			///// <summary>
-			///// Initiates the search.
-			///// </summary>
-			///// <returns></returns>
-			//public abstract ElementType[] Search();
 
 			protected ElementType[] BuildPath(Node node)
 			{
@@ -289,21 +299,17 @@ namespace Stratus
 				return result.ToArray();
 			}
 
-			/// <summary>
-			/// </summary>
 			/// <returns>A dictionary of all the elements in range along with the cost to traverse to them </returns>
 			public Dictionary<ElementType, float> SearchWithCosts()
 			{
 				Node[] nodes = GetNodes();
 
-				//List<ElementType> elements = new List<ElementType>();
 				Dictionary<ElementType, float> costs = new Dictionary<ElementType, float>();
 
 				for (int i = 0; i < nodes.Length; i++)
 				{
 					Node node = nodes[i];
 					costs.Add(node.element, node.givenCost);
-					//result.Add(node.element);
 				}
 
 				return costs;
@@ -394,13 +400,23 @@ namespace Stratus
 				}
 
 				// Optionally, check if the element is traversable
-				if (arguments.traversableFunction != null && !arguments.traversableFunction(element))
+				// TODO Change predicate result?
+				if (arguments.traversableFunction != null)
 				{
-					continue;
+					var status = arguments.traversableFunction(element);
+					if (status != StratusTraversableStatus.Free)
+					{
+						continue;
+					}
 				}
 
+				float traversalCost = 1;
+				if (arguments.traversalCostFunction != null)
+				{
+					traversalCost = arguments.traversalCostFunction(element);
+				}
 				float distance = arguments.distanceFunction(node.element, element);
-				float givenCost = node.givenCost + distance;
+				float givenCost = node.givenCost + (distance * traversalCost);
 
 				Node neighborNode = new Node(node, element, givenCost);
 				neighbors.Add(neighborNode);

@@ -272,16 +272,16 @@ namespace Stratus
         public static StratusGridRange GetRange(Vector3Int origin,
             StratusSearchRangeArguments range, 
             GridLayout.CellLayout layout,
-            Predicate<Vector3Int> predicate)
+            StratusTraversalPredicate<Vector3Int> predicate)
         {
             StratusGridRange result = null;
             switch (layout)
             {
                 case GridLayout.CellLayout.Rectangle:
-                    result = GetRangeRectangle(origin, range.maximum, predicate);
+                    result = GetRangeRectangle(origin, range, predicate);
                     break;
                 case GridLayout.CellLayout.Hexagon:
-                    result = GetRangeHexOffset(origin, range.maximum, predicate);
+                    result = GetRangeHexOffset(origin, range, predicate);
                     break;
                 case GridLayout.CellLayout.Isometric:
                     break;
@@ -300,16 +300,17 @@ namespace Stratus
         /// <param name="n">The search range from the origin</param>
         /// <param name="predicate">A predicate that validates whether a given cell is traversible</param>
         /// <returns>A dictionary of all the elements in range along with the cost to traverse to them </returns>
-        public static StratusGridRange GetRangeRectangle(Vector3Int origin, int n, Predicate<Vector3Int> predicate = null)
+        public static StratusGridRange GetRangeRectangle(Vector3Int origin, StratusSearchRangeArguments args, StratusTraversalPredicate<Vector3Int> predicate = null)
         {
             GridSearch.RangeSearch search
                 = new GridSearch.RangeSearch()
                 {
                     debug = false,
                     distanceFunction = ManhattanDistance,
+                    traversalCostFunction = args.traversalCostFunction,
                     neighborFunction = FindNeighboringCellsRectangle,
                     traversableFunction = predicate,
-                    range = n,
+                    range = args.maximum,
                     startElement = origin
                 };
 
@@ -323,7 +324,7 @@ namespace Stratus
         /// <param name="n"></param>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        public static StratusGridRange GetRangeHexOffset(Vector3Int origin, int n, Predicate<Vector3Int> predicate = null)
+        public static StratusGridRange GetRangeHexOffset(Vector3Int origin, StratusSearchRangeArguments args, StratusTraversalPredicate<Vector3Int> predicate = null)
         {
             GridSearch.RangeSearch search
             = new GridSearch.RangeSearch()
@@ -332,7 +333,7 @@ namespace Stratus
                 distanceFunction = HexOffsetDistance,
                 neighborFunction = FindNeighboringCellsHexOffset,
                 traversableFunction = predicate,
-                range = n,
+                range = args.maximum,
                 startElement = origin
             };
             return new StratusGridRange(search.SearchWithCosts());
@@ -342,7 +343,7 @@ namespace Stratus
         // Path
         //-------------------------------------------------------------------------/
         public static Vector3Int[] FindPath(Vector3Int origin, Vector3Int target, GridLayout.CellLayout layout,
-            Predicate<Vector3Int> traversablePredicate = null)
+            StratusTraversalPredicate<Vector3Int> traversablePredicate = null)
         {
             Vector3Int[] result = null;
             switch (layout)
@@ -362,7 +363,7 @@ namespace Stratus
         }
 
         public static Vector3Int[] FindRectanglePath(Vector3Int origin, Vector3Int target,
-            Predicate<Vector3Int> traversablePredicate = null)
+            StratusTraversalPredicate<Vector3Int> traversablePredicate = null)
         {
             var pathSearch = new GridSearch.PathSearch()
             {
@@ -375,8 +376,8 @@ namespace Stratus
             return pathSearch.Search();
         }
 
-        public static Vector3Int[] FindHexOffsetPath(Vector3Int origin, Vector3Int target, 
-            Predicate<Vector3Int> traversablePredicate = null)
+        public static Vector3Int[] FindHexOffsetPath(Vector3Int origin, Vector3Int target,
+            StratusTraversalPredicate<Vector3Int> traversablePredicate = null)
         {
             var pathSearch = new GridSearch.PathSearch()
             {
