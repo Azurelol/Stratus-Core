@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Stratus
 {
-	public static partial class Extensions
+	public static class DelegateExtensions
 	{
 		public static Predicate<T> ToPredicate<T>(this Func<T, bool> func)
 		{
@@ -66,5 +66,34 @@ namespace Stratus
             return false;
         }
 
+        public static Predicate<T> Or<T>(this IEnumerable<Predicate<T>> predicates)
+        {
+            return delegate (T item)
+            {
+                foreach (Predicate<T> predicate in predicates)
+                {
+                    if (predicate(item))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            };
+        }
+
+        public static Predicate<T> And<T>(this IEnumerable<Predicate<T>> predicates)
+        {
+            return delegate (T item)
+            {
+                foreach (Predicate<T> predicate in predicates)
+                {
+                    if (!predicate(item))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            };
+        }
     }
 }

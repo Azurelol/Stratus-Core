@@ -52,11 +52,12 @@ namespace Stratus
 		public int minimum { get; }
 		public int maximum { get; }
 		public Func<Vector3Int, float> traversalCostFunction { get; set; }
+		public StratusTraversalPredicate<Vector3Int> traversableFunction { get; set; }
 
-		public static implicit operator StratusSearchRangeArguments(Vector2Int vec)  => 
-			new StratusSearchRangeArguments(vec.x, vec.y);
-		public static implicit operator StratusSearchRangeArguments(int n) =>
-			new StratusSearchRangeArguments(n);
+		//public static implicit operator StratusSearchRangeArguments(Vector2Int vec)  => 
+		//	new StratusSearchRangeArguments(vec.x, vec.y);
+		//public static implicit operator StratusSearchRangeArguments(int n) =>
+		//	new StratusSearchRangeArguments(n);
 	}
 
 	public class StratusGridRange : StratusSearchRange<Vector3Int, float>

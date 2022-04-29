@@ -403,7 +403,17 @@ namespace Stratus
 				// TODO Change predicate result?
 				if (arguments.traversableFunction != null)
 				{
-					var status = arguments.traversableFunction(element);
+					StratusTraversableStatus status = StratusTraversableStatus.Free;
+					foreach (StratusTraversalPredicate<ElementType> func in arguments.traversableFunction.GetInvocationList())
+					{
+						status = func(element);
+						if (status != StratusTraversableStatus.Free)
+						{
+							break;
+						}
+					}
+
+					//var status = arguments.traversableFunction(element);
 					if (status != StratusTraversableStatus.Free)
 					{
 						continue;

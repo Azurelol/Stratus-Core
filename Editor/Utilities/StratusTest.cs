@@ -13,6 +13,11 @@ namespace Stratus.Editor.Tests
 			Assert.True(dictionary.ContainsKey(key), $"Dictionary contains {dictionary.ToStringJoin()}");
 		}
 
+		public void AssertContains<T>(HashSet<T> set, T key)
+		{
+			Assert.True(set.Contains(key), $"Hashset contains {set.ToStringJoin()}");
+		}
+
 		public void AssertContainsExactly<T, V>(IReadOnlyDictionary<T, V> dictionary, params T[] keys)
 		{
 			Assert.AreEqual(keys.Length, dictionary.Count, $"Dictionary contains {dictionary.ToStringJoin()}");
@@ -35,6 +40,16 @@ namespace Stratus.Editor.Tests
 		public void AssertEquality<T>(ICollection<T> first, ICollection<T> second)
 		{
 			AssertSuccess(first.IsEqualInValues(second));
+		}
+
+		public void AssertEquality<T>(T[] first, T[] second)
+		{
+			AssertSuccess(first.IsEqualInValues(second));
+		}
+
+		public void AssertLength<T>(int expected, IList<T> list)
+		{
+			Assert.AreEqual(expected, list.Count, $"List contained {list.ToStringJoin().Enclose(StratusStringEnclosure.SquareBracket)}");
 		}
 	}
 }

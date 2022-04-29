@@ -271,17 +271,16 @@ namespace Stratus
         /// </summary>
         public static StratusGridRange GetRange(Vector3Int origin,
             StratusSearchRangeArguments range, 
-            GridLayout.CellLayout layout,
-            StratusTraversalPredicate<Vector3Int> predicate)
+            GridLayout.CellLayout layout)
         {
             StratusGridRange result = null;
             switch (layout)
             {
                 case GridLayout.CellLayout.Rectangle:
-                    result = GetRangeRectangle(origin, range, predicate);
+                    result = GetRangeRectangle(origin, range);
                     break;
                 case GridLayout.CellLayout.Hexagon:
-                    result = GetRangeHexOffset(origin, range, predicate);
+                    result = GetRangeHexOffset(origin, range);
                     break;
                 case GridLayout.CellLayout.Isometric:
                     break;
@@ -300,7 +299,7 @@ namespace Stratus
         /// <param name="n">The search range from the origin</param>
         /// <param name="predicate">A predicate that validates whether a given cell is traversible</param>
         /// <returns>A dictionary of all the elements in range along with the cost to traverse to them </returns>
-        public static StratusGridRange GetRangeRectangle(Vector3Int origin, StratusSearchRangeArguments args, StratusTraversalPredicate<Vector3Int> predicate = null)
+        public static StratusGridRange GetRangeRectangle(Vector3Int origin, StratusSearchRangeArguments args)
         {
             GridSearch.RangeSearch search
                 = new GridSearch.RangeSearch()
@@ -309,7 +308,7 @@ namespace Stratus
                     distanceFunction = ManhattanDistance,
                     traversalCostFunction = args.traversalCostFunction,
                     neighborFunction = FindNeighboringCellsRectangle,
-                    traversableFunction = predicate,
+                    traversableFunction = args.traversableFunction,
                     range = args.maximum,
                     startElement = origin
                 };
