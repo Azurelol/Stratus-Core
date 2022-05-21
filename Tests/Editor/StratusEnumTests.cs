@@ -67,6 +67,32 @@ namespace Stratus.Editor.Tests
 			Assert.AreEqual(expected.Length, flags.Length);
 			Assert.AreEqual(expected, flags);
 		}
+
+		public enum MockDegree
+		{
+			ReallyBad,
+			Bad,
+			Good,
+			ReallyGood
+		}
+
+		[TestCase(MockDegree.ReallyBad, MockDegree.Bad)]
+		[TestCase(MockDegree.Bad, MockDegree.Good)]
+		[TestCase(MockDegree.Good, MockDegree.ReallyGood)]
+		[TestCase(MockDegree.ReallyGood, MockDegree.ReallyGood)]
+		public void IncreasesDegree(MockDegree value, MockDegree expected)
+		{
+			Assert.AreEqual(expected, StratusEnum.Increase(value));
+		}
+
+		[TestCase(MockDegree.ReallyGood, MockDegree.Good)]
+		[TestCase(MockDegree.Good, MockDegree.Bad)]
+		[TestCase(MockDegree.Bad, MockDegree.ReallyBad)]
+		[TestCase(MockDegree.ReallyBad, MockDegree.ReallyBad)]
+		public void DecreasesDegree(MockDegree value, MockDegree expected)
+		{
+			Assert.AreEqual(expected, StratusEnum.Decrease(value));
+		}
 	}
 
 }

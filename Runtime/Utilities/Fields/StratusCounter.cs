@@ -97,6 +97,14 @@ namespace Stratus
 			current = 0;
 		}
 
+		/// <summary>
+		/// Fill up the counter
+		/// </summary>
+		public void Consume()
+		{
+			current = total;
+		}
+
 	}
 
 

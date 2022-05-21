@@ -11,13 +11,20 @@ namespace Stratus
 	{
 		private static Dictionary<Type, string[]> enumDisplayNames { get; set; } = new Dictionary<Type, string[]>();
 		private static Dictionary<Type, Array> enumValues { get; set; } = new Dictionary<Type, Array>();
+		private static Dictionary<Type, Enum[]> _enumValues { get; set; } = new Dictionary<Type, Enum[]>();
 
 		public static T[] Values<T>() where T : Enum
 		{
-			return Enum.GetValues(typeof(T)).Cast<T>().ToArray();
+			return Values(typeof(T)).Cast<T>().ToArray();
+			//return Enum.GetValues(typeof(T)).Cast<T>().ToArray();
 		}
 
-		public static Array Values(Type enumType)
+		public static Enum[] Values(Type enumType)
+		{
+			return _enumValues.GetValueOrGenerate(enumType, t => Enum.GetValues(t).Cast<Enum>().ToArray());
+		}
+
+		public static Array ValuesArray(Type enumType)
 		{
 			return enumValues.GetValueOrGenerate(enumType, Enum.GetValues);
 		}
@@ -29,7 +36,7 @@ namespace Stratus
 
 		public static Enum Value(Type enumType, int index)
 		{
-			return (Enum)Values(enumType).GetValue(index);
+			return (Enum)ValuesArray(enumType).GetValue(index);
 		}
 
 		public static string[] Names<T>() where T : Enum
@@ -143,6 +150,31 @@ namespace Stratus
 			where TEnum : Enum
 		{
 			return ((int)(object)first) >= ((int)(object)second);
+		}
+
+		public static TEnum Increase<TEnum>(TEnum value)
+			where TEnum : Enum
+		{
+			int count  = StratusEnum.Values<TEnum>().Length;
+			return FromInteger<TEnum>(Math.Min(count - 1, ToInteger(value) + 1));
+		}
+
+		public static TEnum Decrease<TEnum>(TEnum value)
+			where TEnum : Enum
+		{
+			return FromInteger<TEnum>(Math.Max(0, ToInteger(value) - 1));
+		}
+
+		public static int ToInteger<TEnum>(TEnum value)
+			where TEnum : Enum
+		{
+			return Convert.ToInt32(value);
+		}
+
+		public static TEnum FromInteger<TEnum>(int value)
+			where TEnum : Enum
+		{
+			return Values<TEnum>()[value];
 		}
 	}
 }
