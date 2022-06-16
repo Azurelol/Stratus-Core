@@ -14,9 +14,9 @@ namespace Stratus
 		/// <typeparam name="T"></typeparam>
 		/// <param name="collection">The list.</param>
 		/// <returns>True if the list is empty, false otherwise</returns>
-		public static bool Empty(this ICollection collection)
+		public static bool IsNullOrEmpty<T>(this Stack<T> collection)
 		{
-			return collection.Count == 0;
+			return collection == null || collection.Count == 0;
 		}
 
 		/// <summary>
@@ -25,7 +25,29 @@ namespace Stratus
 		/// <typeparam name="T"></typeparam>
 		/// <param name="collection">The array.</param>
 		/// <returns>True if the array is not empty, false otherwise</returns>
-		public static bool NotEmpty(this ICollection collection)
+		public static bool IsValid<T>(this Stack<T> collection)
+		{
+			return collection != null && collection.Count > 0;
+		}
+
+		/// <summary>
+		/// Returns true if the collection is empty
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="collection">The list.</param>
+		/// <returns>True if the list is empty, false otherwise</returns>
+		public static bool IsNullOrEmpty<T>(this Queue<T> collection)
+		{
+			return collection == null || collection.Count == 0;
+		}
+
+		/// <summary>
+		/// Returns true if the collection is not empty
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="collection">The array.</param>
+		/// <returns>True if the array is not empty, false otherwise</returns>
+		public static bool IsValid<T>(this Queue<T> collection)
 		{
 			return collection != null && collection.Count > 0;
 		}
@@ -36,8 +58,17 @@ namespace Stratus
 		/// <typeparam name="T"></typeparam>
 		/// <param name="collection"></param>
 		/// <returns></returns>
-		public static bool IsNullOrEmpty<T>(this ICollection<T> collection) 
+		public static bool IsNullOrEmpty<T>(this ICollection<T> collection)
 			=> collection == null || collection.Count == 0;
+
+		/// <summary>
+		/// Returns true if the given collection is valid (not null or empty)
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="collection"></param>
+		/// <returns></returns>
+		public static bool IsValid<T>(this ICollection<T> collection)
+			=> collection != null && collection.Count > 0;
 
 		/// <summary>
 		/// Returns the collection to an array (an empty one if it's null)
@@ -52,14 +83,6 @@ namespace Stratus
 			return collection.ToArray();
 		}
 
-		/// <summary>
-		/// Returns true if the given collection is valid (not null or empty)
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="collection"></param>
-		/// <returns></returns>
-		public static bool IsValid<T>(this ICollection<T> collection) 
-			=> collection != null && collection.Count > 0;
 
 		/// <summary>
 		/// Returns the length of the collection; if it's null it will return 0

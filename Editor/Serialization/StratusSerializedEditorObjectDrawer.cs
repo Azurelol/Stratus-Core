@@ -55,7 +55,7 @@ namespace Stratus.Editor
 			public FieldInfo[] fields { get; private set; }
 			public Dictionary<string, FieldInfo> fieldsByName { get; private set; } = new Dictionary<string, FieldInfo>();
 			public int fieldCount => this.fields.Length;
-			public bool hasFields => this.fields.NotEmpty();
+			public bool hasFields => this.fields.IsValid();
 			public bool hasDefaultConstructor { get; private set; }
 
 			public ObjectDrawer(Type type)

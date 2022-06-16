@@ -277,7 +277,7 @@ namespace Stratus.Editor
 		private void SortByMultipleColumns()
 		{
 			int[] sortedColumns = this.multiColumnHeader.state.sortedColumns;
-			if (sortedColumns.Empty())
+			if (sortedColumns.IsNullOrEmpty())
 			{
 				return;
 			}

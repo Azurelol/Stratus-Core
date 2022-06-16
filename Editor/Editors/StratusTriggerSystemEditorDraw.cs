@@ -60,7 +60,7 @@ namespace Stratus.Editor
 				DrawTrigger(trigger);
 
 			// If any swap operations...
-			if (!triggerSwapOperations.Empty())
+			if (!triggerSwapOperations.IsNullOrEmpty())
 			{
 				foreach (var tuple in triggerSwapOperations)
 					triggers.Swap(tuple.Item1, tuple.Item2);
@@ -74,7 +74,7 @@ namespace Stratus.Editor
 				DrawTriggerable(triggerable);
 
 			// If any swap operations...
-			if (!triggerableSwapOperations.Empty())
+			if (!triggerableSwapOperations.IsNullOrEmpty())
 			{
 				foreach (var tuple in triggerableSwapOperations)
 					triggerables.Swap(tuple.Item1, tuple.Item2);

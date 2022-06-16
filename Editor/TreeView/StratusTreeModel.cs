@@ -175,12 +175,18 @@ namespace Stratus
 		public void AddElement(T element, StratusTreeElement parent, int insertPosition)
 		{
 			if (element == null)
+			{
 				throw new ArgumentNullException("element", "element is null");
+			}
 			if (parent == null)
+			{
 				throw new ArgumentNullException("parent", "parent is null");
+			}
 
 			if (parent.children == null)
+			{
 				parent.children = new List<StratusTreeElement>();
+			}
 
 			parent.children.Insert(insertPosition, element);
 			element.parent = parent;

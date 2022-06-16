@@ -81,7 +81,7 @@ namespace Stratus.Editor
 		/// <summary>
 		/// Whether there are messages to be shown
 		/// </summary>
-		public bool hasMessages => this.messages.NotEmpty();
+		public bool hasMessages => this.messages.IsValid();
 		/// <summary>
 		/// The base type for the component type this editor is for. It marks the stopping point to look at properties.
 		/// </summary>
@@ -176,7 +176,7 @@ namespace Stratus.Editor
 			this.serializedObject.Update();
 
 			// Show any messages, if present
-			if (this.messages.NotEmpty())
+			if (this.messages.IsValid())
 			{
 				this.DrawMessages();
 			}
@@ -188,7 +188,7 @@ namespace Stratus.Editor
 			}
 
 			// Now draw invokable methods
-			if (this.buttons.NotEmpty())
+			if (this.buttons.IsValid())
 			{
 				this.DrawButtons();
 			}
@@ -318,7 +318,7 @@ namespace Stratus.Editor
 
 		private void ProcessEndOfFrameRequests()
 		{
-			if (this.endOfFrameRequests.NotEmpty())
+			if (this.endOfFrameRequests.IsValid())
 			{
 				foreach (Action request in this.endOfFrameRequests)
 				{

@@ -45,7 +45,7 @@ namespace Stratus
     /// <summary>
     /// Whether there no components in the system
     /// </summary>    
-    public bool isEmpty => triggers.Empty() && triggerables.Empty();
+    public bool isEmpty => triggers.IsNullOrEmpty() && triggerables.IsNullOrEmpty();
 
     //------------------------------------------------------------------------/
     // Messages
@@ -217,7 +217,7 @@ namespace Stratus
 
     public static bool IsConnected(StratusTriggerBehaviour trigger)
     {
-      return trigger.targets.NotEmpty();
+      return trigger.targets.IsValid();
     }
 
     public StratusObjectValidation ValidateConnections()
@@ -235,7 +235,7 @@ namespace Stratus
       //    disconnected.Add(t);
       //}
 
-      if (disconnected.Empty())
+      if (disconnected.IsNullOrEmpty())
         return null;
 
       string msg = $"Triggers marked as disconnected ({disconnected.Count}):";

@@ -30,7 +30,7 @@ namespace Stratus.Editor
 			{
 				this.height = lineHeight;
 				this.drawCalls = this.GenerateDrawCommands(this.fields);
-				this.isDrawable = this.drawCalls.NotEmpty();
+				this.isDrawable = this.drawCalls.IsValid();
 			}
 
 			public DefaultObjectDrawer(FieldInfo field, Type type) : base(type)
@@ -38,7 +38,7 @@ namespace Stratus.Editor
 				this.displayName = ObjectNames.NicifyVariableName(field.Name);
 				this.height = lineHeight;
 				this.drawCalls = this.GenerateDrawCommands(this.fields);
-				this.isDrawable = this.drawCalls.NotEmpty();
+				this.isDrawable = this.drawCalls.IsValid();
 			}
 
 			//------------------------------------------------------------------------/

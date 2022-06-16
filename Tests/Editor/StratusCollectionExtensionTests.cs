@@ -13,44 +13,42 @@ namespace Stratus.Editor.Tests
 		public void IsEmpty()
 		{
 			List<string> values = null;
-			Assert.Throws<Exception>(() => values.Empty());
 			values = new List<string>();
-			Assert.True(values.Empty());
+			Assert.True(values.IsNullOrEmpty());
 			values.Add("Boo");
-			Assert.False(values.Empty());
+			Assert.False(values.IsNullOrEmpty());
 		}
 
 		[Test]
 		public void IsNotEmpty()
 		{
 			List<string> values = null;
-			Assert.Throws<Exception>(() => values.NotEmpty());
-			Assert.False(values.NotEmpty());
+			Assert.False(values.IsValid());
 			values = new List<string>();
 			values.Add("Boo");
-			Assert.True(values.NotEmpty());
+			Assert.True(values.IsValid());
 		}
 
 		[Test]
 		public void IsNullOrEmpty()
 		{
 			string[] values = null;
-			Assert.True(values.IsNullOrEmpty());
+			Assert.True(values.IsNullOrEmpty<string>());
 			values = new string[] { };
-			Assert.True(values.IsNullOrEmpty());
+			Assert.True(values.IsNullOrEmpty<string>());
 			values = new string[] { "foo", "bar" };
-			Assert.False(values.IsNullOrEmpty());
+			Assert.False(values.IsNullOrEmpty<string>());
 		}
 
 		[Test]
 		public void IsValid()
 		{
 			string[] values = null;
-			Assert.False(values.IsValid());
+			Assert.False(values.IsValid<string>());
 			values = new string[] { };
-			Assert.False(values.IsValid());
+			Assert.False(values.IsValid<string>());
 			values = new string[] { "foo", "bar" };
-			Assert.True(values.IsValid());
+			Assert.True(values.IsValid<string>());
 		}
 
 		[Test]

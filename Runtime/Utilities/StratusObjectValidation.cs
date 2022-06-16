@@ -106,7 +106,7 @@ namespace Stratus
 		public static StratusObjectValidation NullReference(Behaviour behaviour, string description = null)
 		{
 			FieldInfo[] nullFields = Stratus.Utilities.StratusReflection.GetFieldsWithNullReferences(behaviour);
-			if (nullFields.Empty())
+			if (nullFields.IsNullOrEmpty())
 				return null;
 
 			string label = behaviour.GetType().Name;

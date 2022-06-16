@@ -68,7 +68,7 @@ namespace Stratus
 			where T : Component
 		{
 			List<T> result = new List<T>(component.GetComponentsInChildren<T>(includeInactive));
-			if (result.NotEmpty() && result[0].transform == component.transform)
+			if (result.IsValid() && result[0].transform == component.transform)
 			{
 				result.RemoveFirst();
 

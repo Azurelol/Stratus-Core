@@ -136,6 +136,7 @@ namespace Stratus
 		}
 
 		public static implicit operator float(StratusValue attribute) => attribute.total;
+		public static implicit operator int(StratusValue attribute) => (int)attribute.total;
 
 		//------------------------------------------------------------------------/
 		// Methods

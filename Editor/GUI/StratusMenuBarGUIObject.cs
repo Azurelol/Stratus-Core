@@ -202,7 +202,7 @@ namespace Stratus.Editor
 
 		private void DrawContextMenu(StratusEditorGUILayout.ContextMenuType type, List<MenuOption> options)
 		{
-			if (options.NotEmpty())
+			if (options.IsValid())
 			{
 				var menu = new GenericMenu();
 				foreach (var option in options)

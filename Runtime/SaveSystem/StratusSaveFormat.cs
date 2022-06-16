@@ -70,11 +70,15 @@ namespace Stratus
 		{
 			IEnumerable<StratusSaveFileInfo> get(string directoryPath)
 			{
-				var files = Directory.GetFiles(directoryPath, $"*{extension}", SearchOption.TopDirectoryOnly);
-				for (int i = 0; i < files.Length; i++)
+				var directory = new DirectoryInfo(directoryPath);
+				if (directory.Exists)
 				{
-					string file = files[i];
-					yield return new StratusSaveFileInfo(file);
+					var files = Directory.GetFiles(directoryPath, $"*{extension}", SearchOption.TopDirectoryOnly);
+					for (int i = 0; i < files.Length; i++)
+					{
+						string file = files[i];
+						yield return new StratusSaveFileInfo(file);
+					}
 				}
 			}
 

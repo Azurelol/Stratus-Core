@@ -19,7 +19,7 @@ namespace Stratus
         public bool canPop => activeLayer != null && !activeLayer.pushed;
         public int layerCount => _layers.Count;
         public bool hasActiveLayers => layerCount > 0;
-        public bool hasQueuedLayers => _queuedLayers.NotEmpty();
+        public bool hasQueuedLayers => _queuedLayers.IsValid();
 
         public event Action<InputLayer> onInputLayerChanged;
 
@@ -75,7 +75,7 @@ namespace Stratus
                 // and the topmost is not blocking
                 if (hasQueuedLayers)
                 {
-                    while (_queuedLayers.NotEmpty())
+                    while (_queuedLayers.IsValid())
                     {
                         layer = _queuedLayers.Dequeue();
                         bool blocking = layer.blocking;

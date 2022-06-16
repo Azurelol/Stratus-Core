@@ -24,7 +24,7 @@ namespace Stratus
 			// Add all the children starting from the root to the list in order
 			Stack<T> stack = new Stack<T>();
 			stack.Push(root);
-			while (stack.NotEmpty())
+			while (stack.IsValid())
 			{
 				T current = stack.Pop();
 				list.Add(current);
@@ -296,7 +296,7 @@ namespace Stratus
 
 			Stack<StratusTreeElement> stack = new Stack<StratusTreeElement>();
 			stack.Push(root);
-			while (stack.NotEmpty())
+			while (stack.IsValid())
 			{
 				StratusTreeElement current = stack.Pop();
 				if (current.hasChildren)

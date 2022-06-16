@@ -35,8 +35,8 @@ namespace Stratus.Editor.Tests
 		[TestCase(-5.5111f, -5.51f)]
 		[TestCase(5.5111f, 5.51f)]
 		[TestCase(5.54444f, 5.54f)]
-		[TestCase(5.55555f, 5.55f)]
-		[TestCase(5.58888f, 5.58f)]
+		[TestCase(5.55555f, 5.56f)]
+		[TestCase(5.58888f, 5.59f)]
 		public void RoundsByDecimalPlaces(float value, float expected,  int decimalPlaces = 2)
 		{
 			Assert.AreEqual(expected, value.Round(decimalPlaces));

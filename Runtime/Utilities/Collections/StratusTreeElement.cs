@@ -19,7 +19,7 @@ namespace Stratus
 		[SerializeField] public int depth;
 
 		[NonSerialized] public StratusTreeElement parent;
-		[NonSerialized] public List<StratusTreeElement> children;
+		[NonSerialized] public List<StratusTreeElement> children = new List<StratusTreeElement>();
 		#endregion
 
 		#region Properties

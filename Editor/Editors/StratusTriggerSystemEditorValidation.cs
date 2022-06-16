@@ -24,7 +24,7 @@ namespace Stratus.Editor
 		{
 			List<StratusTriggerBase> persistents = new List<StratusTriggerBase>();
 			persistents.AddRange(triggers.FindAll(x => x.persistent));
-			if (persistents.NotEmpty())
+			if (persistents.IsValid())
 			{
 				string msg = $"Triggers marked as persistent ({persistents.Count}):";
 				foreach (var t in persistents)
@@ -49,7 +49,7 @@ namespace Stratus.Editor
 					disconnected.Add(t);
 			}
 
-			if (disconnected.NotEmpty())
+			if (disconnected.IsValid())
 			{
 				string msg = $"Triggers marked as disconnected ({disconnected.Count}):";
 				foreach (var t in disconnected)
