@@ -50,7 +50,50 @@ namespace Stratus.OdinSerializer
     {
         public static readonly Type SerializeReferenceAttributeType = typeof(SerializeField).Assembly.GetType("UnityEngine.SerializeReference");
 
+        private static readonly Assembly String_Assembly = typeof(string).Assembly;
+        private static readonly Assembly HashSet_Assembly = typeof(HashSet<>).Assembly;
+        private static readonly Assembly LinkedList_Assembly = typeof(LinkedList<>).Assembly;
+
+
 #if UNITY_EDITOR        
+        private static bool isDoingDomainReload;
+
+        [UnityEditor.InitializeOnLoadMethod]
+        private static void SubscribeToDomainReloadEvents()
+        {
+            var AssemblyReloadEvents_Type = TwoWaySerializationBinder.Default.BindToType("UnityEditor.AssemblyReloadEvents");
+
+            if (AssemblyReloadEvents_Type == null) return;
+
+            var AssemblyReloadEvents_beforeAssemblyReload_Event = AssemblyReloadEvents_Type.GetEvent("beforeAssemblyReload");
+            var AssemblyReloadEvents_afterAssemblyReload_Event = AssemblyReloadEvents_Type.GetEvent("afterAssemblyReload");
+            var AssemblyReloadEvents_AssemblyReloadCallback_Type = AssemblyReloadEvents_Type.GetNestedType("AssemblyReloadCallback");
+
+            if (AssemblyReloadEvents_beforeAssemblyReload_Event == null || AssemblyReloadEvents_afterAssemblyReload_Event == null || AssemblyReloadEvents_AssemblyReloadCallback_Type == null)
+            {
+                return;
+            }
+
+            var UnitySerializationUtility_OnBeforeAssemblyReload_Method = typeof(UnitySerializationUtility).GetMethod("OnBeforeAssemblyReload", Flags.StaticAnyVisibility);
+            var UnitySerializationUtility_OnAfterAssemblyReload_Method = typeof(UnitySerializationUtility).GetMethod("OnAfterAssemblyReload", Flags.StaticAnyVisibility);
+
+            var onBeforeDelegate = Delegate.CreateDelegate(AssemblyReloadEvents_AssemblyReloadCallback_Type, UnitySerializationUtility_OnBeforeAssemblyReload_Method);
+            var onAfterDelegate = Delegate.CreateDelegate(AssemblyReloadEvents_AssemblyReloadCallback_Type, UnitySerializationUtility_OnAfterAssemblyReload_Method);
+
+            AssemblyReloadEvents_beforeAssemblyReload_Event.AddEventHandler(null, onBeforeDelegate);
+            AssemblyReloadEvents_afterAssemblyReload_Event.AddEventHandler(null, onAfterDelegate);
+        }
+
+        private static void OnBeforeAssemblyReload()
+        {
+            isDoingDomainReload = true;
+        }
+
+        private static void OnAfterAssemblyReload()
+        {
+            isDoingDomainReload = false;
+        }
+
         /// <summary>
         /// From the new scriptable build pipeline package
         /// </summary>
@@ -149,6 +192,11 @@ namespace Stratus.OdinSerializer
         private static readonly HashSet<Type> UnityNeverSerializesTypes = new HashSet<Type>()
         {
             typeof(Coroutine)
+        };
+
+        private static readonly HashSet<string> UnityNeverSerializesTypeNames = new HashSet<string>()
+        {
+            "UnityEngine.AnimationState"
         };
 
 #if UNITY_EDITOR
@@ -331,7 +379,7 @@ namespace Stratus.OdinSerializer
         {
             FieldInfo fieldInfo = member as FieldInfo;
 
-            if (fieldInfo == null || fieldInfo.IsStatic)
+            if (fieldInfo == null || fieldInfo.IsStatic || fieldInfo.IsInitOnly)
             {
                 return false;
             }
@@ -394,13 +442,18 @@ namespace Stratus.OdinSerializer
 
         private static bool GuessIfUnityWillSerializePrivate(Type type)
         {
-            if (UnityNeverSerializesTypes.Contains(type))
+            if (UnityNeverSerializesTypes.Contains(type) || UnityNeverSerializesTypeNames.Contains(type.FullName))
             {
                 return false;
             }
 
-            if (typeof(UnityEngine.Object).IsAssignableFrom(type) && type.GetGenericArguments().Length == 0)
+            if (typeof(UnityEngine.Object).IsAssignableFrom(type))
             {
+                if (type.IsGenericType)
+                {
+                    return UnityVersion.IsVersionOrGreater(2020, 1);
+                }
+
                 // Unity will always serialize all of its own special objects
                 // Except when they have generic type arguments.
                 return true;
@@ -480,8 +533,9 @@ namespace Stratus.OdinSerializer
                 return false;
             }
 
-            // Unity does not serialize [Serializable] structs and classes if they are defined in mscorlib
-            if (type.Assembly == typeof(string).Assembly)
+            // Unity does not serialize [Serializable] structs and classes if they are defined in mscorlib, System.dll or System.Core.dll if those are present
+            // Checking against the assemblies that declare System.String, HashSet<T> and LinkedList<T> is a simple way to do this.
+            if (type.Assembly == String_Assembly || type.Assembly == HashSet_Assembly || type.Assembly == LinkedList_Assembly)
             {
                 return false;
             }
@@ -596,7 +650,7 @@ namespace Stratus.OdinSerializer
                 // that supports special prefab serialization, we enter a special bail-out case.
                 //
 
-                if (!pretendIsPlayer)
+                if (!pretendIsPlayer && !isDoingDomainReload) // Recently some Unity versions started breaking if the prefab API was accessed during a domain reload, so no prefab stuff for domain reloads!
                 {
                     UnityEngine.Object prefab = null;
                     SerializationData prefabData = default(SerializationData);
@@ -1157,7 +1211,7 @@ namespace Stratus.OdinSerializer
                     context.IndexReferenceResolver = resolver.Value;
                     using (var writerCache = GetCachedUnityWriter(format, stream.Value.MemoryStream, context))
                     {
-                        SerializeUnityObject(unityObject, writerCache.Value, serializeUnityFields);
+                        SerializeUnityObject(unityObject, writerCache.Value as IDataWriter, serializeUnityFields);
                     }
                 }
                 else
@@ -1193,7 +1247,7 @@ namespace Stratus.OdinSerializer
 
                         using (var writerCache = GetCachedUnityWriter(format, stream.Value.MemoryStream, con))
                         {
-                            SerializeUnityObject(unityObject, writerCache.Value, serializeUnityFields);
+                            SerializeUnityObject(unityObject, writerCache.Value as IDataWriter, serializeUnityFields);
                         }
                     }
                 }
@@ -1676,7 +1730,7 @@ namespace Stratus.OdinSerializer
 
                     using (var readerCache = GetCachedUnityReader(format, stream.Value.MemoryStream, context))
                     {
-                        DeserializeUnityObject(unityObject, readerCache.Value);
+                        DeserializeUnityObject(unityObject, readerCache.Value as IDataReader);
                     }
                 }
                 else
@@ -1712,7 +1766,7 @@ namespace Stratus.OdinSerializer
 
                         using (var readerCache = GetCachedUnityReader(format, stream.Value.MemoryStream, con))
                         {
-                            DeserializeUnityObject(unityObject, readerCache.Value);
+                            DeserializeUnityObject(unityObject, readerCache.Value as IDataReader);
                         }
                     }
                 }
@@ -2402,9 +2456,9 @@ namespace Stratus.OdinSerializer
             }
         }
 
-        private static ICache<IDataWriter> GetCachedUnityWriter(DataFormat format, Stream stream, SerializationContext context)
+        private static ICache GetCachedUnityWriter(DataFormat format, Stream stream, SerializationContext context)
         {
-            ICache<IDataWriter> cache;
+            ICache cache;
 
             switch (format)
             {
@@ -2428,7 +2482,7 @@ namespace Stratus.OdinSerializer
                     throw new NotImplementedException(format.ToString());
             }
 
-            cache.Value.Context = context;
+            (cache.Value as IDataWriter).Context = context;
 
             return cache;
 
@@ -2456,9 +2510,9 @@ namespace Stratus.OdinSerializer
             //return writer;
         }
 
-        private static ICache<IDataReader> GetCachedUnityReader(DataFormat format, Stream stream, DeserializationContext context)
+        private static ICache GetCachedUnityReader(DataFormat format, Stream stream, DeserializationContext context)
         {
-            ICache<IDataReader> cache;
+            ICache cache;
 
             switch (format)
             {
@@ -2482,7 +2536,7 @@ namespace Stratus.OdinSerializer
                     throw new NotImplementedException(format.ToString());
             }
 
-            cache.Value.Context = context;
+            (cache.Value as IDataReader).Context = context;
 
             return cache;
 

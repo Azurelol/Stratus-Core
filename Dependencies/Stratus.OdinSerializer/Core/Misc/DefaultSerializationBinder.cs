@@ -85,25 +85,99 @@ namespace Stratus.OdinSerializer
         private static readonly object NAMETOTYPE_LOCK = new object();
         private static readonly Dictionary<string, Type> typeMap = new Dictionary<string, Type>();
 
-        private static readonly List<string> genericArgNamesList = new List<string>();
-        private static readonly List<Type> genericArgTypesList = new List<Type>();
+        private static readonly object ASSEMBLY_REGISTER_QUEUE_LOCK = new object();
+        private static readonly List<Assembly> assembliesQueuedForRegister = new List<Assembly>();
+        private static readonly List<AssemblyLoadEventArgs> assemblyLoadEventsQueuedForRegister = new List<AssemblyLoadEventArgs>();
 
         static DefaultSerializationBinder()
         {
             AppDomain.CurrentDomain.AssemblyLoad += (sender, args) =>
             {
-                RegisterAssembly(args.LoadedAssembly);
+                lock (ASSEMBLY_REGISTER_QUEUE_LOCK)
+                {
+                    assemblyLoadEventsQueuedForRegister.Add(args);
+                }
             };
 
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
+                lock (ASSEMBLY_REGISTER_QUEUE_LOCK)
+                {
+                    assembliesQueuedForRegister.Add(assembly);
+                }
+            }
+        }
+
+        private static void RegisterAllQueuedAssembliesRepeating()
+        {
+            while (RegisterQueuedAssemblies()) { }
+            while (RegisterQueuedAssemblyLoadEvents()) { }
+        }
+
+        private static bool RegisterQueuedAssemblies()
+        {
+            Assembly[] toRegister = null;
+
+            lock (ASSEMBLY_REGISTER_QUEUE_LOCK)
+            {
+                if (assembliesQueuedForRegister.Count > 0)
+                {
+                    toRegister = assembliesQueuedForRegister.ToArray();
+                    assembliesQueuedForRegister.Clear();
+                }
+            }
+
+            if (toRegister == null) return false;
+
+            for (int i = 0; i < toRegister.Length; i++)
+            {
+                RegisterAssembly(toRegister[i]);
+            }
+
+            return true;
+        }
+
+        private static bool RegisterQueuedAssemblyLoadEvents()
+        {
+            AssemblyLoadEventArgs[] toRegister = null;
+
+            lock (ASSEMBLY_REGISTER_QUEUE_LOCK)
+            {
+                if (assemblyLoadEventsQueuedForRegister.Count > 0)
+                {
+                    toRegister = assemblyLoadEventsQueuedForRegister.ToArray();
+                    assemblyLoadEventsQueuedForRegister.Clear();
+                }
+            }
+
+            if (toRegister == null) return false;
+
+            for (int i = 0; i < toRegister.Length; i++)
+            {
+                var args = toRegister[i];
+                Assembly assembly;
+
+                try
+                {
+                    assembly = args.LoadedAssembly;
+                }
+                catch { continue; } // Assembly is invalid, likely causing a type load or bad image format exception of some sort
+
                 RegisterAssembly(assembly);
             }
+
+            return true;
         }
 
         private static void RegisterAssembly(Assembly assembly)
         {
-            var name = assembly.GetName().Name;
+            string name;
+
+            try
+            {
+                name = assembly.GetName().Name;
+            }
+            catch { return; } // Assembly is invalid somehow
 
             bool wasAdded = false;
 
@@ -237,6 +311,8 @@ namespace Stratus.OdinSerializer
             {
                 throw new ArgumentNullException("typeName");
             }
+
+            RegisterAllQueuedAssembliesRepeating();
 
             Type result;
 
@@ -397,42 +473,53 @@ namespace Stratus.OdinSerializer
             {
                 if (!type.IsGenericType) return null;
 
-                List<Type> args = genericArgTypesList;
-                args.Clear();
-
-                for (int i = 0; i < genericArgNames.Count; i++)
+                using (var argsCache = Cache<List<Type>>.Claim())
                 {
-                    Type arg = this.BindToType(genericArgNames[i], debugContext);
-                    if (arg == null) return null;
-                    args.Add(arg);
-                }
+                    List<Type> args = argsCache.Value;
+                    args.Clear();
 
-                var argsArray = args.ToArray();
-
-                if (!type.AreGenericConstraintsSatisfiedBy(argsArray))
-                {
-                    if (debugContext != null)
+                    for (int i = 0; i < genericArgNames.Count; i++)
                     {
-                        string argsStr = "";
-
-                        foreach (var arg in args)
-                        {
-                            if (argsStr != "") argsStr += ", ";
-                            argsStr += arg.GetNiceFullName();
-                        }
-
-                        debugContext.LogWarning("Deserialization type lookup failure: The generic type arguments '" + argsStr + "' do not satisfy the generic constraints of generic type definition '" + type.GetNiceFullName() + "'. All this parsed from the full type name string: '" + typeName + "'");
+                        Type arg = this.BindToType(genericArgNames[i], debugContext);
+                        if (arg == null) return null;
+                        args.Add(arg);
                     }
 
-                    return null;
-                }
+                    var argsArray = args.ToArray();
 
-                type = type.MakeGenericType(argsArray);
+                    if (!type.AreGenericConstraintsSatisfiedBy(argsArray))
+                    {
+                        if (debugContext != null)
+                        {
+                            string argsStr = "";
+
+                            foreach (var arg in argsArray)
+                            {
+                                if (argsStr != "") argsStr += ", ";
+                                argsStr += arg.GetNiceFullName();
+                            }
+
+                            debugContext.LogWarning("Deserialization type lookup failure: The generic type arguments '" + argsStr + "' do not satisfy the generic constraints of generic type definition '" + type.GetNiceFullName() + "'. All this parsed from the full type name string: '" + typeName + "'");
+                        }
+
+                        return null;
+                    }
+
+                    type = type.MakeGenericType(argsArray);
+                    args.Clear();
+                }
             }
 
             if (isArray)
             {
-                type = type.MakeArrayType(arrayRank);
+                if (arrayRank == 1)
+                {
+                    type = type.MakeArrayType();
+                }
+                else
+                {
+                    type = type.MakeArrayType(arrayRank);
+                }
             }
 
             return type;
@@ -487,8 +574,7 @@ namespace Stratus.OdinSerializer
                             actualTypeName = typeName.Substring(0, i);
                             isGeneric = true;
                             parsingGenericArguments = true;
-                            genericArgNames = genericArgNamesList;
-                            genericArgNames.Clear();
+                            genericArgNames = new List<string>();
                         }
                         else if (isGeneric && ReadGenericArg(typeName, ref i, out argName))
                         {

@@ -8,7 +8,7 @@ namespace Stratus
 	/// <summary>
 	/// Tags the given static method, field or property as being a static command,
 	/// registering it to be used. Note that it must be used within a class that implements the
-	/// IConsoleCommandHandler interface
+	/// <see cref="IStratusConsoleCommandProvider"/> interface
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
 	public class StratusConsoleCommandAttribute : Attribute, IStratusConsoleCommand

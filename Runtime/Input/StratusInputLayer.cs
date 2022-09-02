@@ -166,6 +166,10 @@ namespace Stratus
 		public ActionMap actions { get; } = new ActionMap();
 		public override string map => actions.map;
 
+		public StratusInputLayer() : this(typeof(ActionMap).Name, new ActionMap())
+		{
+		}
+
 		public StratusInputLayer(string label) : this(label, new ActionMap())
 		{
 		}

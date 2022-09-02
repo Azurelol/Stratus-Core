@@ -437,9 +437,9 @@ namespace Stratus.OdinSerializer
             }
             else if (this.peekedBinaryEntryType == BinaryEntryType.NamedStartOfStructNode || this.peekedBinaryEntryType == BinaryEntryType.UnnamedStartOfStructNode)
             {
-                this.MarkEntryContentConsumed();
                 type = this.ReadTypeEntry();
                 this.PushNode(this.peekedEntryName, -1, type);
+                this.MarkEntryContentConsumed();
                 return true;
             }
             else
@@ -921,12 +921,23 @@ namespace Stratus.OdinSerializer
                     {
                         case BinaryEntryType.NamedSByte:
                         case BinaryEntryType.UnnamedSByte:
-                        case BinaryEntryType.NamedByte:
-                        case BinaryEntryType.UnnamedByte:
-                            byte i8;
-                            if (this.UNSAFE_Read_1_Byte(out i8))
+                            sbyte i8;
+                            if (this.UNSAFE_Read_1_SByte(out i8))
                             {
                                 value = i8;
+                            }
+                            else
+                            {
+                                value = 0;
+                                return false;
+                            }
+                            break;
+                        case BinaryEntryType.NamedByte:
+                        case BinaryEntryType.UnnamedByte:
+                            byte ui8;
+                            if (this.UNSAFE_Read_1_Byte(out ui8))
+                            {
+                                value = ui8;
                             }
                             else
                             {

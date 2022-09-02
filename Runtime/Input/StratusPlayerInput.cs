@@ -145,7 +145,7 @@ namespace Stratus
 				}
 				catch (Exception exception)
 				{
-					this.LogError(exception);
+					this.LogException(exception);
 				}
 			}
 

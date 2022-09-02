@@ -39,6 +39,8 @@ namespace Stratus.OdinSerializer.Utilities
         private static readonly Dictionary<Type, Type> GenericConstraintsSatisfactionInferredParameters = new Dictionary<Type, Type>();
         private static readonly Dictionary<Type, Type> GenericConstraintsSatisfactionResolvedMap = new Dictionary<Type, Type>();
         private static readonly HashSet<Type> GenericConstraintsSatisfactionProcessedParams = new HashSet<Type>();
+        private static readonly HashSet<Type> GenericConstraintsSatisfactionTypesToCheck = new HashSet<Type>();
+        private static readonly List<Type> GenericConstraintsSatisfactionTypesToCheck_ToAdd = new List<Type>();
 
         private static readonly Type GenericListInterface = typeof(IList<>);
         private static readonly Type GenericCollectionInterface = typeof(ICollection<>);
@@ -488,7 +490,7 @@ namespace Stratus.OdinSerializer.Utilities
 
             foreach (var method in fromMethods)
             {
-                if ((method.Name == "op_Implicit" || (requireImplicitCast == false && method.Name == "op_Explicit")) && to.IsAssignableFrom(method.ReturnType))
+                if ((method.Name == "op_Implicit" || (requireImplicitCast == false && method.Name == "op_Explicit")) && method.GetParameters()[0].ParameterType.IsAssignableFrom(from) && to.IsAssignableFrom(method.ReturnType))
                 {
                     return method;
                 }
@@ -498,7 +500,7 @@ namespace Stratus.OdinSerializer.Utilities
 
             foreach (var method in toMethods)
             {
-                if ((method.Name == "op_Implicit" || (requireImplicitCast == false && method.Name == "op_Explicit")) && method.GetParameters()[0].ParameterType.IsAssignableFrom(from))
+                if ((method.Name == "op_Implicit" || (requireImplicitCast == false && method.Name == "op_Explicit")) && method.GetParameters()[0].ParameterType.IsAssignableFrom(from) && to.IsAssignableFrom(method.ReturnType))
                 {
                     return method;
                 }
@@ -850,11 +852,35 @@ namespace Stratus.OdinSerializer.Utilities
             {
                 types[0] = leftOperand;
                 types[1] = rightOperand;
-                var result = type.GetMethod(methodName, Flags.StaticAnyVisibility, null, types, null);
 
-                if (result != null && result.ReturnType != typeof(bool)) return null;
+                try
+                {
+                    var result = type.GetMethod(methodName, Flags.StaticAnyVisibility, null, types, null);
 
-                return result;
+                    if (result != null && result.ReturnType != typeof(bool)) return null;
+
+                    return result;
+                }
+                catch (AmbiguousMatchException)
+                {
+                    // We fallback to manual resolution
+                    var methods = type.GetMethods(Flags.StaticAnyVisibility);
+
+                    for (int i = 0; i < methods.Length; i++)
+                    {
+                        var method = methods[i];
+                        if (method.Name != methodName) continue;
+                        if (method.ReturnType != typeof(bool)) continue;
+                        var parameters = method.GetParameters();
+                        if (parameters.Length != 2) continue;
+                        if (!parameters[0].ParameterType.IsAssignableFrom(leftOperand)) continue;
+                        if (!parameters[1].ParameterType.IsAssignableFrom(rightOperand)) continue;
+
+                        return method;
+                    }
+
+                    return null;
+                }
             }
         }
 
@@ -1585,6 +1611,9 @@ namespace Stratus.OdinSerializer.Utilities
         /// <exception cref="System.ArgumentException">The genericTypeDefinition parameter must be a generic type definition.</exception>
         public static bool TryInferGenericParameters(this Type genericTypeDefinition, out Type[] inferredParams, params Type[] knownParameters)
         {
+            // NOTE: When modifying this method, also remember to modify Sirenix.Utilities.TypeExtensions.TryInferGenericParameters
+            // and GenericParameterInferenceTypeMatcher.TryInferGenericParameters!
+
             if (genericTypeDefinition == null)
             {
                 throw new ArgumentNullException("genericTypeDefinition");
@@ -1604,6 +1633,17 @@ namespace Stratus.OdinSerializer.Utilities
             {
                 Dictionary<Type, Type> matches = GenericConstraintsSatisfactionInferredParameters;
                 matches.Clear();
+
+                HashSet<Type> typesToCheck = GenericConstraintsSatisfactionTypesToCheck;
+                typesToCheck.Clear();
+
+                List<Type> typesToCheck_ToAdd = GenericConstraintsSatisfactionTypesToCheck_ToAdd;
+                typesToCheck_ToAdd.Clear();
+
+                for (int i = 0; i < knownParameters.Length; i++)
+                {
+                    typesToCheck.Add(knownParameters[i]);
+                }
 
                 Type[] definitions = genericTypeDefinition.GetGenericArguments();
 
@@ -1653,15 +1693,15 @@ namespace Stratus.OdinSerializer.Utilities
                     return true;
                 }
 
-                foreach (var type in definitions)
+                foreach (var typeArg in definitions)
                 {
-                    if (matches.ContainsKey(type)) continue;
+                    //if (matches.ContainsKey(type)) continue;
 
-                    var constraints = type.GetGenericParameterConstraints();
+                    var constraints = typeArg.GetGenericParameterConstraints();
 
                     foreach (var constraint in constraints)
                     {
-                        foreach (var parameter in knownParameters)
+                        foreach (var parameter in typesToCheck)
                         {
                             if (!constraint.IsGenericType)
                             {
@@ -1690,16 +1730,25 @@ namespace Stratus.OdinSerializer.Utilities
                                 continue;
                             }
 
-                            matches[type] = parameter;
+                            matches[typeArg] = parameter;
+                            typesToCheck_ToAdd.Add(parameter);
 
                             for (int i = 0; i < constraintParams.Length; i++)
                             {
                                 if (constraintParams[i].IsGenericParameter)
                                 {
                                     matches[constraintParams[i]] = paramParams[i];
+                                    typesToCheck_ToAdd.Add(paramParams[i]);
                                 }
                             }
                         }
+
+                        foreach (var type in typesToCheck_ToAdd)
+                        {
+                            typesToCheck.Add(type);
+                        }
+
+                        typesToCheck_ToAdd.Clear();
                     }
                 }
 

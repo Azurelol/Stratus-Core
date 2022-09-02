@@ -2,8 +2,8 @@
     "name": "Stratus.Core",
     "rootNamespace": "",
     "references": [
-        "GUID:75469ad4d38634e559750d17036d5f7c",
-        "GUID:9f8d19da3d7094c4b8dfa60afbe6838b"
+        "Unity.InputSystem",
+        "Stratus.OdinSerializer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.InputSystem;
+using System.Linq;
 
 namespace Stratus
 {
@@ -34,17 +35,25 @@ namespace Stratus
 		where T : Enum
 	{
 		private Lazy<T[]> availableActions = new Lazy<T[]>(() => StratusEnum.Values<T>());
-		private Dictionary<string, Action<InputAction>> actions 
+		private Dictionary<string, Action<InputAction>> actions
 			= new Dictionary<string, Action<InputAction>>(StringComparer.InvariantCultureIgnoreCase);
 		public bool lowercase { get; private set; }
 
-		public StratusInputActionMap(bool lowercase = false)
+		public StratusInputActionMap(bool lowercase = false) : this()
 		{
 			this.lowercase = lowercase;
 		}
 
 		protected StratusInputActionMap()
 		{
+			Initialize();
+		}
+
+		protected virtual void Initialize()
+		{
+			// Try binding all actions based by their type
+			var fieldsOrProperties = Utilities.StratusReflection.GetAllFieldsOrProperties(this);				
+			//foreach (var field in Utilities.)
 		}
 
 		public void Bind(T action, Action<InputAction> onAction)
@@ -90,6 +99,10 @@ namespace Stratus
 				{
 					actions[context.action.name].Invoke(context.action);
 					handled = true;
+				}
+				else
+				{
+					Debug.LogWarning($"No action {context.action.name} ({actions.Count})");
 				}
 			}
 			return handled;
