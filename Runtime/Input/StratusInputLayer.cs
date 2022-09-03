@@ -36,7 +36,7 @@ namespace Stratus
 		/// <summary>
 		/// An identifier for this input layer
 		/// </summary>
-		public string label { get; set; }
+		public string name { get; set; }
 		/// <summary>
 		/// Whether this input layer blocks the pushes of additional input layers until its been popped
 		/// </summary>
@@ -89,15 +89,15 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		// CTOR
 		//------------------------------------------------------------------------/
-		public StratusInputLayer(string label)
+		public StratusInputLayer(string name)
 		{
-			this.label = label;
+			this.name = name;
 		}
 
 		//------------------------------------------------------------------------/
 		// Messages
 		//------------------------------------------------------------------------/
-		public override string ToString() => $"{label} ({map})";
+		public override string ToString() => $"{name} ({map})";
 		public abstract bool HandleInput(InputAction.CallbackContext context);
 		protected abstract void OnActive(bool enabled);
 
@@ -132,7 +132,7 @@ namespace Stratus
 		{
 			if (!pushed)
 			{
-				StratusDebug.LogError($"Cannot pop disabled layer {label}");
+				StratusDebug.LogError($"Cannot pop disabled layer {name}");
 				return;
 			}
 			this.Log($"Popping layer {this}");
@@ -189,6 +189,25 @@ namespace Stratus
 		}
 	}
 
+	public class StratusDefaultInputLayer : StratusInputLayer
+	{
+		public StratusDefaultInputActionMap actions { get; }
 
+		public StratusDefaultInputLayer(StratusDefaultInputActionMap actions)
+			 : base(actions.map)
+		{
+			this.actions = actions;
+		}
 
+		public override string map => actions.map;
+
+		public override bool HandleInput(InputAction.CallbackContext context)
+		{
+			return actions.HandleInput(context);
+		}
+
+		protected override void OnActive(bool enabled)
+		{
+		}
+	}
 }

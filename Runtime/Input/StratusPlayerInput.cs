@@ -84,7 +84,7 @@ namespace Stratus
 				{
 					StratusGUI.GUILayoutArea(StratusGUI.Anchor.TopRight, StratusGUI.quarterScreen, (Rect rect) =>
 					{
-						GUILayout.Label(inputLayers.activeLayer.label, StratusGUIStyles.headerWhite);
+						GUILayout.Label(inputLayers.activeLayer.name, StratusGUIStyles.headerWhite);
 					});
 				}
 			}
@@ -97,7 +97,7 @@ namespace Stratus
 			StratusOperationResult result = inputLayers.Push(e.layer);
 			if (debug)
 			{
-				this.Log($"Pushed input layer: {e.layer.label}. Result ? {result}");
+				this.Log($"Pushed input layer: {e.layer.name}. Result ? {result}");
 			}
 		}
 
@@ -155,7 +155,7 @@ namespace Stratus
 				{
 					this.Log($"Action map switched to {layer.map}");
 				}
-				this.Log($"Input layer now '{layer.label}'");
+				this.Log($"Input layer now '{layer.name}'");
 			}
 		}
 

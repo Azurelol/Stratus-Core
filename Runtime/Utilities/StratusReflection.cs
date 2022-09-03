@@ -814,38 +814,7 @@ namespace Stratus.Utilities
 			}
 		}
 
-		/// <summary>
-		/// Gets all the properties and fields in object
-		/// </summary>
-		/// <param name="obj">Object to find the fields/properties in.</param>
-		/// <param name="bindingFlags">Filters for the types of fields/properties that can be found.</param>
-		/// <returns>The fields/properties found.</returns>
-		public static IEnumerable GetAllFieldsOrProperties(this object obj, BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-		{
-			// Get the fields and the properties in the object.
-			object[] fields = obj.GetAllFields(bindingFlags).Cast<object>().ToArray();
-			object[] properties = obj.GetAllProperties(bindingFlags).Cast<object>().ToArray();
 
-			// Only return the fields if fields were found.
-			if (fields != null && fields.Length != 0)
-			{
-				// Loop through the fields and return each one.
-				for (int i = 0; i < fields.Length; i++)
-				{
-					yield return fields[i];
-				}
-			}
-
-			// Only return the properties if properties were found.
-			if (properties != null && properties.Length != 0)
-			{
-				// Loop through the properties and return each one if they have the right type.
-				for (int i = 0; i < properties.Length; i++)
-				{
-					yield return properties[i];
-				}
-			}
-		}
 
 		/// <summary>
 		/// Gets all the fields in obj of type T.
@@ -899,31 +868,6 @@ namespace Stratus.Utilities
 			return members.OfType<FieldInfo>().ToArray();
 		}
 
-
-		/// <summary>
-		/// Gets all the fields in obj.
-		/// </summary>
-		/// <param name="obj">Object to find the fields in.</param>
-		/// <param name="bindingFlags">Filters of the fields allowed.</param>
-		/// <returns>The fields found.</returns>
-		public static IEnumerable GetAllFields(this object obj, BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-		{
-			// Get all the properties.
-			FieldInfo[] fields = obj.GetType().GetFields(bindingFlags);
-
-			// If there are no properties, break.
-			if (fields == null || fields.Length == 0)
-			{
-				yield break;
-			}
-
-			// If there are properties in the array, return each element.
-			for (int i = 0; i < fields.Length; i++)
-			{
-				yield return fields[i].GetValue(obj);
-			}
-		}
-
 		/// <summary>
 		/// Gets all the properties in obj of type T.
 		/// </summary>
@@ -955,27 +899,40 @@ namespace Stratus.Utilities
 		}
 
 		/// <summary>
+		/// Gets all the properties and fields in object
+		/// </summary>
+		/// <param name="obj">Object to find the fields/properties in.</param>
+		/// <param name="bindingFlags">Filters for the types of fields/properties that can be found.</param>
+		/// <returns>The fields/properties found.</returns>
+		public static IEnumerable<StratusMemberReference> GetAllFieldsOrProperties(this object obj, BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+		{
+			return GetAllFields(obj, bindingFlags).Concat(GetAllProperties(obj, bindingFlags));
+		}
+
+		/// <summary>
+		/// Gets all the fields in the object
+		/// </summary>
+		/// <param name="obj">Object to find the fields in.</param>
+		/// <param name="bindingFlags">Filters of the fields allowed.</param>
+		/// <returns>The fields found.</returns>
+		public static IEnumerable<StratusMemberReference> GetAllFields(this object obj, BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+		{
+			return obj.GetType()
+				.GetFields(bindingFlags)
+				.Select(f => new StratusMemberReference(f, obj));
+		}
+
+		/// <summary>
 		/// Gets all the properties in obj.
 		/// </summary>
 		/// <param name="obj">Object to find the properties in.</param>
 		/// <param name="bindingFlags">Filters of the properties allowed.</param>
 		/// <returns>The properties found.</returns>
-		public static IEnumerable GetAllProperties(this object obj, BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+		public static IEnumerable<StratusMemberReference> GetAllProperties(this object obj, BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
 		{
-			// Get all the properties.
-			PropertyInfo[] properties = obj.GetType().GetProperties(bindingFlags);
-
-			// If there are no properties, break.
-			if (properties == null || properties.Length == 0)
-			{
-				yield break;
-			}
-
-			// If there are properties in the array, return each element.
-			for (int i = 0; i < properties.Length; i++)
-			{
-				yield return properties[i].GetValue(obj, null);
-			}
+			return obj.GetType()
+				.GetProperties(bindingFlags)
+				.Select(p => new StratusMemberReference(p, obj));
 		}
 
 	}

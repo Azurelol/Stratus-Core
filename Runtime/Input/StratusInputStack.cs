@@ -36,7 +36,7 @@ namespace Stratus
                 if (activeLayer.blocking)
                 {
                     _queuedLayers.Enqueue(layer);
-                    return new StratusOperationResult(false, $"Active layer {activeLayer.label} is blocking. Queuing...");
+                    return new StratusOperationResult(false, $"Active layer {activeLayer.name} is blocking. Queuing...");
                 }
                 activeLayer.active = false;
             }

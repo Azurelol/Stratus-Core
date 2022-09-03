@@ -34,10 +34,21 @@ namespace Stratus
 	public abstract class StratusInputActionMap<T> : StratusInputActionMap
 		where T : Enum
 	{
-		private Lazy<T[]> availableActions = new Lazy<T[]>(() => StratusEnum.Values<T>());
-		private Dictionary<string, Action<InputAction>> actions
+		private static Lazy<T[]> enumeratedValues = new Lazy<T[]>(() => StratusEnum.Values<T>());
+		private static Lazy<Dictionary<string, T>> enumeratedValuesByName =>
+			new Lazy<Dictionary<string, T>>(() => enumeratedValues.Value.ToDictionary(v => v.ToString().ToLowerInvariant()));
+
+		private Dictionary<string, Action<InputAction>> _actions
 			= new Dictionary<string, Action<InputAction>>(StringComparer.InvariantCultureIgnoreCase);
+		private bool _initialized;
+
+		public IReadOnlyDictionary<string, Action<InputAction>> actions => _actions;
 		public bool lowercase { get; private set; }
+		public int boundActions => _actions.Count;
+
+		protected virtual void OnInitialize()
+		{
+		}
 
 		public StratusInputActionMap(bool lowercase = false) : this()
 		{
@@ -46,20 +57,47 @@ namespace Stratus
 
 		protected StratusInputActionMap()
 		{
-			Initialize();
 		}
 
-		protected virtual void Initialize()
+		private void Initialize()
 		{
-			// Try binding all actions based by their type
-			var fieldsOrProperties = Utilities.StratusReflection.GetAllFieldsOrProperties(this);				
-			//foreach (var field in Utilities.)
+			OnInitialize();
+			_initialized = true;
+		}
+
+		public bool Contains(string name) => actions.ContainsKey(name);
+
+		protected void TryBindActions()
+		{
+			var members = Utilities.StratusReflection.GetAllFieldsOrProperties(this)
+				.Where(m => typeof(Delegate).IsAssignableFrom(m.type));
+
+			foreach (var member in members)
+			{
+				if (!enumeratedValuesByName.Value.ContainsKey(member.name.ToLowerInvariant()))
+				{
+					StratusDebug.LogWarning($"No enumeration found for {member.name}");
+					continue;
+				}
+
+				T value = enumeratedValuesByName.Value[member.name.ToLowerInvariant()];
+
+				if (member.type == typeof(Action))
+				{
+					Bind(value, (Action)member.value, InputActionPhase.Started);
+				}
+
+				if (member.type == typeof(Action<Vector2>))
+				{
+					Bind(value, (Action<Vector2>)member.value);
+				}
+			}
 		}
 
 		public void Bind(T action, Action<InputAction> onAction)
 		{
 			string name = action.ToString();
-			actions.AddOrUpdate(lowercase ? name.ToLowerInvariant() : name, onAction);
+			_actions.AddOrUpdate(lowercase ? name.ToLowerInvariant() : name, onAction);
 		}
 
 		public void Bind<ValueType>(T action, Action<ValueType> onAction)
@@ -93,19 +131,39 @@ namespace Stratus
 		public override bool HandleInput(InputAction.CallbackContext context)
 		{
 			bool handled = false;
+			if (!_initialized)
+			{
+				Initialize();
+			}
 			if (context.phase != InputActionPhase.Waiting)
 			{
-				if (actions.ContainsKey(context.action.name))
+				if (_actions.ContainsKey(context.action.name))
 				{
-					actions[context.action.name].Invoke(context.action);
+					_actions[context.action.name].Invoke(context.action);
 					handled = true;
 				}
 				else
 				{
-					Debug.LogWarning($"No action {context.action.name} ({actions.Count})");
+					Debug.LogWarning($"No action bound for {context.action.name} ({_actions.Count})");
 				}
 			}
 			return handled;
+		}
+	}
+
+	public class StratusDefaultInputActionMap : StratusInputActionMap
+	{
+		private string _name;
+
+		public StratusDefaultInputActionMap(string name)
+		{
+
+		}
+		public override string map => _name;
+
+		public override bool HandleInput(InputAction.CallbackContext context)
+		{
+			throw new NotImplementedException();
 		}
 	}
 

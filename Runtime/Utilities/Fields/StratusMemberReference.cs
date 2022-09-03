@@ -46,7 +46,31 @@ namespace Stratus
 		/// <summary>
 		/// Returns the current value of this member
 		/// </summary>
-		public object value => Get();
+		public object value
+		{
+			get => Get();
+			set => Set(value);
+		}
+
+		public StratusMemberReference(FieldInfo field, object target)
+		{
+			this.field = field;
+			this.type = field.FieldType;
+			this.target = target;
+			this.name = field.Name;
+		}
+
+		public StratusMemberReference(PropertyInfo property, object target)
+		{
+			this.property = property;
+			this.type = property.PropertyType;
+			this.target = target;
+			this.name = property.Name;
+		}
+
+		private StratusMemberReference()
+		{
+		}
 
 		/// <summary>
 		/// Constructs a reference to the given member from a lambda expression capture
@@ -115,11 +139,5 @@ namespace Stratus
 					break;
 			}
 		}
-
-		private object GetProperty => property.GetValue(target, null).ToString();
-		private void SetProperty(object value) => property.SetValue(target, value);
-
-
-
 	}
 }
