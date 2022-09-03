@@ -7,12 +7,7 @@ namespace Stratus
 {
 	public class StratusInputFPSActionMap : StratusInputActionMap
 	{
-		public override string map { get; }
-
-		public override bool HandleInput(InputAction.CallbackContext context)
-		{
-			throw new System.NotImplementedException();
-		}
+		public override string name { get; }
 	}
 
 	public class StratusFPSInputLayer<ActionMap> : StratusInputLayer<ActionMap>

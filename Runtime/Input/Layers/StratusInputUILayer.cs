@@ -20,9 +20,9 @@ namespace Stratus
 	/// <summary>
 	/// Default input action map for UI
 	/// </summary>
-	public class StratusInputUIActionMap : StratusInputActionMap
+	public class StratusInputUIActionMap : IStratusInputActionMap
 	{
-		public override string map => "UI";
+		public string name => "UI";
 
 		public Action<Vector2> onNavigate;
 		public Action onSubmit;
@@ -40,7 +40,7 @@ namespace Stratus
 		public const string resetActionName = nameof(StratusInputUIAction.Reset);
 		public const string pauseActionName = nameof(StratusInputUIAction.Pause);
 
-		public override bool HandleInput(InputAction.CallbackContext context)
+		public bool HandleInput(InputAction.CallbackContext context)
 		{
 			bool handled = false;
 			if (context.performed)

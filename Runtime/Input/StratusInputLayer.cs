@@ -115,7 +115,6 @@ namespace Stratus
 				this.LogWarning($"Layer {this} already enabled");
 				return;
 			}
-			this.Log($"Pushing layer {this}");
 			pushed = true;
 			onPushed?.Invoke(true);
 			PushEvent e = new PushEvent(this);
@@ -135,7 +134,6 @@ namespace Stratus
 				StratusDebug.LogError($"Cannot pop disabled layer {name}");
 				return;
 			}
-			this.Log($"Popping layer {this}");
 			pushed = false;
 			onPushed?.Invoke(false);
 			PopEvent e = new PopEvent();
@@ -161,10 +159,10 @@ namespace Stratus
 	}
 
 	public class StratusInputLayer<ActionMap> : StratusInputLayer
-		where ActionMap : StratusInputActionMap, new()
+		where ActionMap : IStratusInputActionMap, new()
 	{
 		public ActionMap actions { get; } = new ActionMap();
-		public override string map => actions.map;
+		public override string map => actions.name;
 
 		public StratusInputLayer() : this(typeof(ActionMap).Name, new ActionMap())
 		{
@@ -191,15 +189,15 @@ namespace Stratus
 
 	public class StratusDefaultInputLayer : StratusInputLayer
 	{
-		public StratusDefaultInputActionMap actions { get; }
+		public IStratusInputActionMap actions { get; }
 
-		public StratusDefaultInputLayer(StratusDefaultInputActionMap actions)
-			 : base(actions.map)
+		public StratusDefaultInputLayer(IStratusInputActionMap actions)
+			 : base(actions.name)
 		{
 			this.actions = actions;
 		}
 
-		public override string map => actions.map;
+		public override string map => actions.name;
 
 		public override bool HandleInput(InputAction.CallbackContext context)
 		{

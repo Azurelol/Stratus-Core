@@ -16,6 +16,8 @@ namespace Stratus
 		public string name { get; set; }
 		public string description { get; set; }
 		public string usage { get; set; }
+		public bool hidden { get; set; }
+
 		public StratusConsoleCommandParameterInformation[] parameters { get; set; }
 
 		public StratusConsoleCommandAttribute()
@@ -49,5 +51,4 @@ namespace Stratus
 	public interface IStratusConsoleCommandProvider
 	{
 	}
-
 }

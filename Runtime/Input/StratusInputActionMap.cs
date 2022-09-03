@@ -7,21 +7,107 @@ using System.Linq;
 
 namespace Stratus
 {
-	/// <summary>
-	/// Base class for input action maps
-	/// </summary>
-	public abstract class StratusInputActionMap
+	public interface IStratusInputActionMap
 	{
 		/// <summary>
 		/// The name of the action map these inputs are for
 		/// </summary>
-		public abstract string map { get; }
-
+		string name { get; }
 		/// <summary>
 		/// An abstract function that maps the context to the provided actions in the derived map
 		/// </summary>
 		/// <param name="context"></param>
-		public abstract bool HandleInput(InputAction.CallbackContext context);
+		bool HandleInput(InputAction.CallbackContext context);
+	}
+
+	/// <summary>
+	/// Base class for input action maps
+	/// </summary>
+	public abstract class StratusInputActionMap : IStratusInputActionMap
+	{
+		protected Dictionary<string, Action<InputAction>> _actions
+			= new Dictionary<string, Action<InputAction>>(StringComparer.InvariantCultureIgnoreCase);
+
+		private bool _initialized;
+
+		public IReadOnlyDictionary<string, Action<InputAction>> actions => _actions;
+		public abstract string name { get; }
+		public bool lowercase { get; protected set; }
+		public int boundActions => _actions.Count;
+
+		protected virtual void OnInitialize()
+		{
+		}
+
+		///// <summary>
+		///// An abstract function that maps the context to the provided actions in the derived map
+		///// </summary>
+		///// <param name="context"></param>
+		//public abstract bool HandleInput(InputAction.CallbackContext context);
+
+		private void Initialize()
+		{
+			OnInitialize();
+			_initialized = true;
+		}
+
+		public bool Contains(string name) => actions.ContainsKey(name);
+
+		public void Bind(string action, Action<InputAction> onAction)
+		{
+			_actions.AddOrUpdate(lowercase ? action.ToLowerInvariant() : action, onAction);
+		}
+
+		public void Bind<ValueType>(string action, Action<ValueType> onAction)
+			where ValueType : struct
+		{
+			Bind(action, a => onAction(a.ReadValue<ValueType>()));
+		}
+
+		public void Bind<ValueType>(string action, Action<InputActionPhase, ValueType> onAction)
+			where ValueType : struct
+		{
+			Bind(action, a => onAction(a.phase, a.ReadValue<ValueType>()));
+		}
+
+		public StratusInputActionMap Bind(string action, Action onAction)
+		{
+			Bind(action, a => onAction());
+			return this;
+		}
+
+		public void Bind(string action, Action onAction, InputActionPhase phase)
+		{
+			Bind(action, a =>
+			{
+				if (a.phase == phase)
+				{
+					onAction();
+				}
+			});
+		}
+
+		public bool HandleInput(InputAction.CallbackContext context)
+		{
+			bool handled = false;
+			if (!_initialized)
+			{
+				Initialize();
+			}
+			if (context.phase != InputActionPhase.Waiting)
+			{
+				if (_actions.ContainsKey(context.action.name))
+				{
+					_actions[context.action.name].Invoke(context.action);
+					handled = true;
+				}
+				else
+				{
+					Debug.LogWarning($"No action bound for {context.action.name} ({_actions.Count})");
+				}
+			}
+			return handled;
+		}
 
 		/// <summary>
 		/// Converts an input action phase enumerated value from Unity's to this system
@@ -29,6 +115,19 @@ namespace Stratus
 		/// <param name="phase"></param>
 		/// <returns></returns>
 		public StratusInputActionPhase Convert(InputActionPhase phase) => StratusInputUtility.Convert(phase);
+
+	}
+
+	public class StratusDefaultInputActionMap : StratusInputActionMap
+	{
+		private string _name;
+
+		public StratusDefaultInputActionMap(string name)
+		{
+			_name = name;
+		}
+
+		public override string name => _name;
 	}
 
 	public abstract class StratusInputActionMap<T> : StratusInputActionMap
@@ -38,17 +137,6 @@ namespace Stratus
 		private static Lazy<Dictionary<string, T>> enumeratedValuesByName =>
 			new Lazy<Dictionary<string, T>>(() => enumeratedValues.Value.ToDictionary(v => v.ToString().ToLowerInvariant()));
 
-		private Dictionary<string, Action<InputAction>> _actions
-			= new Dictionary<string, Action<InputAction>>(StringComparer.InvariantCultureIgnoreCase);
-		private bool _initialized;
-
-		public IReadOnlyDictionary<string, Action<InputAction>> actions => _actions;
-		public bool lowercase { get; private set; }
-		public int boundActions => _actions.Count;
-
-		protected virtual void OnInitialize()
-		{
-		}
 
 		public StratusInputActionMap(bool lowercase = false) : this()
 		{
@@ -58,14 +146,6 @@ namespace Stratus
 		protected StratusInputActionMap()
 		{
 		}
-
-		private void Initialize()
-		{
-			OnInitialize();
-			_initialized = true;
-		}
-
-		public bool Contains(string name) => actions.ContainsKey(name);
 
 		protected void TryBindActions()
 		{
@@ -96,76 +176,35 @@ namespace Stratus
 
 		public void Bind(T action, Action<InputAction> onAction)
 		{
-			string name = action.ToString();
-			_actions.AddOrUpdate(lowercase ? name.ToLowerInvariant() : name, onAction);
+			Bind(action.ToString(), onAction);
 		}
 
 		public void Bind<ValueType>(T action, Action<ValueType> onAction)
 			where ValueType : struct
 		{
-			Bind(action, a => onAction(a.ReadValue<ValueType>()));
+			Bind(action.ToString(), onAction);
 		}
 
 		public void Bind<ValueType>(T action, Action<InputActionPhase, ValueType> onAction)
 			where ValueType : struct
 		{
-			Bind(action, a => onAction(a.phase, a.ReadValue<ValueType>()));
+			Bind(action.ToString(), onAction);
 		}
 
 		public void Bind(T action, Action onAction)
 		{
-			Bind(action, a => onAction());
+			Bind(action.ToString(), onAction);
 		}
 
 		public void Bind(T action, Action onAction, InputActionPhase phase)
 		{
-			Bind(action, a =>
-			{
-				if (a.phase == phase)
-				{
-					onAction();
-				}
-			});
+			Bind(action.ToString(), onAction, phase);
 		}
 
-		public override bool HandleInput(InputAction.CallbackContext context)
-		{
-			bool handled = false;
-			if (!_initialized)
-			{
-				Initialize();
-			}
-			if (context.phase != InputActionPhase.Waiting)
-			{
-				if (_actions.ContainsKey(context.action.name))
-				{
-					_actions[context.action.name].Invoke(context.action);
-					handled = true;
-				}
-				else
-				{
-					Debug.LogWarning($"No action bound for {context.action.name} ({_actions.Count})");
-				}
-			}
-			return handled;
-		}
+
 	}
 
-	public class StratusDefaultInputActionMap : StratusInputActionMap
-	{
-		private string _name;
 
-		public StratusDefaultInputActionMap(string name)
-		{
-
-		}
-		public override string map => _name;
-
-		public override bool HandleInput(InputAction.CallbackContext context)
-		{
-			throw new NotImplementedException();
-		}
-	}
 
 	public interface IStratusInputUIActionHandler
 	{

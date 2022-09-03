@@ -25,25 +25,25 @@ namespace Stratus.Editor.Tests
 		//------------------------------------------------------------------------/
 		// Methods
 		//------------------------------------------------------------------------/
-		[StratusConsoleCommand("add")]
+		[StratusConsoleCommand("add", hidden = true)]
 		public static int Add(int a, int b)
 		{
 			return (a + b);
 		}
 
-		[StratusConsoleCommand("addvector")]
+		[StratusConsoleCommand("addvector", hidden = true)]
 		public static string AddVector(Vector3 a, Vector3 b)
 		{
 			return (a + b).ToString();
 		}
 
-		[StratusConsoleCommand("multfloat")]
+		[StratusConsoleCommand("multfloat", hidden = true)]
 		public static string MultiplyFloat(float a, float b, float c)
 		{
 			return (a * b * c).ToString();
 		}
 
-		[StratusConsoleCommand("flipbool")]
+		[StratusConsoleCommand("flipbool", hidden = true)]
 		public static bool FlipBoolean(bool value)
 		{
 			return !value;
@@ -69,28 +69,28 @@ namespace Stratus.Editor.Tests
 		//------------------------------------------------------------------------/
 		// Variables
 		//------------------------------------------------------------------------/
-		[StratusConsoleCommand(nameof(floatField))]
+		[StratusConsoleCommand(nameof(floatField), hidden = true)]
 		private static float floatField;
 
-		[StratusConsoleCommand(nameof(intField))]
+		[StratusConsoleCommand(nameof(intField), hidden = true)]
 		private static int intField;
 
-		[StratusConsoleCommand(nameof(boolField))]
+		[StratusConsoleCommand(nameof(boolField), hidden = true)]
 		private static bool boolField;
 
-		[StratusConsoleCommand(nameof(stringField))]
+		[StratusConsoleCommand(nameof(stringField), hidden = true)]
 		private static string stringField;
 
-		[StratusConsoleCommand(nameof(vector3Field))]
+		[StratusConsoleCommand(nameof(vector3Field), hidden = true)]
 		private static Vector3 vector3Field;
 
-		[StratusConsoleCommand(nameof(intProperty))]
+		[StratusConsoleCommand(nameof(intProperty), hidden = true)]
 		private static int intProperty { get; set; }
 
-		[StratusConsoleCommand]
+		[StratusConsoleCommand(hidden = true)]
 		private static int intGetProperty => 5;
 
-		[StratusConsoleCommand]
+		[StratusConsoleCommand(hidden = true)]
 		private static Space enumField;
 
 		[Test]

@@ -23,7 +23,7 @@ namespace Stratus.Tests.Editor
 			public Action<Vector2> pan;
 			public Action pause;
 
-			public override string map { get; } = "Default";
+			public override string name { get; } = "Default";
 
 			protected override void OnInitialize()
 			{

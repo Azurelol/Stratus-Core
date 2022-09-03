@@ -10,6 +10,7 @@ namespace Stratus
 		string name { get; set; }
 		string description { get; set; }
 		string usage { get; set; }
+		bool hidden { get; }
 		StratusConsoleCommandParameterInformation[] parameters { get; set; }
 	}
 
@@ -85,6 +86,7 @@ namespace Stratus
 		string IStratusConsoleCommand.name { get; set; }
 		string IStratusConsoleCommand.description { get; set; }
 		string IStratusConsoleCommand.usage { get; set; }
+		bool IStratusConsoleCommand.hidden { get; }
 		StratusConsoleCommandParameterInformation[] IStratusConsoleCommand.parameters { get; set; }
 
 		//------------------------------------------------------------------------/
@@ -143,11 +145,9 @@ namespace Stratus
 			for(int i = length; i >= 0; i--)
 			{
 				commandName = commandSplit.Take(i).Join(delimiterStr);
-				StratusDebug.Log($"Searching command: {commandName}");
 				commandAction = commandActions.GetValueOrDefault(commandName);
 				if (commandAction != null)
 				{
-					StratusDebug.Log($"Found command: {commandName}");
 					if (i > 0)
 					{
 						args = commandSplit.Skip(i).Join(delimiterStr);
@@ -160,7 +160,6 @@ namespace Stratus
 			{
 				try
 				{
-					StratusDebug.Log($"Executing command {commandName} with args: {args}");
 					commandAction.Invoke(args);
 				}
 				catch (Exception e)
@@ -233,7 +232,7 @@ namespace Stratus
 			List<IStratusConsoleCommand> commands = new List<IStratusConsoleCommand>();
 			List<string> variableNames = new List<string>();
 
-			handlerTypes = Stratus.Utilities.StratusReflection.GetInterfaces(typeof(IStratusConsoleCommandProvider));
+			handlerTypes = Utilities.StratusReflection.GetInterfaces(typeof(IStratusConsoleCommandProvider));
 			handlerTypesByName = new Dictionary<string, Type>();
 			handlerTypesByName.AddRange(x => x.Name, handlerTypes);
 
