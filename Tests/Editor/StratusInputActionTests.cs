@@ -35,7 +35,7 @@ namespace Stratus.Tests.Editor
 		public void BindsActions()
 		{
 			var map = new MockInputActionMap();
-			Assert.AreEqual(3, map.boundActions);
+			Assert.AreEqual(3, map.count);
 			Assert.True(map.Contains(nameof(MockInputActionMap.console)));
 			Assert.True(map.Contains(nameof(MockInputActionMap.pan)));
 			Assert.True(map.Contains(nameof(MockInputActionMap.pause)));

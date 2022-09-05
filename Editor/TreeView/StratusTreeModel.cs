@@ -42,7 +42,7 @@ namespace Stratus
 		private T _root;
 
 		#region Events
-		public event Action onModelChanged; 
+		public event Action onModelChanged;
 		#endregion
 
 		//------------------------------------------------------------------------/
@@ -54,8 +54,8 @@ namespace Stratus
 		}
 
 		//public StratusTreeModel(IEnumerable<T> data)
+		//	: this(new StratusProvider<IList<T>>(data.ToList()))
 		//{
-		//	this.SetData(data.ToList());
 		//}
 
 		//------------------------------------------------------------------------/

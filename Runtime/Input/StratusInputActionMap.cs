@@ -33,7 +33,7 @@ namespace Stratus
 		public IReadOnlyDictionary<string, Action<InputAction>> actions => _actions;
 		public abstract string name { get; }
 		public bool lowercase { get; protected set; }
-		public int boundActions => _actions.Count;
+		public int count => _actions.Count;
 
 		protected virtual void OnInitialize()
 		{
@@ -150,7 +150,12 @@ namespace Stratus
 		protected void TryBindActions()
 		{
 			var members = Utilities.StratusReflection.GetAllFieldsOrProperties(this)
-				.Where(m => typeof(Delegate).IsAssignableFrom(m.type));
+				.Where(m => typeof(Delegate).IsAssignableFrom(m.type)).ToArray();
+
+			if (members.IsNullOrEmpty())
+			{
+				StratusDebug.LogWarning($"Found no action members in the map class {GetType().Name}");
+			}
 
 			foreach (var member in members)
 			{

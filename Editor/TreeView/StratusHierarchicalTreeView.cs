@@ -19,7 +19,7 @@ namespace Stratus
 			this.InitializeHierarchicalTreeView();
 		}
 
-		public StratusHierarchicalTreeView(TreeViewState state, StratusProvider<IList<TreeElementType>> data) 
+		public StratusHierarchicalTreeView(TreeViewState state, StratusProvider<IList<TreeElementType>> data)
 			: base(state, new StratusTreeModel<TreeElementType>(data))
 		{
 			this.InitializeHierarchicalTreeView();
