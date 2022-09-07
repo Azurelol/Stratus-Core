@@ -289,10 +289,14 @@ namespace Stratus
 		public static void UpdateDepthValues<T>(T root) where T : StratusTreeElement
 		{
 			if (root == null)
+			{
 				throw new ArgumentNullException(nameof(root), "The root is null");
+			}
 
 			if (!root.hasChildren)
+			{
 				return;
+			}
 
 			Stack<StratusTreeElement> stack = new Stack<StratusTreeElement>();
 			stack.Push(root);

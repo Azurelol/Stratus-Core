@@ -28,27 +28,37 @@ namespace Stratus
 		protected Dictionary<string, Action<InputAction>> _actions
 			= new Dictionary<string, Action<InputAction>>(StringComparer.InvariantCultureIgnoreCase);
 
-		private bool _initialized;
 
-		public IReadOnlyDictionary<string, Action<InputAction>> actions => _actions;
 		public abstract string name { get; }
+		public bool initialized { get; private set; }
+		public IReadOnlyDictionary<string, Action<InputAction>> actions
+		{
+			get
+			{
+				Initialize();
+				return _actions;
+			}
+		}
+		public int count => actions.Count;
 		public bool lowercase { get; protected set; }
-		public int count => _actions.Count;
+
+		public StratusInputActionMap()
+		{
+		}
 
 		protected virtual void OnInitialize()
 		{
 		}
 
-		///// <summary>
-		///// An abstract function that maps the context to the provided actions in the derived map
-		///// </summary>
-		///// <param name="context"></param>
-		//public abstract bool HandleInput(InputAction.CallbackContext context);
-
 		private void Initialize()
 		{
+			if (initialized)
+			{
+				return;
+			}
+
 			OnInitialize();
-			_initialized = true;
+			initialized = true;
 		}
 
 		public bool Contains(string name) => actions.ContainsKey(name);
@@ -90,7 +100,7 @@ namespace Stratus
 		public bool HandleInput(InputAction.CallbackContext context)
 		{
 			bool handled = false;
-			if (!_initialized)
+			if (!initialized)
 			{
 				Initialize();
 			}
@@ -143,7 +153,7 @@ namespace Stratus
 			this.lowercase = lowercase;
 		}
 
-		protected StratusInputActionMap()
+		protected StratusInputActionMap() : base()
 		{
 		}
 
@@ -157,6 +167,7 @@ namespace Stratus
 				StratusDebug.LogWarning($"Found no action members in the map class {GetType().Name}");
 			}
 
+			int count = 0;
 			foreach (var member in members)
 			{
 				if (!enumeratedValuesByName.Value.ContainsKey(member.name.ToLowerInvariant()))
@@ -176,6 +187,13 @@ namespace Stratus
 				{
 					Bind(value, (Action<Vector2>)member.value);
 				}
+
+				count++;
+			}
+
+			if (count == 0)
+			{
+				StratusDebug.LogWarning($"Found no actions to bind to in {GetType().Name}");
 			}
 		}
 
@@ -205,16 +223,10 @@ namespace Stratus
 		{
 			Bind(action.ToString(), onAction, phase);
 		}
-
-
 	}
-
-
 
 	public interface IStratusInputUIActionHandler
 	{
 		void Navigate(Vector2 dir);
 	}
-
-
 }

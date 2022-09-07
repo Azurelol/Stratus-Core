@@ -21,8 +21,8 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		// Fields
 		//------------------------------------------------------------------------/ 
-		private StratusProvider<IList<T>> _data;
-		private IList<T> data;
+		private StratusProvider<IList<T>> provider;
+		private IList<T> elements => provider.value;
 		private int maxID;
 
 		//------------------------------------------------------------------------/
@@ -53,25 +53,20 @@ namespace Stratus
 			this.SetData(data);
 		}
 
-		//public StratusTreeModel(IEnumerable<T> data)
-		//	: this(new StratusProvider<IList<T>>(data.ToList()))
-		//{
-		//}
-
 		//------------------------------------------------------------------------/
 		// Methods
 		//------------------------------------------------------------------------/ 
 		/// <summary>
 		/// Sets the data for this tree model
 		/// </summary>
-		/// <param name="data"></param>
-		public void SetData(StratusProvider<IList<T>> data)
+		/// <param name="provider"></param>
+		public void SetData(StratusProvider<IList<T>> provider)
 		{
-			if (data == null)
+			if (provider == null)
 			{
 				throw new ArgumentNullException("No input data given!");
 			}
-			this._data = data;
+			this.provider = provider;
 		}
 
 		/// <summary>
@@ -79,11 +74,10 @@ namespace Stratus
 		/// </summary>
 		public void BuildRoot()
 		{
-			this.data = _data.value;
-			if (this.data.Count > 0)
+			if (this.elements.Count > 0)
 			{
-				this._root = StratusTreeElement.ListToTree(this.data);
-				this.maxID = this.data.Max(d => d.id);
+				this._root = StratusTreeElement.ListToTree(this.elements);
+				this.maxID = this.elements.Max(d => d.id);
 			}
 		}
 
@@ -92,7 +86,7 @@ namespace Stratus
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		public T Find(int id) => this.data.FirstOrDefault(element => element.id == id);
+		public T Find(int id) => this.elements.FirstOrDefault(element => element.id == id);
 
 		/// <summary>
 		/// Generates an unique id for a tree element
@@ -161,7 +155,7 @@ namespace Stratus
 				StratusTreeElement.UpdateDepthValues(element);
 			}
 
-			StratusTreeElement.TreeToList(this.root, this.data);
+			StratusTreeElement.TreeToList(this.root, this.elements);
 
 			OnChanged();
 		}
@@ -172,7 +166,7 @@ namespace Stratus
 		/// <param name="element"></param>
 		/// <param name="parent"></param>
 		/// <param name="insertPosition"></param>
-		public void AddElement(T element, StratusTreeElement parent, int insertPosition)
+		public T AddElement(T element, StratusTreeElement parent, int insertPosition)
 		{
 			if (element == null)
 			{
@@ -192,9 +186,12 @@ namespace Stratus
 			element.parent = parent;
 
 			StratusTreeElement.UpdateDepthValues(parent);
-			StratusTreeElement.TreeToList(this.root, this.data);
+			int parentIndex = elements.IndexOf((T)parent);
+			elements.Insert(parentIndex + 1 + insertPosition, element);
+			//StratusTreeElement.TreeToList(this.root, this.elements);
 
 			OnChanged();
+			return element;
 		}
 
 		/// <summary>
@@ -206,15 +203,15 @@ namespace Stratus
 			if (root == null)
 				throw new ArgumentNullException("root", "root is null");
 
-			if (this.data == null)
+			if (this.elements == null)
 				throw new InvalidOperationException("Internal Error: data list is null");
 
-			if (this.data.Count != 0)
+			if (this.elements.Count != 0)
 				throw new InvalidOperationException("AddRoot is only allowed on empty data list");
 
 			root.id = GenerateUniqueID();
 			root.depth = -1;
-			this.data.Add(root);
+			this.elements.Add(root);
 		}
 
 		/// <summary>
@@ -223,7 +220,7 @@ namespace Stratus
 		/// <param name="elementIDs"></param>
 		public void RemoveElements(IList<int> elementIDs)
 		{
-			IList<T> elements = this.data.Where(element => elementIDs.Contains(element.id)).ToArray();
+			IList<T> elements = this.elements.Where(element => elementIDs.Contains(element.id)).ToArray();
 			RemoveElements(elements);
 		}
 
@@ -245,7 +242,7 @@ namespace Stratus
 				element.parent = null;
 			}
 
-			StratusTreeElement.TreeToList(this.root, this.data);
+			StratusTreeElement.TreeToList(this.root, this.elements);
 
 			OnChanged();
 		}
@@ -294,7 +291,7 @@ namespace Stratus
 			parentElement.children.InsertRange(insertionIndex, elements);
 
 			StratusTreeElement.UpdateDepthValues(root);
-			StratusTreeElement.TreeToList(this.root, this.data);
+			StratusTreeElement.TreeToList(this.root, this.elements);
 
 			OnChanged();
 		}

@@ -285,7 +285,13 @@ namespace Stratus
 		{
 			if (first.Length != second.Length)
 			{
-				return new StratusOperationResult(false, $"The first collection is of size {first.Length} while the second is of size{second.Length}.");
+				var message = $"The first collection is of size {first.Length} while the second is of size {second.Length}.";
+				const int maxLogLength = 5;
+				if (first.Length <= maxLogLength && second.Length <= maxLogLength)
+				{
+					message += $"\n[{first.ToStringJoin()}] <-> [{second.ToStringJoin()}]";
+				}
+				return new StratusOperationResult(false, message);
 			}
 
 			var a = first.CopyArray();
