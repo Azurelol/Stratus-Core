@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 namespace Stratus
 {
@@ -45,9 +46,11 @@ namespace Stratus
 			return Vector3.zero;
 		}
 
-		public static Vector3 GetMousePositionToWorld(this Camera camera)
+		public static Vector3 GetMousePositionToWorld(this Camera camera, bool legacy = false)
 		{
-			return camera.ScreenToWorldPoint(Input.mousePosition);
+			return camera.ScreenToWorldPoint(legacy 
+				? Input.mousePosition
+				: Mouse.current.position.ReadValue());
 		}
 
 		/// <summary>

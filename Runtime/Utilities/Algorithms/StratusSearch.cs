@@ -16,10 +16,22 @@ namespace Stratus
 
 	public enum StratusTraversableStatus
 	{
-		Free,
+		/// <summary>
+		/// Freely traversible
+		/// </summary>
+		Valid,
+		/// <summary>
+		/// Occupied by another object
+		/// </summary>
 		Occupied,
+		/// <summary>
+		/// Not traversible
+		/// </summary>
 		Blocked,
-		Unavailable
+		/// <summary>
+		/// Not a valid tile
+		/// </summary>
+		Invalid
 	}
 
 	public delegate StratusTraversableStatus StratusTraversalPredicate<TElement>(TElement element);
@@ -403,18 +415,18 @@ namespace Stratus
 				// TODO Change predicate result?
 				if (arguments.traversableFunction != null)
 				{
-					StratusTraversableStatus status = StratusTraversableStatus.Free;
+					StratusTraversableStatus status = StratusTraversableStatus.Valid;
 					foreach (StratusTraversalPredicate<ElementType> func in arguments.traversableFunction.GetInvocationList())
 					{
 						status = func(element);
-						if (status != StratusTraversableStatus.Free)
+						if (status != StratusTraversableStatus.Valid)
 						{
 							break;
 						}
 					}
 
 					//var status = arguments.traversableFunction(element);
-					if (status != StratusTraversableStatus.Free)
+					if (status != StratusTraversableStatus.Valid)
 					{
 						continue;
 					}
