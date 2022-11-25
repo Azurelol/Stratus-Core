@@ -6,7 +6,7 @@ using System;
 namespace Stratus
 {
 	[Serializable]
-	public class StratusAudioClip : StratusAssetReference<AudioClip>
+	public class StratusAudioClip : StratusUnityAssetReference<AudioClip>
 	{
 	}
 

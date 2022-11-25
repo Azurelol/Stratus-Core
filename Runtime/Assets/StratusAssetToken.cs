@@ -61,25 +61,4 @@ namespace Stratus
 		protected virtual bool IsNull(T asset) => asset == null;
 		public override string ToString() => name;
 	}
-
-	public abstract class StratusUnityAssetReference<T>
-		: StratusAssetToken<T>
-		where T : UnityEngine.Object
-	{
-		protected StratusUnityAssetReference(string name, Func<T> assetFunction) 
-			: base(name, assetFunction)
-		{
-		}
-
-		protected StratusUnityAssetReference(string name, Func<string, T> aliasToAssetFunction) 
-			: base(name, aliasToAssetFunction)
-		{
-		}
-
-		protected override bool IsNull(T asset)
-		{
-			return Stratus.OdinSerializer.Utilities.UnityExtensions.SafeIsUnityNull(asset);
-		}
-	}
-
 }

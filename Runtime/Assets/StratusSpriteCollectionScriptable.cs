@@ -6,7 +6,7 @@ using System;
 namespace Stratus
 {
 	[Serializable]
-	public class StratusSprite : StratusAssetReference<Sprite>
+	public class StratusSprite : StratusUnityAssetReference<Sprite>
 	{
 	}
 
