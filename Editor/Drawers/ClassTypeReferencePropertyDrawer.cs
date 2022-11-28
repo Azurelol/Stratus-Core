@@ -65,17 +65,10 @@ namespace Stratus.Dependencies.TypeReferences
 			ICollection<Type> excludedTypes = (ExcludedTypeCollectionGetter != null ? ExcludedTypeCollectionGetter() : null);
 
 			//Assembly assembly = Assembly.GetExecutingAssembly();
-			foreach(var assembly in StratusReflection.allAssemblies)
+			foreach(var assembly in StratusTypeUtility.allAssemblies)
 			{
 				FilterTypes(assembly, filter, excludedTypes, types);
 			}
-
-			//FilterTypes(assembly, filter, excludedTypes, types);
-			//
-			//foreach (AssemblyName referencedAssembly in assembly.GetReferencedAssemblies())
-			//{
-			//	FilterTypes(Assembly.Load(referencedAssembly), filter, excludedTypes, types);
-			//}
 
 			types.Sort((a, b) => a.FullName.CompareTo(b.FullName));
 
@@ -200,7 +193,7 @@ namespace Stratus.Dependencies.TypeReferences
 					{
 						s_TempContent.text = "(None)";
 					}
-					else if (StratusReflection.ResolveType(classRef) == null)
+					else if (StratusTypeUtility.ResolveType(classRef) == null)
 					{
 						s_TempContent.text += " {Missing}";
 					}
@@ -215,7 +208,7 @@ namespace Stratus.Dependencies.TypeReferences
 				s_SelectedClassRef = classRef;
 
 				List<Type> filteredTypes = GetFilteredTypes(filter);
-				DisplayDropDown(position, filteredTypes, StratusReflection.ResolveType(classRef), filter.Grouping);
+				DisplayDropDown(position, filteredTypes, StratusTypeUtility.ResolveType(classRef), filter.Grouping);
 			}
 
 			return classRef;

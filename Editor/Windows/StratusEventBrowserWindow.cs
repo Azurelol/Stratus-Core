@@ -197,7 +197,7 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		private IList<EventTreeElement> BuildEventTree()
 		{
-			this.events = StratusReflection.SubclassesOf<StratusEvent>();
+			this.events = StratusTypeUtility.SubclassesOf<StratusEvent>();
 			EventInformation[] eventsInformation = new EventInformation[this.events.Length];
 			for (int i = 0; i < this.events.Length; ++i)
 			{

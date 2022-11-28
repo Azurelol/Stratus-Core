@@ -65,7 +65,7 @@ namespace Stratus
 	}
 
 	public abstract class StratusAudioSourcePlayer<AudioClipSource> : StratusAudioSourcePlayer
-		where AudioClipSource : IStratusAssetSource<StratusAudioClip>
+		where AudioClipSource : IStratusAssetSource<StratusAudioClip>, IStratusAssetResolver<StratusAudioClip>
 	{
 		public AudioClipSource assets;
 		private Coroutine playRoutine;

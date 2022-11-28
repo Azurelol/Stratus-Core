@@ -87,7 +87,7 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		private static Dictionary<Type, ObjectDrawer> objectDrawers { get; set; } = new Dictionary<Type, ObjectDrawer>();
 		private static Dictionary<FieldInfo, FieldDrawer> fieldDrawers { get; set; } = new Dictionary<FieldInfo, FieldDrawer>();
-		private static Type[] customObjectDrawers { get; set; } = StratusReflection.SubclassesOf<CustomObjectDrawer>(false);
+		private static Type[] customObjectDrawers { get; set; } = StratusTypeUtility.SubclassesOf<CustomObjectDrawer>(false);
 
 		//------------------------------------------------------------------------/
 		// Methods: Static

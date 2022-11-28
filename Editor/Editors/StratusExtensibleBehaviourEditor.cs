@@ -228,7 +228,7 @@ namespace Stratus.Editor
 			List<Type> matchingTypes = new List<Type>();
 
 			// 1. Get all extensible types who have marked support for this extensible
-			var allExtensionTypes = StratusReflection.GetInterfaces(typeof(MonoBehaviour), extensionType);
+			var allExtensionTypes = StratusTypeUtility.GetInterfaces(typeof(MonoBehaviour), extensionType);
 			foreach (var type in allExtensionTypes)
 			{
 				var attributeMap = type.MapAttributes();

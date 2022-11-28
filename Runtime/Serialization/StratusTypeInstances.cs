@@ -177,7 +177,7 @@ namespace Stratus
 		public StratusTypeInstancer()
 		{
 			baseType = typeof(T);
-			_types = new Lazy<Type[]>(() => Utilities.StratusReflection.SubclassesOf<T>());
+			_types = new Lazy<Type[]>(() => Utilities.StratusTypeUtility.SubclassesOf<T>());
 			_instances = new Lazy<Dictionary<Type, T>>(() => types.ToDictionaryFromKey((Type t) => (T)Activator.CreateInstance(t)));
 		}
 

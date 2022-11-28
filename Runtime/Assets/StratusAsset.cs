@@ -40,6 +40,11 @@ namespace Stratus
 			this._name = name;
 		}
 
+		public void Set(string name)
+		{
+			_name = name;
+		}
+
 		public override string ToString()
 		{
 			return _name;

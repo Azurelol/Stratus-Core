@@ -232,7 +232,7 @@ namespace Stratus
 			List<IStratusConsoleCommand> commands = new List<IStratusConsoleCommand>();
 			List<string> variableNames = new List<string>();
 
-			handlerTypes = Utilities.StratusReflection.GetInterfaces(typeof(IStratusConsoleCommandProvider));
+			handlerTypes = Utilities.StratusTypeUtility.GetInterfaces(typeof(IStratusConsoleCommandProvider));
 			handlerTypesByName = new Dictionary<string, Type>();
 			handlerTypesByName.AddRange(x => x.Name, handlerTypes);
 

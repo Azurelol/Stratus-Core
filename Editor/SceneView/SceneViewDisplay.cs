@@ -106,7 +106,7 @@ namespace Stratus
 		private static void ConstructAllDisplays()
 		{
 			// Get a list of all display classes, then construct them
-			Type[] displayClasses = StratusReflection.SubclassesOf<SceneViewDisplay>();
+			Type[] displayClasses = StratusTypeUtility.SubclassesOf<SceneViewDisplay>();
 			foreach (Type displayType in displayClasses)
 			{
 				SceneViewDisplay display = Activator.CreateInstance(displayType) as SceneViewDisplay;

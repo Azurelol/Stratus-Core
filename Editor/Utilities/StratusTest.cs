@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using NUnit.Framework;
 using Stratus;
+using System;
+using Stratus.Utilities;
+using System.Reflection;
 
 namespace Stratus.Editor.Tests
 {
@@ -50,6 +53,17 @@ namespace Stratus.Editor.Tests
 		public static void AssertLength<T>(int expected, IList<T> list)
 		{
 			Assert.AreEqual(expected, list.Count, $"List contained {list.ToStringJoin().Enclose(StratusStringEnclosure.SquareBracket)}");
+		}
+
+		public static void AssertEqualFields<T>(T a, T b)
+		{
+			StratusTypeInfo info = StratusTypeInfo.From(a);
+			foreach(var field in info.fields)
+			{
+				object aValue = field.GetValue(a);
+				object bValue = field.GetValue(b);
+				Assert.AreEqual(aValue, bValue, $"{a} did not match {b}");
+			}
 		}
 	}
 }

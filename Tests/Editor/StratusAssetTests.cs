@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using NUnit.Framework;
 using System.Drawing.Printing;
+using Stratus.Utilities;
+using Stratus.Editor.Tests;
 
 namespace Stratus.Tests.Editor
 {
-	public partial class StratusAssetTests
+	public partial class StratusAssetTests : StratusTest
 	{
 		public class MockAsset
 		{
@@ -20,27 +22,51 @@ namespace Stratus.Tests.Editor
 			}
 		}
 
-		public class 
-
-		public class MockAssetSource
+		public class MockAssetReference : StratusAssetReference<MockAsset>
 		{
+		}
+
+		public class MockAssetSource : CustomStratusAssetSource<MockAsset>
+		{
+			internal static MockAsset a = new MockAsset("a", "foobar");
+
+			protected override IEnumerable<MockAsset> Generate()
+			{
+				yield return a;
+			}
 		}
 
 		private class MockObject
 		{
 			public string name;
 			[StratusAssetSource(sourceTypes = typeof(MockAssetSource))]
-			public StratusAssetAlias<MockAsset> asset;
+			public MockAssetReference value1 = new MockAssetReference();
 		}
 
-
-		public void DoesThing()
+		[Test]
+		public void AddsAssetToFile()
 		{
 			MockAsset a = new MockAsset("a", "foobar");
 
-			MockObject obj = new MockObject();
-			obj.asset
+			StratusAssetCollection<MockAsset> collection = new StratusAssetCollection<MockAsset>();
+			collection.Add(a);
 
+			StratusFile<MockAsset> file = new StratusFile<MockAsset>();
+			file.AtTemporaryPath().WithJSON();
+			file.Serialize(a);
+
+			var deserialization = file.Deserialize();
+			Assert.True(deserialization);
+			MockAsset aDeserialized = deserialization.result;
+			AssertEqualFields(a, aDeserialized);
+		}
+
+		[Test]
+		public void GetsAssetsFromSources()
+		{
+			MockObject obj = new MockObject();
+			obj.value1.Set("a");
+			Assert.AreEqual(MockAssetSource.a, obj.value1.asset);
 		}
 	}
 }

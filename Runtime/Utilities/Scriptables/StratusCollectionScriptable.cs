@@ -7,7 +7,7 @@ using System.Linq;
 namespace Stratus
 {
 	public abstract class StratusAssetCollectionScriptable<T> : StratusScriptable<List<T>>,
-		IStratusAssetSource<T>
+		IStratusAssetSource<T>, IStratusAssetResolver<T>
 		where T : class
 	{
 		public StratusSortedList<string, T> assetsByName
@@ -37,6 +37,13 @@ namespace Stratus
 		public StratusAssetToken<T> GetAsset(string name)
 		{
 			return new StratusAssetToken<T>(name, () => assetsByName.GetValueOrDefault(name));
+		}
+
+		public string[] GetAssetNames() => assetNames;
+
+		public IEnumerable<StratusAssetToken<T>> Fetch()
+		{
+			return assets.Select(a => new StratusAssetToken<T>(a, () => a));
 		}
 	}
 

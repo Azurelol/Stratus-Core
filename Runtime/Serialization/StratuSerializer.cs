@@ -39,29 +39,29 @@ namespace Stratus.Serialization
 			return OnDeserialize(filePath);
 		}
 
-		public bool TrySerialize(object data, string filePath)
+		public StratusOperationResult TrySerialize(object data, string filePath)
 		{
 			try
 			{
 				Serialize(data, filePath);
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
-				return false;
+				return new StratusOperationResult(ex);
 			}
 			return true;
 		}
 
-		public bool TryDeserialize(string filePath, out object data)
+		public StratusOperationResult TryDeserialize(string filePath, out object data)
 		{
 			try
 			{
 				data = Deserialize(filePath);
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
 				data = null;
-				return false;
+				return new StratusOperationResult(ex);
 			}
 			return true;
 		}

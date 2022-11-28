@@ -28,6 +28,8 @@ namespace Stratus
 			this.properties = type.GetProperties(flags);
 			this.propertiesByName = properties.ToDictionary((x) => x.Name, false);
 		}
+
+		public static StratusTypeInfo From(object obj) => new StratusTypeInfo(obj.GetType());
 	}
 
 }
