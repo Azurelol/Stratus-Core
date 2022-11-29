@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Stratus.Utilities;
+
+using System;
 using UnityEditor;
 
 namespace Stratus.Editor
@@ -38,7 +40,7 @@ namespace Stratus.Editor
 		protected override void OnSelectionChanged()
 		{
 			base.OnSelectionChanged();
-			eventObject = (StratusEvent)Utilities.StratusReflection.Instantiate(selectedClass);
+			eventObject = (StratusEvent)StratusObjectUtility.Instantiate(selectedClass);
 			serializedEvent = new StratusSerializedEditorObject(eventObject);
 		}
 

@@ -75,33 +75,6 @@ namespace Stratus.Utilities
 					select f).ToArray();
 		}
 
-		public static Type GetPrivateType(string name, Type source)
-		{
-			Assembly assembly = source.Assembly;
-			return assembly.GetType(name);
-		}
-
-		public static Type[] GetTypesFromAssembly(Assembly assembly)
-		{
-			if (assembly == null)
-			{
-				return new Type[0];
-			}
-			try
-			{
-				return assembly.GetTypes();
-			}
-			catch (ReflectionTypeLoadException)
-			{
-				return new Type[0];
-			}
-		}
-
-		public static Type GetPrivateType(string fqName)
-		{
-			return Type.GetType(fqName);
-		}
-
 		public static T GetField<T>(string name, Type type, bool isStatic = true, object instance = null)
 		{
 			BindingFlags bindflags = isStatic ? (BindingFlags.NonPublic | BindingFlags.Static) : (BindingFlags.NonPublic | BindingFlags.Instance);
@@ -176,58 +149,7 @@ namespace Stratus.Utilities
 
 				return () => (T)FormatterServices.GetUninitializedObject(t);
 			}
-		}
-
-		public static object Instantiate(Type t)
-		{
-			if (t == typeof(string))
-			{
-				return Expression.Lambda<Func<string>>(Expression.Constant(string.Empty)).Compile();
-			}
-
-			if (t.HasDefaultConstructor())
-			{
-				return Activator.CreateInstance(t);
-			}
-
-			return FormatterServices.GetUninitializedObject(t);
-		}
-
-		public static T Instantiate<T>()
-		{
-			Type t = typeof(T);
-			if (t == typeof(string))
-			{
-				return (T)(object)(Expression.Lambda<Func<string>>(Expression.Constant(string.Empty)).Compile());
-			}
-
-			if (t.HasDefaultConstructor())
-			{
-				return (T)Activator.CreateInstance(t);
-			}
-
-			return (T)FormatterServices.GetUninitializedObject(t);
-		}
-
-		public static object Instantiate(Type type, params object[] parameters)
-		{
-			return Activator.CreateInstance(type, parameters);
-		}
-
-		public static T Instantiate<T>(params object[] parameters)
-		{
-			return (T)Instantiate(typeof(T), parameters);
-		}
-
-		public static IEnumerable<object> InstantiateRange(params Type[] types)
-		{
-			return types.Select(t => Instantiate(t));
-		}
-
-		public static IEnumerable<T> InstantiateRange<T>(params Type[] types)
-		{
-			return InstantiateRange(types).Select(obj => (T)obj);
-		}
+		}	
 
 		/// <summary>
 		/// Finds the most nested object inside of an object.

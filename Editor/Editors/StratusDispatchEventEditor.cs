@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Reflection;
 using System;
+using Stratus.Utilities;
 
 namespace Stratus.Editor
 {
@@ -45,7 +46,7 @@ namespace Stratus.Editor
 			if (!triggerable.hasType)
 				return;
 
-			eventObject = (Stratus.StratusEvent)Utilities.StratusReflection.Instantiate(type);
+			eventObject = (StratusEvent)StratusObjectUtility.Instantiate(type);
 			serializedEvent = new StratusSerializedEditorObject(eventObject);
 			serializedEvent.Deserialize(eventDataProperty);
 		}

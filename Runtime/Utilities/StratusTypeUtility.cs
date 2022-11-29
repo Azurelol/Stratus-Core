@@ -2,16 +2,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.Serialization;
 using UnityEngine;
 using Stratus;
 using Stratus.OdinSerializer;
 
 namespace Stratus.Utilities
 {
-    public static class StratusTypeUtility
+	/// <summary>
+	/// Utility methods for <see cref="Type"/>
+	/// </summary>
+	public static class StratusTypeUtility
     {
 		#region Properties
 		private static Dictionary<Type, Type[]> genericTypeDefiniions { get; set; } = new Dictionary<Type, Type[]>();
@@ -44,7 +45,7 @@ namespace Stratus.Utilities
 		/// </summary>
 		/// <param name="includeAbstract"></param>
 		/// <returns></returns>
-		public static string[] GetSubclassNames(Type baseType, bool includeAbstract = false)
+		public static string[] SubclassNames(Type baseType, bool includeAbstract = false)
 		{
 			string[] typeNames;
 			if (!subclassNames.ContainsKey(baseType))
@@ -66,6 +67,54 @@ namespace Stratus.Utilities
 		public static Type[] SubclassesOf<TClass>(bool includeAbstract = false)
 		{
 			return SubclassesOf(typeof(TClass), includeAbstract);
+		}
+
+		/// <summary>
+		/// Get an array of types of all the classes derived from the given one
+		/// </summary>
+		/// <typeparam name="ClassType"></typeparam>
+		/// <param name="includeAbstract"></param>
+		/// <returns></returns>
+		public static Type[] SubclassesOf(Type baseType, bool includeAbstract = false)
+		{
+			// Done the first time this type is queried, in order to cache
+			// Abstract
+			if (includeAbstract)
+			{
+				if (!subclassesIncludeAbstract.ContainsKey(baseType))
+				{
+					List<Type> types = new List<Type>();
+					foreach (Assembly assembly in allAssemblies)
+					{
+						Type[] assemblyTypes = (from Type t
+												in assembly.GetTypes()
+												where t.IsSubclassOf(baseType)
+												select t).ToArray();
+						types.AddRange(assemblyTypes);
+					}
+					subclassesIncludeAbstract.Add(baseType, types.ToArray());
+				}
+			}
+			// Non-Abstract
+			else
+			{
+				if (!subclasses.ContainsKey(baseType))
+				{
+					List<Type> types = new List<Type>();
+					foreach (Assembly assembly in allAssemblies)
+					{
+						Type[] assemblyTypes = (from Type t
+												in assembly.GetTypes()
+												where t.IsSubclassOf(baseType) && !t.IsAbstract
+												select t).ToArray();
+
+						types.AddRange(assemblyTypes);
+					}
+					subclasses.Add(baseType, types.ToArray());
+				}
+			}
+
+			return includeAbstract ? subclassesIncludeAbstract[baseType] : subclasses[baseType];
 		}
 
 		/// <summary>
@@ -125,61 +174,6 @@ namespace Stratus.Utilities
 		}
 
 		/// <summary>
-		/// Get an array of types of all the classes derived from the given one
-		/// </summary>
-		/// <typeparam name="ClassType"></typeparam>
-		/// <param name="includeAbstract"></param>
-		/// <returns></returns>
-		public static Type[] SubclassesOf(Type baseType, bool includeAbstract = false)
-		{
-			// Done the first time this type is queried, in order to cache
-			// Abstract
-			if (includeAbstract)
-			{
-				if (!subclassesIncludeAbstract.ContainsKey(baseType))
-				{
-					List<Type> types = new List<Type>();
-					foreach (Assembly assembly in allAssemblies)
-					{
-						Type[] assemblyTypes = (from Type t
-												in assembly.GetTypes()
-												where t.IsSubclassOf(baseType)
-												select t).ToArray();
-						types.AddRange(assemblyTypes);
-					}
-					subclassesIncludeAbstract.Add(baseType, types.ToArray());
-				}
-			}
-			// Non-Abstract
-			else
-			{
-				if (!subclasses.ContainsKey(baseType))
-				{
-					List<Type> types = new List<Type>();
-					foreach (Assembly assembly in allAssemblies)
-					{
-						Type[] assemblyTypes = (from Type t
-												in assembly.GetTypes()
-												where t.IsSubclassOf(baseType) && !t.IsAbstract
-												select t).ToArray();
-
-						types.AddRange(assemblyTypes);
-					}
-					subclasses.Add(baseType, types.ToArray());
-				}
-			}
-
-			return includeAbstract ? subclassesIncludeAbstract[baseType] : subclasses[baseType];
-		}
-
-		[System.Diagnostics.DebuggerHidden]
-		public static Type GetIndexedType(this ICollection collection)
-		{
-			PropertyInfo propertyInfo = collection == null ? null : collection.GetType().GetProperty("Item");
-			return propertyInfo == null ? null : propertyInfo.PropertyType;
-		}
-
-		/// <summary>
 		/// Gets all the types that have at least one attribute in the given assembly
 		/// </summary>
 		/// <param name="assembly"></param>
@@ -216,7 +210,7 @@ namespace Stratus.Utilities
 		public static string[] GetSubclassNames<ClassType>(bool includeAbstract = false)
 		{
 			Type baseType = typeof(ClassType);
-			return GetSubclassNames(baseType, includeAbstract);
+			return SubclassNames(baseType, includeAbstract);
 		}
 
 		private static Dictionary<string, Type> s_TypeMap = new Dictionary<string, Type>();
@@ -367,5 +361,43 @@ namespace Stratus.Utilities
 			return list;
 		}
 		#endregion
+
+		/// <summary>
+		/// Finds the element type of the given collection
+		/// </summary>
+		[System.Diagnostics.DebuggerHidden]
+		public static Type GetElementType(this ICollection collection)
+		{
+			PropertyInfo propertyInfo = collection == null ? null : collection.GetType().GetProperty("Item");
+			return propertyInfo == null ? null : propertyInfo.PropertyType;
+		}
+		
+		public static Type GetPrivateType(string name, Type source)
+		{
+			Assembly assembly = source.Assembly;
+			return assembly.GetType(name);
+		}
+
+		public static Type[] GetTypesFromAssembly(Assembly assembly)
+		{
+			if (assembly == null)
+			{
+				return new Type[0];
+			}
+			try
+			{
+				return assembly.GetTypes();
+			}
+			catch (ReflectionTypeLoadException)
+			{
+				return new Type[0];
+			}
+		}
+
+		public static Type GetPrivateType(string fqName)
+		{
+			return Type.GetType(fqName);
+		}
 	}
+
 }

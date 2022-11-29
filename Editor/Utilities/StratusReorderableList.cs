@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Stratus.Utilities;
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -225,10 +227,10 @@ namespace Stratus.Editor
 			{
 				Type baseType = serializedProperty.elementType;
 				GenericMenu menu = new GenericMenu();
-				string[] typeNames = Utilities.StratusTypeUtility.GetSubclassNames(baseType);
+				string[] typeNames = Utilities.StratusTypeUtility.SubclassNames(baseType);
 				menu.AddItems(typeNames, (int index) =>
 				{
-					serializedProperty.asList.Add(Utilities.StratusReflection.Instantiate(Utilities.StratusTypeUtility.SubclassesOf(baseType)[index]));
+					serializedProperty.asList.Add(StratusObjectUtility.Instantiate(StratusTypeUtility.SubclassesOf(baseType)[index]));
 				});
 				menu.ShowAsContext();
 			};

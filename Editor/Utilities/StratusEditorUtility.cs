@@ -125,16 +125,6 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		// Methods
 		//------------------------------------------------------------------------/
-		public static T Instantiate<T>()
-		{
-			return StratusReflection.Instantiate<T>();
-		}
-
-		public static object Instantiate(Type type)
-		{
-			return StratusReflection.Instantiate(type);
-		}
-
 		public static void OnMouseClick(Action onLeftClick, Action onRightClick, Action onDoubleClick, bool used = false)
 		{
 			if (!used && !currentEvent.isMouse)

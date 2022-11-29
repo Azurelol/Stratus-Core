@@ -88,7 +88,7 @@ namespace Stratus.Editor
 		private static void BuildDrawerTypeForTypeDictionary()
 		{
 			s_DrawerTypeForType = new Dictionary<Type, DrawerKeySet>();
-			Type[] source = AppDomain.CurrentDomain.GetAssemblies().SelectMany((Assembly x) => StratusReflection.GetTypesFromAssembly(x)).ToArray();
+			Type[] source = AppDomain.CurrentDomain.GetAssemblies().SelectMany((Assembly x) => StratusTypeUtility.GetTypesFromAssembly(x)).ToArray();
 			foreach (Type item in SubclassesOf(typeof(GUIDrawer)))
 			{
 				object[] customAttributes = item.GetCustomAttributes(typeof(CustomPropertyDrawer), true);
@@ -294,7 +294,7 @@ namespace Stratus.Editor
 
 		internal static IEnumerable<Type> SubclassesOf(Type parent)
 		{
-			Type hiddenType = StratusReflection.GetPrivateType("UnityEditor.EditorAssemblies", typeof(CustomEditor));
+			Type hiddenType = StratusTypeUtility.GetPrivateType("UnityEditor.EditorAssemblies", typeof(CustomEditor));
 			return (IEnumerable<Type>)StratusReflection.GetReflectedMethod("SubclassesOf", hiddenType).Invoke(null, new object[] { parent });
 		}
 	}

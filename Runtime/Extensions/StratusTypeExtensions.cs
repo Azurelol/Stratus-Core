@@ -332,15 +332,26 @@ namespace Stratus
 			return allTypes;
 		}
 
+		/// <summary>
+		/// Instantiates an object with the given type
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="parameters">Arguments for the constructor</param>
+		/// <returns></returns>
 		public static object Instantiate(this Type type, params object[] parameters)
 		{
-			return StratusReflection.Instantiate(type, parameters);
+			return StratusObjectUtility.Instantiate(type, parameters);
 		}
 
+		/// <summary>
+		/// Instantiates an object with the given type
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="parameters">Arguments for the constructor</param>
+		/// <returns></returns>
 		public static T Instantiate<T>(this Type type, params object[] parameters)
 		{
 			return (T)Instantiate(type, parameters);
 		}
 	}
-
 }
