@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+
 using Stratus.Utilities;
+
 using UnityEditor;
+
 using UnityEngine;
 
 namespace Stratus.Editor
@@ -88,7 +91,7 @@ namespace Stratus.Editor
 		private static void BuildDrawerTypeForTypeDictionary()
 		{
 			s_DrawerTypeForType = new Dictionary<Type, DrawerKeySet>();
-			Type[] source = AppDomain.CurrentDomain.GetAssemblies().SelectMany((Assembly x) => StratusTypeUtility.GetTypesFromAssembly(x)).ToArray();
+			Type[] source = StratusTypeUtility.GetAllTypes();
 			foreach (Type item in SubclassesOf(typeof(GUIDrawer)))
 			{
 				object[] customAttributes = item.GetCustomAttributes(typeof(CustomPropertyDrawer), true);
@@ -122,7 +125,7 @@ namespace Stratus.Editor
 								continue;
 							}
 							goto IL_0158;
-							IL_0158:
+						IL_0158:
 							s_DrawerTypeForType[item2] = new DrawerKeySet
 							{
 								drawer = item,

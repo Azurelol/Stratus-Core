@@ -13,16 +13,17 @@ namespace Stratus.Utilities
 	/// Utility methods for <see cref="Type"/>
 	/// </summary>
 	public static class StratusTypeUtility
-    {
+	{
 		#region Properties
 		private static Dictionary<Type, Type[]> genericTypeDefiniions { get; set; } = new Dictionary<Type, Type[]>();
 		private static Dictionary<Type, Type[]> subclasses { get; set; } = new Dictionary<Type, Type[]>();
 		private static Dictionary<Type, string[]> subclassNames { get; set; } = new Dictionary<Type, string[]>();
 		private static Dictionary<Type, Type[]> subclassesIncludeAbstract { get; set; } = new Dictionary<Type, Type[]>();
-
 		private static Dictionary<Type, Dictionary<Type, Type[]>> interfacesImplementationsByBaseType { get; set; } = new Dictionary<Type, Dictionary<Type, Type[]>>();
 		private static Dictionary<Type, Type[]> interfaceImplementations { get; set; } = new Dictionary<Type, Type[]>();
 
+		private static Lazy<List<Type>> classes = new Lazy<List<Type>>(() =>
+			allAssemblies.SelectMany(a => a.GetTypes()).ToList());
 
 		private static Assembly[] _allAssemblies;
 		public static Assembly[] allAssemblies
@@ -37,9 +38,41 @@ namespace Stratus.Utilities
 				return _allAssemblies;
 			}
 		}
+
+		private static Lazy<Dictionary<Type, List<Type>>> typesWithAttribute
+			= new Lazy<Dictionary<Type, List<Type>>>(() =>
+			{
+				Dictionary<Type, List<Type>> result = new Dictionary<Type, List<Type>>();
+				foreach (var type in classes.Value)
+				{
+					var attributes = type.GetCustomAttributes();
+					foreach (var attr in attributes)
+					{
+						var attrType = attr.GetType();
+						if (!result.ContainsKey(attr.GetType()))
+						{
+							result.Add(attrType, new List<Type>());
+						}
+						result[attr.GetType()].Add(type);
+					}
+				}
+				return result;
+			});
+
+		private static Lazy<Dictionary<Assembly, Type[]>> typesByAssembly = new Lazy<Dictionary<Assembly, Type[]>>
+			(() => allAssemblies.ToDictionary(a => a.GetTypes()));
+
+		private static Lazy<Type[]> allTypes = new Lazy<Type[]>(() =>
+			typesByAssembly.Value.SelectMany(a => a.Value).ToArray());
+
 		#endregion
 
 		#region Methods
+		public static Type[] GetTypesFromAssembly(Assembly assembly)
+			=> typesByAssembly.Value.GetValueOrDefault(assembly);
+
+		public static Type[] GetAllTypes() => allTypes.Value;
+
 		/// <summary>
 		/// Get the name of all classes derived from the given one
 		/// </summary>
@@ -57,6 +90,18 @@ namespace Stratus.Utilities
 			}
 
 			return subclassNames[baseType];
+		}
+
+		/// <summary>
+		/// Get the name of all classes derived from the given one
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="includeAbstract"></param>
+		/// <returns></returns>
+		public static string[] SubclassNames<T>(bool includeAbstract = false)
+		{
+			Type baseType = typeof(T);
+			return SubclassNames(baseType, includeAbstract);
 		}
 
 		/// <summary>
@@ -179,48 +224,22 @@ namespace Stratus.Utilities
 		/// <param name="assembly"></param>
 		/// <param name="attribute"></param>
 		/// <returns></returns>
-		public static IEnumerable<Type> GetAllTypesWithAttributeAsEnumerable(this Assembly assembly, Type attribute)
+		public static IEnumerable<Type> GetAllTypesWithAttribute(Type attribute)
 		{
-			foreach (Type type in assembly.GetTypes())
-			{
-				if (type.GetCustomAttributes(attribute.GetType(), true).Length > 0)
-				{
-					yield return type;
-				}
-			}
+			return typesWithAttribute.Value[attribute];
 		}
+
+		private static Dictionary<string, Type> typeMap = new Dictionary<string, Type>();
 
 		/// <summary>
-		/// Get all the types that have at least one attribute in the given assembly
+		/// Attempts to resolve the <see cref="Type"/> from the given type name
 		/// </summary>
-		/// <param name="assembly"></param>
-		/// <param name="attribute"></param>
-		/// <returns></returns>
-		public static Type[] GetAllTypesWithAttribute(this Assembly assembly, Type attribute)
+		public static Type ResolveType(string typeName)
 		{
-			return assembly.GetAllTypesWithAttributeAsEnumerable(attribute).ToArray();
-		}
-
-		/// <summary>
-		/// Get the name of all classes derived from the given one
-		/// </summary>
-		/// <typeparam name="ClassType"></typeparam>
-		/// <param name="includeAbstract"></param>
-		/// <returns></returns>
-		public static string[] GetSubclassNames<ClassType>(bool includeAbstract = false)
-		{
-			Type baseType = typeof(ClassType);
-			return SubclassNames(baseType, includeAbstract);
-		}
-
-		private static Dictionary<string, Type> s_TypeMap = new Dictionary<string, Type>();
-
-		public static Type ResolveType(string classRef)
-		{
-			if (!s_TypeMap.TryGetValue(classRef, out Type type))
+			if (!typeMap.TryGetValue(typeName, out Type type))
 			{
-				type = !string.IsNullOrEmpty(classRef) ? Type.GetType(classRef) : null;
-				s_TypeMap[classRef] = type;
+				type = !string.IsNullOrEmpty(typeName) ? Type.GetType(typeName) : null;
+				typeMap[typeName] = type;
 			}
 			return type;
 		}
@@ -231,7 +250,7 @@ namespace Stratus.Utilities
 		/// <typeparam name="ClassType"></typeparam>
 		/// <param name="includeAbstract"></param>
 		/// <returns></returns>
-		public static Type[] GetInterfaces(Type baseType, Type interfaceType, bool includeAbstract = false)
+		public static Type[] InterfaceImplementations(Type baseType, Type interfaceType, bool includeAbstract = false)
 		{
 			// First, map into the selected interface type
 			if (!interfacesImplementationsByBaseType.ContainsKey(interfaceType))
@@ -255,8 +274,6 @@ namespace Stratus.Utilities
 		/// <summary>
 		/// Get an array of types of all the classes derived from the given one
 		/// </summary>
-		/// <typeparam name="ClassType"></typeparam>
-		/// <param name="includeAbstract"></param>
 		/// <returns></returns>
 		public static Type[] GetInterfaces(Type interfaceType, bool includeAbstract = false)
 		{
@@ -279,87 +296,6 @@ namespace Stratus.Utilities
 
 			return interfaceImplementations[interfaceType];
 		}
-
-		/// <summary>
-		/// Retrieves the <see cref="Type"/>s of all classes inheriting from <paramref name="baseType"/> that
-		/// implement the interface <paramref name="interfaceType"/>
-		/// </summary>
-
-		public static IEnumerable<Type> GetInterfaceImplementations(Type baseType, Type interfaceType, Type[] interfaceParameters = null)
-		{
-			Type[] subClasses = SubclassesOf(baseType);
-			foreach (var subClass in subClasses)
-			{
-				if (GetInterfaces(subClass, interfaceType)
-					.Any(t =>
-					{
-						if (t.Equals(interfaceType))
-						{
-							if (interfaceParameters != null)
-							{
-								return t.GenericTypeArguments == interfaceParameters;
-							}
-							return true;
-						}
-						return false;
-					}))
-				{
-					yield return subClass;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Gets the loadable types for a given assembly
-		/// </summary>
-		/// <param name="assembly"></param>
-		/// <returns></returns>
-		public static IEnumerable<Type> GetLoadableTypes(this Assembly assembly)
-		{
-			if (assembly == null)
-			{
-				throw new ArgumentNullException("assembly");
-			}
-
-			try
-			{
-				return assembly.GetTypes();
-			}
-			catch (ReflectionTypeLoadException e)
-			{
-				return e.Types.Where(t => t != null);
-			}
-		}
-
-		/// <summary>
-		/// A list containing all the subclasses deriving from a particular class
-		/// </summary>
-		public class ClassList : List<KeyValuePair<string, Type>> { }
-
-		/// <summary>
-		/// Generates a list of key-value pairs of classes that derive from this one
-		/// </summary>
-		/// <typeparam name="ClassType"></typeparam>
-		/// <returns></returns>
-		public static ClassList GenerateClassList<ClassType>(bool includeAbstract = true)
-		{
-			ClassList list = new ClassList();
-
-			Type[] classes = SubclassesOf<ClassType>();
-			foreach (Type e in classes)
-			{
-				string name = e.FullName.Replace('+', '.');
-				Type type = e.ReflectedType;
-
-				if (!includeAbstract && type.IsAbstract)
-				{
-					continue;
-				}
-
-				list.Add(new KeyValuePair<string, Type>(name, type));
-			}
-			return list;
-		}
 		#endregion
 
 		/// <summary>
@@ -371,33 +307,19 @@ namespace Stratus.Utilities
 			PropertyInfo propertyInfo = collection == null ? null : collection.GetType().GetProperty("Item");
 			return propertyInfo == null ? null : propertyInfo.PropertyType;
 		}
-		
+
 		public static Type GetPrivateType(string name, Type source)
 		{
 			Assembly assembly = source.Assembly;
 			return assembly.GetType(name);
 		}
 
-		public static Type[] GetTypesFromAssembly(Assembly assembly)
-		{
-			if (assembly == null)
-			{
-				return new Type[0];
-			}
-			try
-			{
-				return assembly.GetTypes();
-			}
-			catch (ReflectionTypeLoadException)
-			{
-				return new Type[0];
-			}
-		}
-
 		public static Type GetPrivateType(string fqName)
 		{
 			return Type.GetType(fqName);
 		}
+
+		public static StratusTypeInfo TypeInfo<T>() => new StratusTypeInfo(typeof(T));
 	}
 
 }

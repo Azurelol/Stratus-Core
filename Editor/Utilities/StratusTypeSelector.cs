@@ -50,7 +50,7 @@ namespace Stratus
 		public StratusTypeSelector(Type baseType, Type interfaceType, bool sortAlphabetically = false)
 		{
 			this.baseType = baseType;
-			this.subTypes = new StratusDropdownList<Type>(StratusTypeUtility.GetInterfaces(baseType, interfaceType), (Type type) => type.Name);
+			this.subTypes = new StratusDropdownList<Type>(StratusTypeUtility.InterfaceImplementations(baseType, interfaceType), (Type type) => type.Name);
 
 			if (sortAlphabetically)
 			{

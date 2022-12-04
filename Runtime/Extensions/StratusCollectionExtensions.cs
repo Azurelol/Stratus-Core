@@ -160,7 +160,7 @@ namespace Stratus
 		/// </summary>
 		public static StratusOperationResult IsEqualInValues<T>(this ICollection<T> first, ICollection<T> second)
 		{
-			return first.ToArray().IsEqualInValues(second.ToArray());
+			return first.ToArray().IsComparableByValues(second.ToArray());
 		}
 	}
 }

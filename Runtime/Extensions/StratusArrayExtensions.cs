@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Stratus.Utilities;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -281,7 +283,8 @@ namespace Stratus
 		/// <summary>
 		/// Compares two arrays to determine whether they have equal values
 		/// </summary>
-		public static StratusOperationResult IsEqualInValues<T>(this T[] first, T[] second)
+		/// <returns>True if both arrays are equal in value by comparison</returns>
+		public static StratusOperationResult IsComparableByValues<T>(this T[] first, T[] second)
 		{
 			if (first.Length != second.Length)
 			{
@@ -294,18 +297,41 @@ namespace Stratus
 				return new StratusOperationResult(false, message);
 			}
 
-			var a = first.CopyArray();
-			var b = second.CopyArray();
-			Array.Sort(a);
-			Array.Sort(b);
-
-			for(int i = 0; i < a.Length; ++i)
+			// Sort, then compare linearly
+			if (StratusTypeUtility.GetElementType(first) is IComparable)
 			{
-				if (!a[i].Equals(b[i]))
+				// Sort, then compare
+				var a = first.CopyArray();
+				var b = second.CopyArray();
+				Array.Sort(a);
+				Array.Sort(b);
+
+				for(int i = 0; i < a.Length; ++i)
 				{
-					return new StratusOperationResult(false, $"After sorting, the first collection has item {a[i]} while the second has {b[i]}");
+					if (!a[i].Equals(b[i]))
+					{
+						return new StratusOperationResult(false, $"After sorting, the first collection has item {a[i]} while the second has {b[i]}");
+					}
 				}
 			}
+			// Use a hashset
+			else
+			{
+				var set = new HashSet<T>(first);
+				foreach(var value in second)
+				{
+					if (!set.Contains(value))
+					{
+						return false;
+					}
+					set.Remove(value);
+				}
+				if (set.Count != 0)
+				{
+					return false;
+				}
+			}
+
 			return true;
 		}
 	}

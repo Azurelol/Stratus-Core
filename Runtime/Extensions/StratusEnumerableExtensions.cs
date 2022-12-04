@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using UnityEngine.UIElements;
+
 namespace Stratus
 {
 	public static partial class Extensions
@@ -552,6 +554,16 @@ namespace Stratus
 			{
 				yield return selector(firstEnumerator.Current, secondEnumerator.Current);
 			}
+		}
+
+		public static Dictionary<TKey, TValue[]> ToDictionary<TKey, TValue>(this IEnumerable<TKey> keys, Func<TKey, TValue[]> selector)
+		{
+			Dictionary<TKey, TValue[]> result = new Dictionary<TKey, TValue[]>();
+			foreach(var key in keys)
+			{
+				result.Add(key, selector(key));
+			}
+			return result;
 		}
 	}
 }

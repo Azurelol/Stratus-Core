@@ -40,14 +40,14 @@ namespace Stratus.Editor.Tests
 			Assert.False(result.valid, result.message);
 		}
 
-		public static void AssertEquality<T>(ICollection<T> first, ICollection<T> second)
+		public static void AssertEquality<T>(ICollection<T> expected, ICollection<T> actual)
 		{
-			AssertSuccess(first.IsEqualInValues(second));
+			AssertSuccess(expected.IsEqualInValues(actual));
 		}
 
 		public static void AssertEquality<T>(T[] first, T[] second)
 		{
-			AssertSuccess(first.IsEqualInValues(second));
+			AssertSuccess(first.IsComparableByValues(second));
 		}
 
 		public static void AssertLength<T>(int expected, IList<T> list)

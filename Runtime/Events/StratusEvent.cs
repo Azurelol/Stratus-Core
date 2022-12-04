@@ -50,7 +50,7 @@ namespace Stratus
 		//--------------------------------------------------------------------------------------------/
 		public bool handled { get; internal set; }
 		public static Type[] eventTypes { get; private set; } = StratusTypeUtility.SubclassesOf<StratusEvent>(false);
-		public static string[] eventTypeNames { get; private set; } = StratusTypeUtility.GetSubclassNames<StratusEvent>(false);
+		public static string[] eventTypeNames { get; private set; } = StratusTypeUtility.SubclassNames<StratusEvent>(false);
 
 		//--------------------------------------------------------------------------------------------/
 		// Methods

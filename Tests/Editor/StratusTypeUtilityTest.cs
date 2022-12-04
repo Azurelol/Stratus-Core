@@ -5,6 +5,7 @@ using Stratus.Utilities;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine;
 
 namespace Stratus.Editor.Tests
 {
@@ -19,9 +20,16 @@ namespace Stratus.Editor.Tests
 		}
 
 		[Test]
-		public void SubclassNames()
+		public void GetsSubclassNameByTypeParameter()
 		{
-			var actual = StratusTypeUtility.SubclassNames(typeof(MockA)).ToHashSet(); ;
+			var actual = StratusTypeUtility.SubclassNames<MockA>().ToHashSet();
+			Assert.True(actual.Contains(nameof(MockB)));
+		}
+
+		[Test]
+		public void GetsSubclassNameByType()
+		{
+			var actual = StratusTypeUtility.SubclassNames(typeof(MockA)).ToHashSet();
 			Assert.True(actual.Contains(nameof(MockB)));
 		}
 
@@ -32,6 +40,15 @@ namespace Stratus.Editor.Tests
 			AssertEquality(expected, actual);
 		}
 
+		[AttributeUsage(AttributeTargets.Class)]
+		private class MockAttribute : Attribute
+		{
+		}
+
+		public interface MockInterface
+		{
+		}
+
 		private class MockObject
 		{
 		}
@@ -40,11 +57,12 @@ namespace Stratus.Editor.Tests
 		{
 		}
 
-		private class IntMockObject : MockObject<int>
+		private class IntMockObject : MockObject<int>, MockInterface
 		{
 		}
 
-		private class StringMockObject : MockObject<string>
+		[Mock]
+		private class StringMockObject : MockObject<string>, MockInterface
 		{
 		}
 
@@ -75,11 +93,38 @@ namespace Stratus.Editor.Tests
 		}
 
 		[TestCase(typeof(List<string>), typeof(string))]
+		[TestCase(typeof(List<int>), typeof(int))]
 		public void FindsCollectionElementType(Type collectionType, Type expected)
 		{
 			var collection = (ICollection)StratusObjectUtility.Instantiate(collectionType);
 			var actual = StratusTypeUtility.GetElementType(collection);
 			Assert.AreEqual(expected, actual);
+		}
+
+		[Test]
+		public void GetsTypesWithAttributes()
+		{
+			Type attrType = typeof(MockAttribute);
+			var types = StratusTypeUtility.GetAllTypesWithAttribute(attrType).ToArray();
+			Assert.AreEqual(1, types.Length);
+			Assert.AreEqual(typeof(StringMockObject), types[0]);
+		}
+
+		[TestCase("System.Int32", typeof(int))]
+		public void ResolvesTypeFromString(string typeName, Type expected)
+		{
+			Assert.AreEqual(expected, StratusTypeUtility.ResolveType(typeName));
+		}
+
+		[Test]
+		public void InterfaceImplementations()
+		{
+			Type baseType = typeof(MockObject);
+			Type interfaceType = typeof(MockInterface);
+			var implementationTypes = StratusTypeUtility.InterfaceImplementations(baseType, interfaceType);
+			var expected = new Type[] { typeof(IntMockObject), typeof(StringMockObject) };
+			Assert.AreEqual(expected.Length, implementationTypes.Length);
+			AssertEquality(expected, implementationTypes);
 		}
 	}
 }
