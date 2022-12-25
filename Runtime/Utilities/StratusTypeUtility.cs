@@ -6,6 +6,7 @@ using System.Reflection;
 using UnityEngine;
 using Stratus;
 using Stratus.OdinSerializer;
+using Stratus.OdinSerializer.Utilities;
 
 namespace Stratus.Utilities
 {
@@ -15,10 +16,9 @@ namespace Stratus.Utilities
 	public static class StratusTypeUtility
 	{
 		#region Properties
-		private static Dictionary<Type, Type[]> genericTypeDefiniions { get; set; } = new Dictionary<Type, Type[]>();
-		private static Dictionary<Type, Type[]> subclasses { get; set; } = new Dictionary<Type, Type[]>();
+		private static Dictionary<Type, Type[]> genericTypeDefinitions { get; set; } = new Dictionary<Type, Type[]>();
 		private static Dictionary<Type, string[]> subclassNames { get; set; } = new Dictionary<Type, string[]>();
-		private static Dictionary<Type, Type[]> subclassesIncludeAbstract { get; set; } = new Dictionary<Type, Type[]>();
+		private static Dictionary<Type, Type[]> _subClasses { get; set; } = new Dictionary<Type, Type[]>();
 		private static Dictionary<Type, Dictionary<Type, Type[]>> interfacesImplementationsByBaseType { get; set; } = new Dictionary<Type, Dictionary<Type, Type[]>>();
 		private static Dictionary<Type, Type[]> interfaceImplementations { get; set; } = new Dictionary<Type, Type[]>();
 
@@ -120,46 +120,47 @@ namespace Stratus.Utilities
 		/// <typeparam name="ClassType"></typeparam>
 		/// <param name="includeAbstract"></param>
 		/// <returns></returns>
-		public static Type[] SubclassesOf(Type baseType, bool includeAbstract = false)
+		public static Type[] SubclassesOf(Type type, bool includeAbstract = false)
 		{
 			// Done the first time this type is queried, in order to cache
-			// Abstract
-			if (includeAbstract)
+			if (!_subClasses.ContainsKey(type))
 			{
-				if (!subclassesIncludeAbstract.ContainsKey(baseType))
+				List<Type> types = new List<Type>();
+				foreach (Assembly assembly in allAssemblies)
 				{
-					List<Type> types = new List<Type>();
-					foreach (Assembly assembly in allAssemblies)
-					{
-						Type[] assemblyTypes = (from Type t
-												in assembly.GetTypes()
-												where t.IsSubclassOf(baseType)
-												select t).ToArray();
-						types.AddRange(assemblyTypes);
-					}
-					subclassesIncludeAbstract.Add(baseType, types.ToArray());
-				}
-			}
-			// Non-Abstract
-			else
-			{
-				if (!subclasses.ContainsKey(baseType))
-				{
-					List<Type> types = new List<Type>();
-					foreach (Assembly assembly in allAssemblies)
-					{
-						Type[] assemblyTypes = (from Type t
-												in assembly.GetTypes()
-												where t.IsSubclassOf(baseType) && !t.IsAbstract
-												select t).ToArray();
+					Type[] subclasses = typesByAssembly.Value[assembly]
+						.Where(t =>
+						{
+							if (type.IsGenericType)
+							{
+								if (t.BaseType == type)
+								{
+									return true;
+								}
 
-						types.AddRange(assemblyTypes);
-					}
-					subclasses.Add(baseType, types.ToArray());
+								Type current = t.BaseType;								
+								while (current != null && current.IsGenericType)
+								{
+									if (current.GetGenericTypeDefinition() == type)
+									{
+										return true;
+									}
+									current = current.BaseType;
+								}
+								return false;
+							}
+
+							return t.IsSubclassOf(type);
+						}).ToArray();
+
+					types.AddRange(subclasses);
 				}
+				_subClasses.Add(type, types.ToArray());
 			}
 
-			return includeAbstract ? subclassesIncludeAbstract[baseType] : subclasses[baseType];
+			return includeAbstract 
+				? _subClasses[type] 
+				: _subClasses[type].Where(t => !t.IsAbstract).ToArray();
 		}
 
 		/// <summary>
@@ -168,7 +169,7 @@ namespace Stratus.Utilities
 		/// [int : DerivedInt1, DerivedInt2>
 		/// [bool : DerivedBool1, DerivedBool2]
 		/// </summary>
-		public static Dictionary<Type, Type[]> TypeDefinitionParameterMap(Type baseType)
+		public static Dictionary<Type, Type[]> TypeDefinitionParameterMap(Type baseType, bool recursive = true)
 		{
 			if (!baseType.IsGenericType)
 			{
@@ -178,6 +179,12 @@ namespace Stratus.Utilities
 			Type[] definitions = TypesDefinedFromGeneric(baseType);
 			foreach (var type in definitions)
 			{
+				if (type.IsAbstract)
+				{
+					var derived = TypeDefinitionParameterMap(type, recursive);
+					result.AddFrom(derived);
+				}
+
 				var typeArgs = type.BaseType.GenericTypeArguments;
 				if (typeArgs.Length == 1)
 				{
@@ -193,11 +200,13 @@ namespace Stratus.Utilities
 		}
 
 		/// <summary>
-		/// For a given generic, returns all the types that use its definition.
+		/// For a given generic type, returns all the types that use its definition.
 		/// </summary>
 		public static Type[] TypesDefinedFromGeneric(Type genericType)
 		{
-			if (!genericTypeDefiniions.ContainsKey(genericType))
+			return SubclassesOf(genericType);
+
+			if (!genericTypeDefinitions.ContainsKey(genericType))
 			{
 				List<Type> result = new List<Type>();
 
@@ -212,10 +221,10 @@ namespace Stratus.Utilities
 
 					result.AddRange(implementedTypes);
 				}
-				genericTypeDefiniions.Add(genericType, result.ToArray());
+				genericTypeDefinitions.Add(genericType, result.ToArray());
 			}
 
-			return genericTypeDefiniions[genericType];
+			return genericTypeDefinitions[genericType];
 		}
 
 		/// <summary>
@@ -280,21 +289,38 @@ namespace Stratus.Utilities
 			// First, map into the selected interface type
 			if (!interfaceImplementations.ContainsKey(interfaceType))
 			{
-				List<Type> types = new List<Type>();
-				foreach (Assembly assembly in allAssemblies)
-				{
-					Type[] implementedTypes = (from Type t
-											   in assembly.GetTypes()
-											   where t.GetInterfaces().Contains((interfaceType))
-												&& (t.IsAbstract == includeAbstract)
-											   select t).ToArray();
+				var _types = typesByAssembly.Value
+					.SelectMany(t => t.Value)
+					.Where(t => t.GetInterfaces().Contains((interfaceType)) && (t.IsAbstract == includeAbstract))
+					.ToArray();
 
-					types.AddRange(implementedTypes);
-				}
-				interfaceImplementations.Add(interfaceType, types.ToArray());
+				interfaceImplementations.Add(interfaceType, _types.ToArray());
 			}
 
 			return interfaceImplementations[interfaceType];
+		}
+
+		/// <summary>
+		/// Gets an array of all the types that implement generic type for a given type T
+		/// </summary>
+		public static Type[] ImplementationsOf(Type genericType, Type typeArgument)
+		{
+			var types = SubclassesOf(genericType);
+			return types.Where(t =>
+			{
+				if (t.IsGenericType)
+				{
+					return false;
+				}
+
+				Type baseType = t.BaseType;
+				while (!baseType.IsGenericType)
+				{
+					baseType = baseType.BaseType;
+				}
+
+				return baseType.GenericTypeArguments[0] == typeArgument;
+			}).ToArray();
 		}
 		#endregion
 

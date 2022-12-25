@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using Stratus.Utilities;
+using log4net.Repository.Hierarchy;
 
 namespace Stratus
 {
@@ -36,33 +37,42 @@ namespace Stratus
 			{
 				if (_assetsByName == null)
 				{
-					_assetsByName = new StratusSortedList<string, StratusAssetToken<TAsset>>(GetKey,
-						_assets.Count,
-						StringComparer.InvariantCultureIgnoreCase);
-
-					foreach (var source in sources)
-					{
-
-					}
-					_assetsByName.AddRange(_assets);
+					Resolve();
 				}
 				return _assetsByName;
 			}
 		}
 		private StratusSortedList<string, StratusAssetToken<TAsset>> _assetsByName;
-		private List<StratusAssetToken<TAsset>> _assets;
 
-		public abstract IEnumerable<StratusAssetSource<TAsset>> sources { get; }
+		public abstract StratusAssetSource<TAsset>[] sources { get; }
 		protected virtual string GetKey(StratusAssetToken<TAsset> element) => element.ToString();
+		private static readonly string typeName = typeof(TAsset).Name;
 
 		public void Resolve(bool force = false)
 		{
-			if (_assets == null || force)
+			if (_assetsByName == null || force)
 			{
-				_assets = new List<StratusAssetToken<TAsset>>();
+				_assetsByName = new StratusSortedList<string, StratusAssetToken<TAsset>>(
+					a => a.name,
+					0, 
+					StringComparer.InvariantCultureIgnoreCase);
+
 				foreach (var source in sources)
 				{
-					_assets.AddRange(source.Fetch());
+					try
+					{
+						var assets = source.Fetch();
+						_assetsByName.AddRange(assets);
+					}
+					catch (Exception ex)
+					{
+						StratusDebug.LogException(ex);
+					}
+				}
+
+				if (_assetsByName.IsNullOrEmpty())
+				{
+					StratusDebug.LogError($"Found no assets among sources ({sources.Length}) for {typeof(TAsset)}");
 				}
 			}
 		}
@@ -74,7 +84,12 @@ namespace Stratus
 
 		public StratusAssetToken<TAsset> GetAsset(string name)
 		{
-			return HasAsset(name) ? assetsByName[name] : null;
+			var asset = assetsByName.GetValueOrDefault(name);
+			if (asset == null)
+			{
+				StratusDebug.LogError($"Did not find {typeName} named {name}. ({assetsByName.Count})");
+			}
+			return asset;
 		}
 
 		public string[] GetAssetNames()
@@ -86,10 +101,31 @@ namespace Stratus
 	public class DefaultStratusAssetResolver<TAsset> : StratusAssetResolver<TAsset>
 		where TAsset : class
 	{
-		private static readonly Lazy<Type[]> types = new Lazy<Type[]>(() =>
-			StratusTypeUtility.TypesDefinedFromGeneric(typeof(StratusAssetSource<>)));
+		private static readonly Lazy<Dictionary<Type, Type[]>> sourceTypesByAsset
+			= new Lazy<Dictionary<Type, Type[]>>(() => StratusTypeUtility.TypeDefinitionParameterMap(typeof(StratusAssetSource<>)));
 
-		public override IEnumerable<StratusAssetSource<TAsset>> sources { get; }
+		public override StratusAssetSource<TAsset>[] sources
+		{
+			get
+			{
+				if (_sources == null)
+				{
+					Type assetType = typeof(TAsset);
+					var impl = StratusTypeUtility.ImplementationsOf(typeof(StratusAssetSource<>), assetType);
+					if (impl.IsValid())
+					{
+						_sources = impl.Select(t => t.Instantiate<StratusAssetSource<TAsset>>()).ToArray();
+						StratusDebug.Log($"Found sources ({_sources.Length}) for {assetType}");
+					}
+					else
+					{
+						StratusDebug.LogError($"Found no sources for {assetType}. Sources -> {impl.ToStringJoin()}");
+					}
+				}
+				return _sources;
+			}
+		}
+		private StratusAssetSource<TAsset>[] _sources;
 	}
 
 	public abstract class CustomStratusAssetSource<TAsset> : StratusAssetSource<TAsset>
@@ -108,10 +144,11 @@ namespace Stratus
 		}
 
 		private IEnumerable<TAsset> _assets;
+		protected abstract string Name(TAsset asset);
 		protected abstract IEnumerable<TAsset> Generate();
 		public override IEnumerable<StratusAssetToken<TAsset>> Fetch()
 		{
-			return assets.Select(a => new StratusAssetToken<TAsset>(a, () => a));
+			return assets.Select(a => new StratusAssetToken<TAsset>(Name(a), () => a));
 		}
 	}
 

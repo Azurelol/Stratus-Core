@@ -73,11 +73,11 @@ namespace Stratus.Editor.Tests
 			Type[] expected = new Type[]
 			{
 				typeof(IntMockObject),
-				typeof(StringMockObject)
+				typeof(StringMockObject),
+				typeof(IntCustomMockObject)
 			};
 			Type[] actual = StratusTypeUtility.TypesDefinedFromGeneric(baseType);
-			Assert.AreEqual(expected.Length, actual.Length, "No clsoed generic types were found"); ;
-			Assert.AreEqual(expected, actual);
+			AssertEquality(expected, actual);
 		}
 
 		[Test]
@@ -86,8 +86,7 @@ namespace Stratus.Editor.Tests
 			Type baseType = typeof(MockObject<>);
 			Dictionary<Type, Type[]> map = StratusTypeUtility.TypeDefinitionParameterMap(baseType);
 			Assert.True(map.ContainsKey(typeof(int)));
-			Assert.True(map[typeof(int)].Length == 1 &&
-				map[typeof(int)][0] == typeof(IntMockObject));
+			Assert.True(map[typeof(int)].Contains(typeof(IntMockObject)));
 			Assert.True(map[typeof(string)].Length == 1 &&
 				map[typeof(string)][0] == typeof(StringMockObject));
 		}
@@ -126,5 +125,33 @@ namespace Stratus.Editor.Tests
 			Assert.AreEqual(expected.Length, implementationTypes.Length);
 			AssertEquality(expected, implementationTypes);
 		}
+
+		[TestCase(typeof(int), typeof(IntMockObject), typeof(IntCustomMockObject))]
+		public void ImplementationssOfType(Type argument, params Type[] expected)
+		{
+			var actual = StratusTypeUtility.ImplementationsOf(typeof(MockObject<>), argument);
+			Assert.AreEqual(expected.Length, actual.Length);
+			AssertEquality(expected, actual);
+		}
+
+		private abstract class CustomMockObject<T> : MockObject<T>
+		{
+		}
+
+		private class IntCustomMockObject : CustomMockObject<int>
+		{
+		}
+
+		[TestCase(typeof(MockObject<>), typeof(IntMockObject))]
+		[TestCase(typeof(MockObject<>), typeof(IntCustomMockObject))]
+		public void GetsSubclassesOfGenericType(Type genericType, params Type[] expected)
+		{
+			var actual = StratusTypeUtility.SubclassesOf(genericType);
+			Assert.That(actual.Length > 0);
+			var actualSet = actual.ToHashSet();
+			Assert.That(expected.All(e => actualSet.Contains(e)));
+		}
+
+
 	}
 }

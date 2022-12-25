@@ -45,9 +45,9 @@ namespace Stratus.Editor.Tests
 			AssertSuccess(expected.IsEqualInValues(actual));
 		}
 
-		public static void AssertEquality<T>(T[] first, T[] second)
+		public static void AssertEquality<T>(T[] expected, T[] actual)
 		{
-			AssertSuccess(first.IsComparableByValues(second));
+			AssertSuccess(expected.IsComparableByValues(actual));
 		}
 
 		public static void AssertLength<T>(int expected, IList<T> list)

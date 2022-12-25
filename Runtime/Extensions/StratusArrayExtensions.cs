@@ -322,13 +322,13 @@ namespace Stratus
 				{
 					if (!set.Contains(value))
 					{
-						return false;
+						return new StratusOperationResult(false, $"First array did not have value {value}");
 					}
 					set.Remove(value);
 				}
 				if (set.Count != 0)
 				{
-					return false;
+					return new StratusOperationResult(false, $"There were items ({set.Count}) present in the first not in the second");
 				}
 			}
 

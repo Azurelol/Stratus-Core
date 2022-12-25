@@ -271,7 +271,7 @@ namespace Stratus
 			bool hasValueFunction = valueToStringFunction != null;
 			foreach (var kp in dictionary)
 			{
-				sb.AppendLine($"{(hasKeyFunction ? keyToStringFunction(kp.Key) : kp.Key.ToString())}{separator}{(hasValueFunction ? valueToStringFunction(kp.Value) : kp.Value.ToString())}");
+				sb.AppendLine($"[{(hasKeyFunction ? keyToStringFunction(kp.Key) : kp.Key.ToString())}{separator}{(hasValueFunction ? valueToStringFunction(kp.Value) : kp.Value.ToString())}]");
 			}
 			return sb.ToString();
 		}
@@ -316,6 +316,21 @@ namespace Stratus
 			return result;
 		}
 
-
+		public static void AddFrom <TKey, TValue, TList>(this Dictionary<TKey, List<TValue>> self, 
+			Dictionary<TKey, TList> other)
+			where TList : IList<TValue>
+		{
+			foreach(var kvp in other)
+			{
+				if (!self.ContainsKey(kvp.Key))
+				{
+					self.Add(kvp.Key, new List<TValue>());
+				}
+				else
+				{
+					self[kvp.Key].AddRange(kvp.Value);
+				}
+			}
+		}
 	}
 }

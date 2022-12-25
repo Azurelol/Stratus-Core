@@ -28,19 +28,23 @@ namespace Stratus.Tests.Editor
 
 		public class MockAssetSource : CustomStratusAssetSource<MockAsset>
 		{
-			internal static MockAsset a = new MockAsset("a", "foobar");
+			internal static MockAsset a = new MockAsset("a", "foo");
+			internal static MockAsset b = new MockAsset("b", "bar");
 
 			protected override IEnumerable<MockAsset> Generate()
 			{
 				yield return a;
+				yield return b;
 			}
+
+			protected override string Name(MockAsset asset) => asset.name;
 		}
 
 		private class MockObject
 		{
 			public string name;
 			[StratusAssetSource(sourceTypes = typeof(MockAssetSource))]
-			public MockAssetReference value1 = new MockAssetReference();
+			public MockAssetReference reference = new MockAssetReference();
 		}
 
 		[Test]
@@ -65,8 +69,11 @@ namespace Stratus.Tests.Editor
 		public void GetsAssetsFromSources()
 		{
 			MockObject obj = new MockObject();
-			obj.value1.Set("a");
-			Assert.AreEqual(MockAssetSource.a, obj.value1.asset);
+			obj.reference.Set("a");
+
+			var token = obj.reference.token;
+			Assert.NotNull(token, $"Token from {obj.reference} was null");
+			Assert.AreEqual(MockAssetSource.a, token.asset);
 		}
 	}
 }

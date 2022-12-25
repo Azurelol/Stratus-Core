@@ -51,19 +51,14 @@ namespace Stratus
 			this.assetFunction = assetFunction;
 		}
 
-		public StratusAssetToken(object obj, Func<T> assetFunction)
+		public StratusAssetToken(IStratusNamed named, Func<T> assetFunction)
+			: this(named.name, assetFunction)
 		{
-			if (obj is IStratusNamed named)
-			{
-				this.name = named.name;
-			}
-			else
-			{
-				this.name = name.ToString();
-			}
+		}
 
-			this.assetSourceType = StratusAssetSourceType.Reference;
-			this.assetFunction = assetFunction;
+		public StratusAssetToken(object obj)
+			: this(obj.ToString(), () => (T)obj)
+		{
 		}
 
 		public StratusAssetToken(string name, Func<string, T> aliasToAssetFunction)

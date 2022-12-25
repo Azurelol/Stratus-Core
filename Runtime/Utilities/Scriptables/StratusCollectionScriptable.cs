@@ -43,7 +43,7 @@ namespace Stratus
 
 		public IEnumerable<StratusAssetToken<T>> Fetch()
 		{
-			return assets.Select(a => new StratusAssetToken<T>(a, () => a));
+			return assets.Select(a => new StratusAssetToken<T>(a));
 		}
 	}
 

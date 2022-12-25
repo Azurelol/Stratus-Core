@@ -29,7 +29,7 @@ namespace Stratus
 	public abstract class StratusAssetReference<TAsset> : StratusAssetReference
 		where TAsset : class
 	{
-		public StratusAssetToken<TAsset> asset => resolver.GetAsset(name);
+		public StratusAssetToken<TAsset> token => resolver.GetAsset(name);
 		protected override string[] availableAssetNames => resolver.GetAssetNames();
 		public virtual StratusAssetResolver<TAsset> resolver { get; } = defaultResolver;
 
@@ -84,7 +84,7 @@ namespace Stratus
 
 		public IEnumerable<StratusAssetToken<TAsset>> Fetch()
 		{
-			return assets.Select(a => new StratusAssetToken<TAsset>(a, () => a));
+			return assets.Select(a => new StratusAssetToken<TAsset>(a));
 		}
 		#endregion
 	}
