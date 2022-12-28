@@ -26,12 +26,14 @@ namespace Stratus
 		protected virtual string[] availableAssetNames { get; }
 	}
 
-	public abstract class StratusAssetReference<TAsset> : StratusAssetReference
+	public abstract class StratusAssetReference<TAsset> : StratusAssetReference,
+		IStratusReference<TAsset>
 		where TAsset : class
 	{
 		public StratusAssetToken<TAsset> token => resolver.GetAsset(name);
 		protected override string[] availableAssetNames => resolver.GetAssetNames();
 		public virtual StratusAssetResolver<TAsset> resolver { get; } = defaultResolver;
+		public TAsset value => token.asset;
 
 		private static readonly DefaultStratusAssetResolver<TAsset> defaultResolver =
 			new DefaultStratusAssetResolver<TAsset>();

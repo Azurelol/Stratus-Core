@@ -205,26 +205,6 @@ namespace Stratus.Utilities
 		public static Type[] TypesDefinedFromGeneric(Type genericType)
 		{
 			return SubclassesOf(genericType);
-
-			if (!genericTypeDefinitions.ContainsKey(genericType))
-			{
-				List<Type> result = new List<Type>();
-
-				foreach (Assembly assembly in allAssemblies)
-				{
-					Type[] implementedTypes = (from Type t
-											   in assembly.GetTypes()
-											   where t.BaseType != null &&
-												t.BaseType.IsGenericType &&
-												t.BaseType.GetGenericTypeDefinition() == genericType
-											   select t).ToArray();
-
-					result.AddRange(implementedTypes);
-				}
-				genericTypeDefinitions.Add(genericType, result.ToArray());
-			}
-
-			return genericTypeDefinitions[genericType];
 		}
 
 		/// <summary>
