@@ -29,6 +29,7 @@ namespace Stratus
 		}
 
 		public T value => instancer.Get(name);
+		public bool valid => _name.IsValid();
 
 		public static implicit operator T(StratusInstanceReference<T> reference) => reference.value;
 		public static implicit operator StratusInstanceReference<T>(T value) => new StratusInstanceReference<T>(value);

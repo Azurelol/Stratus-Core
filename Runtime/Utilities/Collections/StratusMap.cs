@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Collections;
+using UnityEngine;
 
 namespace Stratus.Collections
 {
@@ -20,6 +21,7 @@ namespace Stratus.Collections
 	/// <typeparam name="TValue">The value type</typeparam>
 	public abstract class StratusMap<TKey, TValue> : IEnumerable<TValue>, IReadOnlyStratusMap<TKey, TValue>
 	{
+		[SerializeField]
 		private List<TValue> _list = new List<TValue>();
 		[NonSerialized]
 		private Dictionary<TKey, TValue> _dictionary;
