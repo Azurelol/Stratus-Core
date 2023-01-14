@@ -19,12 +19,12 @@ namespace Stratus.Serialization
 		{
 			if (data == null)
 			{
-				throw new ArgumentNullException("No data to serialize");
+				throw new ArgumentNullException(nameof(data));
 			}
 
 			if (filePath.IsNullOrEmpty())
 			{
-				throw new ArgumentNullException("No file path given");
+				throw new ArgumentNullException(nameof(filePath));
 			}
 
 			OnSerialize(data, filePath);

@@ -29,7 +29,9 @@ namespace Stratus.Editor.Tests
 			Assert.That((instancer.Get(type) != null) == instanced);
 		}
 
-		[TestCase]
+		[TestCase(nameof(B))]
+		[TestCase(nameof(B1))]
+		[TestCase(nameof(C))]
 		public void GetsInstanceByName(string name)
 		{
 			var instancer = new StratusTypeInstancer<A>();

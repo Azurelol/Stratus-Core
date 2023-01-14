@@ -62,8 +62,18 @@ namespace Stratus.Utilities
 		private static Lazy<Dictionary<Assembly, Type[]>> typesByAssembly = new Lazy<Dictionary<Assembly, Type[]>>
 			(() => allAssemblies.ToDictionary(a => a.GetTypes()));
 
-		private static Lazy<Type[]> allTypes = new Lazy<Type[]>(() =>
+		private static Lazy<Type[]> _types = new Lazy<Type[]>(() =>
 			typesByAssembly.Value.SelectMany(a => a.Value).ToArray());
+
+		//private static Lazy<Dictionary<Type, List<Type>>> typesWithAttribute =
+		//	new Lazy<Dictionary<Type, List<Type>>>(() =>
+		//	{
+		//		Dictionary<Type, List<Type>> result = new Dictionary<Type, List<Type>>();
+
+		//		return result;
+		//	});
+
+		public static Type[] types => _types.Value;
 
 		#endregion
 
@@ -71,7 +81,7 @@ namespace Stratus.Utilities
 		public static Type[] GetTypesFromAssembly(Assembly assembly)
 			=> typesByAssembly.Value.GetValueOrDefault(assembly);
 
-		public static Type[] GetAllTypes() => allTypes.Value;
+		public static Type[] GetAllTypes() => _types.Value;
 
 		/// <summary>
 		/// Get the name of all classes derived from the given one
@@ -138,7 +148,7 @@ namespace Stratus.Utilities
 									return true;
 								}
 
-								Type current = t.BaseType;								
+								Type current = t.BaseType;
 								while (current != null && current.IsGenericType)
 								{
 									if (current.GetGenericTypeDefinition() == type)
@@ -158,8 +168,8 @@ namespace Stratus.Utilities
 				_subClasses.Add(type, types.ToArray());
 			}
 
-			return includeAbstract 
-				? _subClasses[type] 
+			return includeAbstract
+				? _subClasses[type]
 				: _subClasses[type].Where(t => !t.IsAbstract).ToArray();
 		}
 
@@ -213,10 +223,15 @@ namespace Stratus.Utilities
 		/// <param name="assembly"></param>
 		/// <param name="attribute"></param>
 		/// <returns></returns>
-		public static IEnumerable<Type> GetAllTypesWithAttribute(Type attribute)
+		public static IEnumerable<Type> TypesWithAttribute(Type attribute)
 		{
 			return typesWithAttribute.Value[attribute];
 		}
+
+		public static IEnumerable<Type> TypesWithAttribute<TAttribute>()
+			where TAttribute : Attribute
+			=> TypesWithAttribute(typeof(TAttribute));
+
 
 		private static Dictionary<string, Type> typeMap = new Dictionary<string, Type>();
 

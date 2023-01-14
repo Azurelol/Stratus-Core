@@ -104,7 +104,7 @@ namespace Stratus.Editor.Tests
 		public void GetsTypesWithAttributes()
 		{
 			Type attrType = typeof(MockAttribute);
-			var types = StratusTypeUtility.GetAllTypesWithAttribute(attrType).ToArray();
+			var types = StratusTypeUtility.TypesWithAttribute(attrType).ToArray();
 			Assert.AreEqual(1, types.Length);
 			Assert.AreEqual(typeof(StringMockObject), types[0]);
 		}
