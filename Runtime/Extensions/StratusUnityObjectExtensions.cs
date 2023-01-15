@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Stratus
 {
-	public static partial class Extensions
+	public static partial class StratusExtensions
 	{
 		/// <summary>
 		/// Checks whether the object is null (exhaustively)

@@ -7,7 +7,7 @@ namespace Stratus
 	/// <summary>
 	/// Useful extensions to Unity's hierarchy window
 	/// </summary>
-	public static partial class Extensions
+	public static class StratusHierarchyWindowExtensions
 	{
 		[MenuItem("GameObject/Transform/Reset Selected", false, 0)]
 		private static void Reset(MenuCommand command)

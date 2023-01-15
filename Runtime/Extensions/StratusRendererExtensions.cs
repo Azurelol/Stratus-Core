@@ -10,7 +10,7 @@ namespace Stratus
 		JPG,
 	}
 
-	public static partial class Extensions
+	public static partial class StratusExtensions
 	{
 		/// <summary>
 		/// Checks if the specified renderer is being seen by a specific Camera. 

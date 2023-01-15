@@ -5,6 +5,7 @@ using System.Reflection;
 using UnityEngine.Serialization;
 using System.Linq.Expressions;
 using System;
+using Stratus.Extensions;
 
 namespace Stratus
 {

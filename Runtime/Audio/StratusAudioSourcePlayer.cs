@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Stratus.Extensions;
+
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;

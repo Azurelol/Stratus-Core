@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Stratus
 {
-	public static partial class Extensions
+	public static partial class StratusExtensions
 	{
 		/// <summary>
 		/// Centers this transform on the parent

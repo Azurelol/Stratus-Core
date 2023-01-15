@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Extensions
 {
-	public static partial class Extensions
+	public static class StratusColorExtensions
 	{
 		/// <summary>
 		/// Returns a copy of the color with a modified alpha
@@ -64,7 +65,7 @@ namespace Stratus
 		{
 			float h, s, v;
 			Color.RGBToHSV(rgbColor, out h, out s, out v);
-			return Color.HSVToRGB(h , s, v * value);
+			return Color.HSVToRGB(h, s, v * value);
 		}
 
 

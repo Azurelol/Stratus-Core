@@ -1,14 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.EventSystems;
+﻿using System;
+
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using System;
 
 namespace Stratus
 {
-	public static partial class Extensions
+	public static partial class StratusExtensions
 	{
 		public static void AddListener(this UnityEvent unityEvent, Action action)
 		{

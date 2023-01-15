@@ -1,7 +1,9 @@
 {
     "name": "Stratus.Core.Editor",
+    "rootNamespace": "",
     "references": [
-        "Stratus.Core"
+        "Stratus.Core",
+        "Stratus.NET"
     ],
     "includePlatforms": [
         "Editor"

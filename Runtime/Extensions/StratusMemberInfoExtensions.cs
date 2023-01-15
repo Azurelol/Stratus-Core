@@ -6,10 +6,11 @@ using System.ComponentModel;
 using System.Text;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Stratus.Extensions;
 
 namespace Stratus
 {
-	public static partial class Extensions
+	public static partial class StratusExtensions
 	{
 		/// <summary>
 		/// Returns true if the given member has the attribute

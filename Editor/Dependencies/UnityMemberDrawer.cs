@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityObject = UnityEngine.Object;
 using Stratus.Dependencies.Ludiq.Controls.Editor;
 using Stratus.Dependencies.Ludiq.Reflection.Internal;
+using Stratus.Extensions;
 
 namespace Stratus.Dependencies.Ludiq.Reflection.Editor
 {

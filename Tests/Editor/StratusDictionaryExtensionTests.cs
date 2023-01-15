@@ -5,6 +5,7 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Linq;
 using Stratus.Editor.Tests;
+using Stratus.Extensions;
 
 namespace Stratus.Editor.Tests
 {

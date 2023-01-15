@@ -8,7 +8,7 @@ using Stratus.Utilities;
 
 namespace Stratus
 {
-	public static partial class Extensions
+	public static partial class StratusPropertyDrawerExtensions
 	{
 		public static float GetPropertyHeightSafe(this PropertyDrawer drawer, SerializedProperty property, GUIContent label)
 		{

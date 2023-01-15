@@ -4,10 +4,11 @@ using System.Reflection;
 using Stratus.Utilities;
 using System.Text;
 using System.Linq;
+using Stratus.Extensions;
 
 namespace Stratus
 {
-	public static partial class Extensions
+	public static partial class StratusExtensions
 	{
 		#region Constants
 		/// <summary>

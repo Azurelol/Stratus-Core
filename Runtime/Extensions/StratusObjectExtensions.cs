@@ -1,16 +1,13 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Stratus.OdinSerializer;
-using UnityEngine;
 
-using static Stratus.Utilities.StratusReflection;
+using System;
+using System.Reflection;
+
+using UnityEngine;
 
 namespace Stratus
 {
-	public static partial class Extensions
+	public static partial class StratusExtensions
 	{
 		/// <summary>
 		/// Provides a deep copy of the given object

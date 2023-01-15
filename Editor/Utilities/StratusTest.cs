@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using NUnit.Framework;
-using Stratus;
 using System;
 using Stratus.Utilities;
 using System.Reflection;
+using Stratus.Extensions;
 
 namespace Stratus.Editor.Tests
 {

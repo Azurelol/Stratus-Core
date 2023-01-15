@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Stratus
 {
-	public static partial class Extensions
+	public static partial class StratusExtensions
 	{
 		public static void SetWidth(this RectTransform rectTransform, float width)
 		{

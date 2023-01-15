@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using Stratus.Extensions;
+
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Stratus

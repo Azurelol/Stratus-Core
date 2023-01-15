@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Stratus
 {
-	public static partial class Extensions
+	public static partial class StratusExtensions
 	{
 		/// <summary>
 		/// Checks the specified value is within the range of this vector

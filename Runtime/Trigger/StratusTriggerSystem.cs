@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Stratus.Interfaces;
+using Stratus.Extensions;
 
 namespace Stratus
 {
-  [ExecuteInEditMode]
+	[ExecuteInEditMode]
   [DisallowMultipleComponent]
   public class StratusTriggerSystem : StratusBehaviour, IStratusValidator, IStratusValidatorAggregator
   {

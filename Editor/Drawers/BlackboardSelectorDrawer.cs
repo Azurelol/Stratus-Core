@@ -1,11 +1,15 @@
-﻿using System.Collections;
+﻿using Stratus.Extensions;
+
+using System.Collections;
 using System.Collections.Generic;
+
 using UnityEditor;
+
 using UnityEngine;
 
 namespace Stratus
 {
-  [CustomPropertyDrawer(typeof(StratusBlackboard.Selector))]
+	[CustomPropertyDrawer(typeof(StratusBlackboard.Selector))]
   public class BlackboardSelectorDrawer : ObjectPropertySelectorDrawer<StratusBlackboard.Selector>
   {
     protected override string objectPropertyName { get; } = nameof(StratusBlackboard.Selector.blackboard);

@@ -155,13 +155,13 @@ namespace Stratus
 					value = Enum.Parse(info.type, arg);
 					break;
 				case StratusConsoleCommandParameter.Vector2:
-					value = Extensions.ParseVector2(arg);
+					value = StratusExtensions.ParseVector2(arg);
 					break;
 				case StratusConsoleCommandParameter.Vector3:
-					value = Extensions.ParseVector3(arg);
+					value = StratusExtensions.ParseVector3(arg);
 					break;
 				case StratusConsoleCommandParameter.Rect:
-					value = Extensions.ParseRect(arg);
+					value = StratusExtensions.ParseRect(arg);
 					break;
 				case StratusConsoleCommandParameter.Object:
 					throw new Exception("Submitting parameters for object types is not supported!");

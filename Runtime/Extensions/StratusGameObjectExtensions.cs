@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Stratus
 {
-	public static partial class Extensions
+	public static partial class StratusExtensions
 	{
 		/// <summary>
 		/// Returns a container of all the children of this GameObject.

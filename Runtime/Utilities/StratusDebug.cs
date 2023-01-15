@@ -1,6 +1,8 @@
 #define STRATUS_TRACE
 #if STRATUS_TRACE
 
+using Stratus.Extensions;
+
 using System;
 using System.Diagnostics;
 using System.Text;

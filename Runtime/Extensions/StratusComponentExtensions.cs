@@ -3,10 +3,11 @@ using System;
 using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
+using Stratus.Extensions;
 
 namespace Stratus
 {
-	public static partial class Extensions
+	public static partial class StratusExtensions
 	{
 		/// <summary>
 		/// Copies the values from another component of the same type onto this one

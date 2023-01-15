@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using UnityEngine.Events;
 using System.Text;
 using System.Linq;
+using Stratus.Extensions;
 
 namespace Stratus
 {

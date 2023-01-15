@@ -6,6 +6,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using Stratus.Extensions;
 
 namespace Stratus.Editor.Tests
 {

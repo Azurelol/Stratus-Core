@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+using Stratus.Extensions;
 
 namespace Stratus
 {
@@ -58,7 +59,7 @@ namespace Stratus
 
 		public void Add(string name)
 		{
-			_assetNames = assetNames.Append(name);
+			_assetNames = assetNames.AppendToArray(name);
 		}
 
 		protected virtual string[] GetAssetNames()

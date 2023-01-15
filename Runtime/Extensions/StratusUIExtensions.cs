@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Stratus
 {
-	public static partial class Extensions
+	public static partial class StratusExtensions
 	{
 		public static void SetOptions(this Dropdown dropdown, IEnumerable<string> values)
 		{

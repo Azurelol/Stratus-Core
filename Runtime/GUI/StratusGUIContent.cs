@@ -1,10 +1,13 @@
-﻿using System.Collections;
+﻿using Stratus.Extensions;
+
+using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 namespace Stratus
 {
-  public partial class StratusGUI : StratusSingletonBehaviour<StratusGUI>
+	public partial class StratusGUI : StratusSingletonBehaviour<StratusGUI>
   {
     public enum RichTextOption
     {

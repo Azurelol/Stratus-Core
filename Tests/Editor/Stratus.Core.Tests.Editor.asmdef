@@ -1,19 +1,26 @@
 {
     "name": "Stratus.Core.Tests.Editor",
+    "rootNamespace": "",
     "references": [
         "Stratus.Core",
-        "Stratus.Core.Editor"
-    ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
+        "Stratus.Core.Editor",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "Stratus.NET"
     ],
     "includePlatforms": [
         "Editor"
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": []
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
