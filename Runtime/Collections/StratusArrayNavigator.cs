@@ -1,10 +1,11 @@
-using System;
-using UnityEngine;
-using System.Collections.Generic;
-using System.Collections;
 using Stratus.Extensions;
 
-namespace Stratus
+using System;
+using System.Collections.Generic;
+
+using UnityEngine;
+
+namespace Stratus.Collections
 {
 	/// <summary>
 	/// Base class for the array navigator
@@ -109,7 +110,7 @@ namespace Stratus
 		/// Whether navigation is currently at the last index
 		/// </summary>
 		public bool atLastIndex => currentIndex == indexSize;
-		
+
 		/// <summary>
 		/// Whether the index has recently changed
 		/// </summary>
@@ -128,7 +129,7 @@ namespace Stratus
 		/// <summary>
 		/// Whether there's a value at the previous possible index
 		/// </summary>
-		public bool hasPrevious => (currentIndex - 1) > firstIndex;
+		public bool hasPrevious => currentIndex - 1 > firstIndex;
 
 		//------------------------------------------------------------------------/
 		// Events
@@ -160,7 +161,7 @@ namespace Stratus
 			currentIndex = 0;
 		}
 
-		public StratusArrayNavigator(IList<T> array, bool loop = false) 
+		public StratusArrayNavigator(IList<T> array, bool loop = false)
 			: this(array, 0, loop)
 		{
 		}
@@ -371,7 +372,7 @@ namespace Stratus
 			{
 				recentlyChanged = false;
 			}
-			
+
 			return this.current;
 		}
 
@@ -389,7 +390,7 @@ namespace Stratus
 		{
 			onIndexChanged?.Invoke(current, currentIndex);
 			onChanged?.Invoke(current, previousIfNotCurrent);
-			recentlyChanged = true; 
+			recentlyChanged = true;
 		}
 
 	}

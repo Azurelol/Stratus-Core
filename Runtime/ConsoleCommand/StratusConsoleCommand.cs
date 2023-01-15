@@ -129,7 +129,7 @@ namespace Stratus
 		/// <returns></returns>
 		public static bool Submit(string command)
 		{
-			RecordCommand(command);
+			RecordCommand(command);			
 
 			string[] commandSplit = command.Split(delimiter);
 			int length = command.Length;

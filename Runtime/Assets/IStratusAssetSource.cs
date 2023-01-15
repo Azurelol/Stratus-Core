@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEditor;
 using Stratus.Utilities;
 using log4net.Repository.Hierarchy;
+using Stratus.Collections;
 
 namespace Stratus
 {

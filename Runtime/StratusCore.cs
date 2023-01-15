@@ -1,5 +1,7 @@
 #define STRATUS_CORE
 
+using Stratus.IO;
+
 using UnityEngine;
 
 namespace Stratus

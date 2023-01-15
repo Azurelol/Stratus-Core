@@ -1,9 +1,7 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
 
-namespace Stratus
+namespace Stratus.Collections
 {
 	/// <summary>
 	/// Utlity class for generating content for a SelectableGrid
@@ -72,7 +70,7 @@ namespace Stratus
 			{
 				for (int c = 0; c < this.columns; ++c)
 				{
-					int index = (r * this.columns) + c;
+					int index = r * this.columns + c;
 					T element = this.isList ? this.list[index] : this.array[index];
 					this.content[index] = this.columnFunctions[index](element);
 				}

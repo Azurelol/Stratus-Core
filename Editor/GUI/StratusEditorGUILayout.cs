@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor.AnimatedValues;
+using Stratus.Collections;
 
 namespace Stratus.Editor
 {

@@ -2,11 +2,7 @@
 
 namespace Stratus
 {
-    public interface IStratusLogger
-    {
-	}
-
-    public static class IStratusLoggerExtensions
+	public static class IStratusLoggerExtensions
     {
 		/// <summary>
 		/// Prints the given message to the console

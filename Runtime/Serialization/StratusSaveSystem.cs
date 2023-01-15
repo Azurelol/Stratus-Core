@@ -1,146 +1,18 @@
+using Stratus.IO;
+using Stratus.Serialization;
+
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 using UnityEngine;
-using System.Collections;
-using Stratus.Utilities;
-using System.Linq;
-using Stratus.Serialization;
-using Stratus.Extensions;
+
+//using UnityEngine;
 
 namespace Stratus
 {
-	public interface IStratusSaveSystem
-	{
-		void RefreshSaveFiles();
-		void ClearSaveFiles();
-		void LoadAllSaves(bool force = false);
-	}
-
-	public interface IStratusSaveSystem<SaveType> : IStratusSaveSystem
-		where SaveType : StratusSave, new()
-	{
-		SaveType[] saves { get; }
-		SaveType CreateSave(Action<SaveType> onCreated = null);
-		StratusOperationResult SaveAs(SaveType save, string fileName);
-		StratusOperationResult Save(SaveType save);
-		StratusOperationResult SaveAsync(SaveType save, Action onFinished);
-		SaveType Load(StratusSaveFileInfo file);
-		SaveType GetSaveAtIndex(int index);
-	}
-
-	public enum StratusSaveType
-	{
-		/// <summary>
-		/// Manual saves triggered by the player
-		/// </summary>
-		Manual,
-		/// <summary>
-		/// Automatic saves triggered by the game
-		/// </summary>
-		Auto,
-		/// <summary>
-		/// Saves usually triggered by a hotkey
-		/// </summary>
-		Quick
-	}
-
-	/// <summary>
-	/// Configurable attributes for a save system
-	/// </summary>
-	public class StratusSaveSystemConfiguration
-	{
-		/// <summary>
-		/// Whether the save data system is being debugged
-		/// </summary>
-		public bool debug { get; set; }
-
-		/// <summary>
-		/// If assigned, will store saves within this folder rather than the root
-		/// of <see cref="StratusSaveSystem.rootSaveDirectoryPath"/>
-		/// </summary>
-		public string folder { get; set; }
-		/// <summary>
-		/// The save format
-		/// </summary>
-		public StratusSaveFormat format
-		{
-			get => _format;
-			set
-			{
-				_format = value;
-				onChanged?.Invoke();
-			}
-		}
-		private StratusSaveFormat _format;
-		/// <summary>
-		/// What naming convention to use for a save file of this type
-		/// </summary>
-		public StratusFileNamingConvention namingConvention { get; set; }
-		/// <summary>
-		/// The maximum amount of saves allowed. If 0, the saves are unlimited.
-		/// </summary>
-		public int saveLimit = 1000;
-
-		/// <summary>
-		/// The default save extension
-		/// </summary>
-		public const string defaultSaveExtension = ".save";
-
-		public event Action onChanged;
-
-		public StratusSaveSystemConfiguration(StratusSaveFormat format, StratusFileNamingConvention namingConvention)
-		{
-			this.format = format;
-			this.namingConvention = namingConvention;
-		}
-
-		public string GenerateSaveFilePath(string path, StratusSaveFileQuery files)
-		{
-			return format.GenerateSaveFilePath(path, namingConvention.GenerateFileName(files));
-		}
-	}
-
-	/// <summary>
-	/// File information about a save
-	/// </summary>
-	public class StratusSaveFileInfo
-	{
-		public string path { get; private set; }
-		public string name { get; private set; }
-		public string directoryPath { get; private set; }
-
-		public bool valid => path.IsValid();
-
-		public StratusSaveFileInfo(string filePath)
-		{
-			this.path = filePath;
-			this.name = StratusIO.GetFileName(filePath);
-		}
-
-		public bool Delete()
-		{
-			if (directoryPath.IsValid())
-			{
-				return StratusIO.DeleteDirectory(directoryPath);
-			}
-			return StratusIO.DeleteFile(path);
-		}
-
-		public override string ToString()
-		{
-			return path;
-		}
-	}
-
-	public class StratusSaveFileQuery : StratusAssetQuery<StratusSaveFileInfo>
-	{
-		public StratusSaveFileQuery(Func<IList<StratusSaveFileInfo>> getAssetsFunction, Func<StratusSaveFileInfo, string> keyFunction) : base(getAssetsFunction, keyFunction)
-		{
-		}
-	}
-
 	public abstract class StratusSaveSystem : IStratusLogger
 	{
 		/// <summary>
@@ -172,7 +44,7 @@ namespace Stratus
 		/// <summary>
 		/// The root path to the directory being used by this save data
 		/// </summary>
-		public string saveDirectoryPath => StratusIO.CombinePath(StratusSaveSystem.rootSaveDirectoryPath, configuration.folder);
+		public string saveDirectoryPath => FileUtility.CombinePath(StratusSaveSystem.rootSaveDirectoryPath, configuration.folder);
 
 		/// <summary>
 		/// Returns all instances of the save data from the path
@@ -228,7 +100,7 @@ namespace Stratus
 		protected virtual void OnBeforeSave(SaveType save) { }
 		#endregion
 
-		#region Messages
+		#region Constructors
 		public StratusSaveSystem(StratusSaveSystemConfiguration configuration)
 		{
 			this.configuration = configuration;
@@ -411,10 +283,11 @@ namespace Stratus
 		/// <param name="save"></param>
 		public StratusOperationResult SaveAsync(SaveType save, Action onFinished)
 		{
-			if (!Application.isPlaying)
-			{
-				return new StratusOperationResult(false, "Cannot save asynchronously outside of playmode...");
-			}
+			// TODO: CHeck elsewhere?
+			//if (!Application.isPlaying)
+			//{
+			//	return new StratusOperationResult(false, "Cannot save asynchronously outside of playmode...");
+			//}
 
 			IEnumerator routine()
 			{
@@ -481,7 +354,7 @@ namespace Stratus
 		/// <param name="filePath"></param>
 		private void Serialize(SaveType save, string filePath)
 		{
-			StratusIO.EnsureDirectoryAt(filePath);
+			FileUtility.EnsureDirectoryAt(filePath);
 			// Update the time to save at
 			save.date = DateTime.Now.ToString();
 			// Call a customized function before writing to disk
@@ -509,6 +382,11 @@ namespace Stratus
 			saveData.OnAnySerialization(filePath);
 			return saveData;
 		}
+	}
+
+	public static class StratusSaveSystemExtensions
+	{
+
 	}
 
 }

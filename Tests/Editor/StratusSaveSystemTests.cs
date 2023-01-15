@@ -1,9 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor.TestTools;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+
+using Stratus.IO;
 using Stratus.Serialization;
+
+using UnityEngine;
 
 namespace Stratus
 {
@@ -16,7 +16,7 @@ namespace Stratus
 			public bool c;
 		}
 
-		internal class MockSave : StratusSave<MockSaveData>
+		internal class MockSave : UnityStratusSave<MockSaveData>
 		{
 			public MockSave()
 			{
@@ -76,9 +76,9 @@ namespace Stratus
 			Assert.True(saveSystem.Save(save));
 			Assert.True(save.serialized);
 
-			string expectedPath = StratusIO.CombinePath(saveSystem.saveDirectoryPath, 
-				StratusIO.ChangeExtension(save.file.name, saveSystem.configuration.format.extension));
-			Assert.True(StratusIO.FileExists(expectedPath), $"No save file at {expectedPath}");
+			string expectedPath = FileUtility.CombinePath(saveSystem.saveDirectoryPath,
+				FileUtility.ChangeExtension(save.file.name, saveSystem.configuration.format.extension));
+			Assert.True(FileUtility.FileExists(expectedPath), $"No save file at {expectedPath}");
 
 			var saveAgain = saveSystem.Load(save.file.name);
 			Assert.NotNull(saveAgain);
@@ -96,9 +96,9 @@ namespace Stratus
 			Assert.True(saveSystem.Save(save));
 			Assert.True(save.serialized);
 
-			string expectedPath = StratusIO.CombinePath(saveSystem.saveDirectoryPath,
-				StratusIO.GetFileName(save.snapshotFilePath));
-			Assert.True(StratusIO.FileExists(expectedPath));
+			string expectedPath = FileUtility.CombinePath(saveSystem.saveDirectoryPath,
+				FileUtility.GetFileName(save.snapshotFilePath));
+			Assert.True(FileUtility.FileExists(expectedPath));
 		}
 
 		[Test]
@@ -111,10 +111,10 @@ namespace Stratus
 			Assert.True(saveSystem.Save(save));
 			Assert.True(save.serialized);
 
-			string expectedPath = StratusIO.CombinePath(saveSystem.saveDirectoryPath, 
-				StratusIO.RemoveExtension(save.file.name),
-				StratusIO.ChangeExtension(save.file.name, saveSystem.configuration.format.extension));
-			Assert.True(StratusIO.FileExists(expectedPath));
+			string expectedPath = FileUtility.CombinePath(saveSystem.saveDirectoryPath,
+				FileUtility.RemoveExtension(save.file.name),
+				FileUtility.ChangeExtension(save.file.name, saveSystem.configuration.format.extension));
+			Assert.True(FileUtility.FileExists(expectedPath));
 		}
 
 		[TestCase("SAV_001.sav", 1)]

@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Stratus.Dependencies.FibonacciHeap;
+﻿using Stratus.Dependencies.FibonacciHeap;
+
 using System;
 
 namespace Stratus

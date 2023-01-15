@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+
 using UnityEngine;
-using System;
 
 namespace Stratus
 {
@@ -64,16 +63,7 @@ namespace Stratus
 		/// <returns></returns>
 		public static Vector2 RowColumnToCartesian(int row, int col) => new Vector2(col, -row);
 
-		//private static int[] offsetX = new int[] { 0, -1, 1, 1, 0, -1, -1, -1 };
-		//private static int[] offsetY = new int[] { -1, 1, 0, 1, 1, 1, 0, -1 };
-
 		public static T GetNeighbor<T>(this CardinalDirection direction, T[,] grid, int row, int col, bool wrap = false) => GetNeighbor(grid, row, col, direction, wrap);
-		//public static T GetNeighbor<T>(this CardinalDirection direction, T[,] grid, Vector2 position, bool wrap = false) => GetNeighbor(grid, (int)position.x, (int)position.y, direction);
-
-		//private static int ArrayTraverseUp(int r, int n) => r - 1 % n - 1;
-		//private static int ArrayTraverseDown(int r, int n) => r + 1 % n - 1;
-		//private static int ArrayTraverseLeft(int c, int n) => c - 1 % n - 1;
-		//private static int ArrayTraverseRight(int c, int n) => c + 1 % n - 1;
 
 		public static T GetNeighbor<T>(T[,] neighbors, int row, int col, CardinalDirection direction, bool wrap = false)
 		{

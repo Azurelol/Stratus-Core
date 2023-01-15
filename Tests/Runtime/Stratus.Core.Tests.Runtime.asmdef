@@ -1,9 +1,11 @@
 {
     "name": "Stratus.Core.Tests.Runtime",
+    "rootNamespace": "",
     "references": [
         "Stratus.Core",
         "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner"
+        "UnityEditor.TestRunner",
+        "Stratus.NET"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
