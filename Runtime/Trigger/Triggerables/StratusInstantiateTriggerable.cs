@@ -1,6 +1,6 @@
 using UnityEngine;
-using Stratus;
 using System.Collections.Generic;
+using Stratus.Extensions;
 
 namespace Stratus
 {

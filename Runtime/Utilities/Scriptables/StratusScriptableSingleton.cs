@@ -4,6 +4,7 @@ using Stratus.Utilities;
 using UnityEngine;
 using Stratus.OdinSerializer;
 using Stratus.IO;
+using Stratus.Extensions;
 
 namespace Stratus
 {

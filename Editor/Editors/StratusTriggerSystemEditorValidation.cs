@@ -1,3 +1,5 @@
+using Stratus.Extensions;
+
 using System.Collections;
 using System.Collections.Generic;
 
@@ -62,12 +64,12 @@ namespace Stratus.Editor
 		{
 			foreach (var t in triggers)
 			{
-				var validation = StratusObjectValidation.NullReference(t, $"<i>{t.description}</i>");
+				var validation = StratusUnityObjectValidation.NullReference(t, $"<i>{t.description}</i>");
 				if (validation != null) AddMessage(validation);
 			}
 			foreach (var t in triggerables)
 			{
-				var validation = StratusObjectValidation.NullReference(t, $"<i>{t.description}</i>");
+				var validation = StratusUnityObjectValidation.NullReference(t, $"<i>{t.description}</i>");
 				if (validation != null) AddMessage(validation);
 			}
 		}

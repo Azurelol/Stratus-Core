@@ -9,7 +9,7 @@ using Stratus.Utilities;
 using UnityEditor.IMGUI.Controls;
 using UnityEditor.AnimatedValues;
 using UnityEditor.Callbacks;
-using Stratus;
+using Stratus.Extensions;
 
 namespace Stratus.Editor
 {

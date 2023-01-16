@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+
 using NUnit.Framework;
+
+using Stratus.Extensions;
+
 using UnityEngine;
 
 namespace Stratus.Editor.Tests

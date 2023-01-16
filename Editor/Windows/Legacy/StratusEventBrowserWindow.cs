@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+
+using Stratus.Extensions;
 using Stratus.Utilities;
+
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
+
 using UnityEngine;
 
 namespace Stratus.Editor

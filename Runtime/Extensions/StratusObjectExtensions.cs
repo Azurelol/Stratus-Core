@@ -5,9 +5,9 @@ using System.Reflection;
 
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Extensions
 {
-	public static partial class StratusExtensions
+	public static class StratusObjectExtensions
 	{
 		/// <summary>
 		/// Provides a deep copy of the given object

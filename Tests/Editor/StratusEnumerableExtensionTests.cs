@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 
 using UnityEngine;
+using Stratus.Extensions;
 
 namespace Stratus.Editor.Tests
 {

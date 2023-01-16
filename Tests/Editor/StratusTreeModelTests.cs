@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 
+using Stratus.Extensions;
+
 using System.Collections.Generic;
 
 namespace Stratus.Editor.Tests

@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 
+using Stratus.Extensions;
 using Stratus.Utilities;
 
 using UnityEditor;

@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Stratus.Extensions;
 
 namespace Stratus
 {
-   /// <summary>
-   /// Manages pushing/popping input layers in a customized manner for the system
-   /// </summary>
-   /// <typeparam name="InputLayer"></typeparam>
-    public class StratusInputStack<InputLayer>
+	/// <summary>
+	/// Manages pushing/popping input layers in a customized manner for the system
+	/// </summary>
+	/// <typeparam name="InputLayer"></typeparam>
+	public class StratusInputStack<InputLayer>
         where InputLayer : StratusInputLayer
     {
         private Stack<InputLayer> _layers = new Stack<InputLayer>();

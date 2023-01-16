@@ -1,4 +1,5 @@
-﻿using Stratus.Serialization;
+﻿using Stratus.Extensions;
+using Stratus.Serialization;
 
 using System;
 

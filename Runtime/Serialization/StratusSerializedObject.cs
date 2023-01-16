@@ -5,13 +5,14 @@ using System;
 using System.Reflection;
 using System.Text;
 using Stratus.Utilities;
+using Stratus.Extensions;
 
 namespace Stratus
 {
-    /// <summary>
-    /// Edits System.Object types in a completely generic way
-    /// </summary>
-    public class StratusSerializedObject : IStratusLogger
+	/// <summary>
+	/// Edits System.Object types in a completely generic way
+	/// </summary>
+	public class StratusSerializedObject : IStratusLogger
     {
         //------------------------------------------------------------------------/
         // Properties

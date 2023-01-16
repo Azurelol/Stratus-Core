@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using Stratus.OdinSerializer;
+using Stratus.Extensions;
 
 namespace Stratus.Serialization
 {
@@ -117,6 +119,8 @@ namespace Stratus.Serialization
 
 		public abstract void SetString(string value);
 		public abstract string GetString();
+
+		private static StratusJSONSerializer serializer = new StratusJSONSerializer();
 
 		public void SetObject(object value)
 		{

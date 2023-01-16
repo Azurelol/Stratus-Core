@@ -6,6 +6,7 @@ using UnityEditor;
 using System;
 using System.IO;
 using System.Linq;
+using Stratus.Extensions;
 
 namespace Stratus.Editor
 {

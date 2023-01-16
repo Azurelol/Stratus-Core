@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+
+using Stratus.Extensions;
+
 using System;
 
 namespace Stratus.Editor.Tests

@@ -6,8 +6,8 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.Serialization;
 using UnityEngine;
-using Stratus;
 using Stratus.OdinSerializer;
+using Stratus.Extensions;
 
 namespace Stratus.Utilities
 {

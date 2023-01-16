@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Stratus.Extensions;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+
 using UnityObject = UnityEngine.Object;
 
 namespace Stratus.Dependencies.Ludiq.Reflection.Internal

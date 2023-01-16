@@ -12,7 +12,13 @@ namespace Stratus.Collections
 	/// </summary>
 	public class StratusArrayNavigator
 	{
-		public enum Direction { Up, Down, Left, Right }
+		public enum Direction 
+		{ 
+			Up, 
+			Down, 
+			Left, 
+			Right 
+		}
 	}
 
 	/// <summary>

@@ -74,7 +74,7 @@ namespace Stratus
 		public override StratusObjectValidation Validate()
 		{
 			StratusObjectValidation validation = new StratusObjectValidation(StratusObjectValidation.Level.Warning, this);
-			validation.Add(StratusObjectValidation.NullReference(this, $"<i>{description}</i>"));
+			validation.Add(StratusUnityObjectValidation.NullReference(this, $"<i>{description}</i>"));
 			validation.Add(ValidateLayers());
 			return validation;
 		}

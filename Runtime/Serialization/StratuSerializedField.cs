@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using Stratus.Utilities;
 using Stratus.Collections;
+using Stratus.Extensions;
 
 namespace Stratus
 {

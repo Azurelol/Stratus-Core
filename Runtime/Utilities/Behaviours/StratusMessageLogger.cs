@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using UnityEngine.Events;
 using Stratus.Collections;
+using Stratus.Extensions;
 
 namespace Stratus
 {

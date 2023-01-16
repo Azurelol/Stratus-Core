@@ -5,6 +5,7 @@ using System;
 using Stratus.Utilities;
 using System.IO;
 using System.Linq;
+using Stratus.Extensions;
 
 namespace Stratus
 {

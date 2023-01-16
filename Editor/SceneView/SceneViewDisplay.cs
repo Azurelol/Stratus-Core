@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+
+using Stratus.Extensions;
 using Stratus.Utilities;
+
 using UnityEditor;
+
 using UnityEngine;
 
 namespace Stratus

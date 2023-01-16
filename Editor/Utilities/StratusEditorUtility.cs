@@ -3,8 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+
+using Stratus.Extensions;
 using Stratus.Utilities;
+
 using UnityEditor;
+
 using UnityEngine;
 
 namespace Stratus.Editor

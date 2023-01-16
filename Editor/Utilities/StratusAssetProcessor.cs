@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using Stratus.Extensions;
+
+using System.Collections.Generic;
+
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.SceneManagement;
+
 using UnityEngine;
 
 namespace Stratus.Editor

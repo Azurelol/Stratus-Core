@@ -5,6 +5,7 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Stratus.Extensions;
 
 namespace Stratus
 {
