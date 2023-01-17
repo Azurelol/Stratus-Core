@@ -14,7 +14,7 @@ namespace Stratus
 		[Header("Event")]
 		[Tooltip("The scope of the event")]
 		public StratusEvent.Scope eventScope;
-		[DrawIf(nameof(StratusDispatchEventTriggerable.eventScope), StratusEvent.Scope.GameObject, ComparisonType.Equals)]
+		[DrawIf(nameof(StratusDispatchEventTriggerable.eventScope), StratusEvent.Scope.Target, ComparisonType.Equals)]
 		[Tooltip("The GameObjects which we want to dispatch the event to")]
 		public List<GameObject> targets = new List<GameObject>();
 		[ClassExtends(typeof(Stratus.StratusEvent), Grouping = ClassGrouping.ByNamespace)]
@@ -57,14 +57,14 @@ namespace Stratus
 		{
 			switch (eventScope)
 			{
-				case StratusEvent.Scope.GameObject:
+				case StratusEvent.Scope.Target:
 					foreach (var target in targets)
 					{
 						if (target)
 							target.Dispatch(eventInstance, type.Type);
 					}
 					break;
-				case StratusEvent.Scope.Scene:
+				case StratusEvent.Scope.All:
 					StratusScene.Dispatch(eventInstance, type.Type);
 					break;
 			}

@@ -51,7 +51,7 @@ namespace Stratus
 			this.DrawPropertiesVertical(ref position, typeProp, scopeProperty);
 
 			// Scope
-			if (scope == StratusEvent.Scope.GameObject)
+			if (scope == StratusEvent.Scope.Target)
 			{
 				DrawProperty(ref position, property.FindPropertyRelative(nameof(StratusEventField.targets)));
 			}

@@ -7,94 +7,100 @@ using System;
 
 namespace Stratus
 {
-  public class StratusEventProxy : StratusProxy
-  {
-    public delegate void OnTriggerMessage(Stratus.StratusEvent e);
+	/// <summary>
+	/// A callback consisting of the Stratus Event received
+	/// </summary>
+	[Serializable]
+	public class UnityStratusEvent : UnityEvent<StratusEvent> { }
 
-    //------------------------------------------------------------------------/
-    // Fields
-    //------------------------------------------------------------------------/
-    [Header("Event")]
-    public StratusEvent.Scope scope;
-    [ClassExtends(typeof(Stratus.StratusEvent), Grouping = ClassGrouping.ByNamespace)]
-    [Tooltip("What type of event this trigger will activate on")]
-    public ClassTypeReference type = new ClassTypeReference();
+	public class StratusEventProxy : StratusProxy
+	{
+		public delegate void OnTriggerMessage(Stratus.StratusEvent e);
 
-    //------------------------------------------------------------------------/
-    // Properties
-    //------------------------------------------------------------------------/
-    /// <summary>
-    /// Subscribes to collision events on this proxy
-    /// </summary>
-    public StratusEvent.EventCallback onTrigger = new StratusEvent.EventCallback();
+		//------------------------------------------------------------------------/
+		// Fields
+		//------------------------------------------------------------------------/
+		[Header("Event")]
+		public StratusEvent.Scope scope;
+		[ClassExtends(typeof(Stratus.StratusEvent), Grouping = ClassGrouping.ByNamespace)]
+		[Tooltip("What type of event this trigger will activate on")]
+		public ClassTypeReference type = new ClassTypeReference();
 
-    public bool hasType => type.Type != null;
-    private bool connected { get; set; } 
+		//------------------------------------------------------------------------/
+		// Properties
+		//------------------------------------------------------------------------/
+		/// <summary>
+		/// Subscribes to collision events on this proxy
+		/// </summary>
+		public UnityStratusEvent onTrigger = new UnityStratusEvent();
 
-    //------------------------------------------------------------------------/
-    // Messages
-    //------------------------------------------------------------------------/
-    private void Awake()
-    {
-      if (hasType)      
-        Subscribe();      
-    }
+		public bool hasType => type.Type != null;
+		private bool connected { get; set; }
 
-    private void Start()
-    {
-      if (!connected)
-        Subscribe();
-    }
+		//------------------------------------------------------------------------/
+		// Messages
+		//------------------------------------------------------------------------/
+		private void Awake()
+		{
+			if (hasType)
+				Subscribe();
+		}
 
-    //------------------------------------------------------------------------/
-    // Methods
-    //------------------------------------------------------------------------/
-    /// <summary>
-    /// Constructs a proxy in order to observe another GameObject's collision messages
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="type"></param>
-    /// <param name="onCollision"></param>
-    /// <param name="persistent"></param>
-    /// <returns></returns>
-    public static StratusEventProxy Construct(GameObject target, StratusEvent.Scope scope, Type type, System.Action<Stratus.StratusEvent> onTrigger, bool persistent = true, bool debug = false)
-    {
-      var proxy = target.gameObject.AddComponent<StratusEventProxy>();
-      proxy.scope = scope;
-      proxy.type = type;
-      proxy.onTrigger.AddListener(new UnityAction<StratusEvent>(onTrigger));
-      proxy.persistent = persistent;
-      proxy.debug = debug;
-      return proxy;
-    }
+		private void Start()
+		{
+			if (!connected)
+				Subscribe();
+		}
 
-    void OnEvent(Stratus.StratusEvent e)
-    {
-      if (!e.GetType().Equals(type.Type))
-        return;
+		//------------------------------------------------------------------------/
+		// Methods
+		//------------------------------------------------------------------------/
+		/// <summary>
+		/// Constructs a proxy in order to observe another GameObject's collision messages
+		/// </summary>
+		/// <param name="target"></param>
+		/// <param name="type"></param>
+		/// <param name="onCollision"></param>
+		/// <param name="persistent"></param>
+		/// <returns></returns>
+		public static StratusEventProxy Construct(GameObject target, StratusEvent.Scope scope, Type type, System.Action<Stratus.StratusEvent> onTrigger, bool persistent = true, bool debug = false)
+		{
+			var proxy = target.gameObject.AddComponent<StratusEventProxy>();
+			proxy.scope = scope;
+			proxy.type = type;
+			proxy.onTrigger.AddListener(new UnityAction<StratusEvent>(onTrigger));
+			proxy.persistent = persistent;
+			proxy.debug = debug;
+			return proxy;
+		}
 
-      //if (debug)
-      //  Trace.Script("Triggered by " + type.Type.Name, this);
+		void OnEvent(Stratus.StratusEvent e)
+		{
+			if (!e.GetType().Equals(type.Type))
+				return;
 
-      onTrigger.Invoke(e);
-    }
+			//if (debug)
+			//  Trace.Script("Triggered by " + type.Type.Name, this);
 
-    private void Subscribe()
-    {
-      switch (scope)
-      {
-        case StratusEvent.Scope.GameObject:
-          this.gameObject.Connect(this.OnEvent, this.type);
-          break;
-        case StratusEvent.Scope.Scene:
-          StratusScene.Connect(this.OnEvent, this.type);
-          break;
-      }
+			onTrigger.Invoke(e);
+		}
 
-      connected = true;
-    }
+		private void Subscribe()
+		{
+			switch (scope)
+			{
+				case StratusEvent.Scope.Target:
+					this.gameObject.Connect(this.OnEvent, this.type);
+					break;
+				case StratusEvent.Scope.All:
+					StratusScene.Connect(this.OnEvent, this.type);
+					break;
+			}
+
+			connected = true;
+		}
 
 
-  }
+	}
 
 }

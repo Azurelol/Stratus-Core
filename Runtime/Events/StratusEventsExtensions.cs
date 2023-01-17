@@ -14,12 +14,12 @@ namespace Stratus
 		/// <param name="func">The member function callback. </param>
 		public static void Connect<T>(this GameObject gameObj, Action<T> func)
 		{
-			Stratus.StratusEvents.Connect(gameObj, func);
+			Stratus.StratusEventSystem.Connect(gameObj, func);
 		}
 
 		public static void Connect(this GameObject gameObj, Action<Stratus.StratusEvent> func, Type type)
 		{
-			Stratus.StratusEvents.Connect(gameObj, func, type);
+			Stratus.StratusEventSystem.Connect(gameObj, func, type);
 		}
 
 		/// <summary>
@@ -31,7 +31,7 @@ namespace Stratus
 		{
 			//T type = default(T);
 			//var eventName = type.ToString();
-			Stratus.StratusEvents.Disconnect(component);
+			Stratus.StratusEventSystem.Disconnect(component);
 		}
 
 		///// <summary>
@@ -55,7 +55,7 @@ namespace Stratus
 		{
 			//T type = default(T);
 			//var eventName = type.ToString();
-			Stratus.StratusEvents.Disconnect(component, gameObj);
+			Stratus.StratusEventSystem.Disconnect(component, gameObj);
 		}
 
 		/// <summary>
@@ -67,7 +67,7 @@ namespace Stratus
 		/// <param name="nextFrame">Whether the event should be sent next frame.</param>
 		public static void Dispatch<T>(this GameObject gameObj, T eventObj, bool nextFrame = false) where T : Stratus.StratusEvent
 		{
-			Stratus.StratusEvents.Dispatch<T>(gameObj, eventObj, nextFrame);
+			Stratus.StratusEventSystem.Dispatch<T>(gameObj, eventObj, nextFrame);
 		}
 
 		///// <summary>
@@ -92,7 +92,7 @@ namespace Stratus
 		/// <param name="nextFrame">Whether the event should be sent next frame.</param>
 		public static void Dispatch(this GameObject gameObj, Stratus.StratusEvent eventObj, System.Type type, bool nextFrame = false)
 		{
-			Stratus.StratusEvents.Dispatch(gameObj, eventObj, type, nextFrame);
+			Stratus.StratusEventSystem.Dispatch(gameObj, eventObj, type, nextFrame);
 		}
 
 		/// <summary>
@@ -103,7 +103,7 @@ namespace Stratus
 		/// <param name="eventObj">The event object. </param>
 		public static void DispatchDown<T>(this GameObject gameObj, T eventObj, bool nextFrame = false) where T : Stratus.StratusEvent
 		{
-			Stratus.StratusEvents.DispatchDown<T>(gameObj, eventObj, nextFrame);
+			Stratus.StratusEventSystem.DispatchDown<T>(gameObj, eventObj, nextFrame);
 		}
 
 		/// <summary>
@@ -114,7 +114,7 @@ namespace Stratus
 		/// <param name="eventObj">The event object. </param>
 		public static void DispatchUp<T>(this GameObject gameObj, T eventObj, bool nextFrame = false) where T : Stratus.StratusEvent
 		{
-			Stratus.StratusEvents.DispatchUp<T>(gameObj, eventObj, nextFrame);
+			Stratus.StratusEventSystem.DispatchUp<T>(gameObj, eventObj, nextFrame);
 		}
 
 

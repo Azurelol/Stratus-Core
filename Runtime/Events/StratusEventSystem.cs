@@ -1,10 +1,8 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
-
-// #define STRATUS_EVENTS_DEBUG
 
 namespace Stratus
 {
@@ -16,7 +14,7 @@ namespace Stratus
 	/// The class which manages the overlying Stratus event system.
 	/// </summary>
 	[StratusSingleton("Stratus Event System", true, true)]
-	public class StratusEvents : StratusSingletonBehaviour<StratusEvents>
+	public class StratusEventSystem : StratusSingletonBehaviour<StratusEventSystem>
 	{
 		public class LoggingSetup
 		{
@@ -76,13 +74,13 @@ namespace Stratus
 			CheckRegistration(gameObject);
 
 			// If the event has no delegates yet, add it
-			if (!StratusEvents.instance.dispatchMap[gameObject].ContainsKey(key))
+			if (!StratusEventSystem.instance.dispatchMap[gameObject].ContainsKey(key))
 			{
-				StratusEvents.instance.dispatchMap[gameObject].Add(key, new DelegateTypeList());
+				StratusEventSystem.instance.dispatchMap[gameObject].Add(key, new DelegateTypeList());
 			}
 
 			// If the delegate is already present, do not add it
-			if (StratusEvents.instance.dispatchMap[gameObject][key].Contains(memFunc))
+			if (StratusEventSystem.instance.dispatchMap[gameObject][key].Contains(memFunc))
 			{
 				return;
 			}
@@ -92,11 +90,6 @@ namespace Stratus
 
 			// Record that this component has connected to this GameObject
 			Register((MonoBehaviour)memFunc.Target, gameObject);
-
-#if STRATUS_EVENTS_DEBUG
-      Trace.Script(memFunc.ToString() + " has connected to " + gameObject.name);
-      //Trace.Script(obj.name + " now has '" + Events.Instance.DelegatesByType[obj].Count + "' delegates");
-#endif
 		}
 
 		public static void Connect(GameObject gameObject, Action<Stratus.StratusEvent> memFunc, Type type)
@@ -107,13 +100,13 @@ namespace Stratus
 			CheckRegistration(gameObject);
 
 			// If this GameObject's dispatch map has no delegates for this event type yet, create it
-			if (!StratusEvents.instance.dispatchMap[gameObject].ContainsKey(key))
+			if (!StratusEventSystem.instance.dispatchMap[gameObject].ContainsKey(key))
 			{
-				StratusEvents.instance.dispatchMap[gameObject].Add(key, new DelegateTypeList());
+				StratusEventSystem.instance.dispatchMap[gameObject].Add(key, new DelegateTypeList());
 			}
 
 			// If the delegate is already present, do not add it
-			if (StratusEvents.instance.dispatchMap[gameObject][key].Contains(memFunc))
+			if (StratusEventSystem.instance.dispatchMap[gameObject][key].Contains(memFunc))
 			{
 				return;
 			}
@@ -122,10 +115,6 @@ namespace Stratus
 			AddDelegate(gameObject, key, memFunc);
 			// Record that this component has connected to this GameObject
 			Register((MonoBehaviour)memFunc.Target, gameObject);
-
-#if STRATUS_EVENTS_DEBUG
-        Trace.Script(memFunc.ToString() + " has connected to " + gameObject.name);
-#endif
 		}
 
 		/// <summary>
@@ -177,22 +166,19 @@ namespace Stratus
 		private static void DisconnectFromGameObject(Behaviour component, GameObject gameObj)
 		{
 			// If the GameObject has been removed previously...
-			if (!StratusEvents.instance.dispatchMap.ContainsKey(gameObj))
+			if (!StratusEventSystem.instance.dispatchMap.ContainsKey(gameObj))
 			{
 				return;
 			}
 
 			// For every delegate this GameObject has
-			foreach (KeyValuePair<string, DelegateTypeList> pair in StratusEvents.instance.dispatchMap[gameObj])
+			foreach (KeyValuePair<string, DelegateTypeList> pair in StratusEventSystem.instance.dispatchMap[gameObj])
 			{
 				// For every delegate in the list
 				foreach (Delegate deleg in pair.Value)
 				{
 					if ((MonoBehaviour)deleg.Target == component)
 					{
-#if STRATUS_EVENTS_DEBUG
-            Trace.Script("Disconnecting <i>" + deleg.Method.Name + "</i> from " + gameObj.name);
-#endif
 						// Remove this delegate
 						pair.Value.Remove(deleg);
 						break;
@@ -212,10 +198,6 @@ namespace Stratus
 		{
 			string key = typeof(T).ToString();
 
-#if STRATUS_EVENTS_DEBUG
-      //  Trace.Script("'" + key + "' to '" + obj.name + "'");
-#endif
-
 			// If this a delayed dispatch...
 			if (nextFrame)
 			{
@@ -229,10 +211,6 @@ namespace Stratus
 			// If there is no delegate registered to this object, do nothing.
 			if (!HasDelegate(obj, key))
 			{
-#if STRATUS_EVENTS_DEBUG
-        //if (logging.Dispatch)
-        //  Trace.Script("No delegate registered to " + obj.name + " for " + eventObj.ToString());
-#endif
 				return;
 			}
 
@@ -244,7 +222,7 @@ namespace Stratus
 			}
 
 			// Invoke the method for every delegate
-			DelegateTypeList delegateMap = StratusEvents.instance.dispatchMap[obj][key];
+			DelegateTypeList delegateMap = StratusEventSystem.instance.dispatchMap[obj][key];
 			DelegateTypeList delegatesToRemove = null;
 			foreach (Delegate deleg in delegateMap)
 			{
@@ -292,11 +270,6 @@ namespace Stratus
 		{
 			string key = type.ToString();
 
-#if STRATUS_EVENTS_DEBUG
-      if (logging.Connect)
-        Trace.Script("'" + key + "' to '" + obj.name + "'");
-#endif
-
 			// If this a delayed dispatch...
 			if (nextFrame)
 			{
@@ -310,10 +283,6 @@ namespace Stratus
 			// If there is no delegate registered to this object, do nothing.
 			if (!HasDelegate(obj, key))
 			{
-#if STRATUS_EVENTS_DEBUG
-        if (logging.Dispatch)
-          Trace.Script("No delegate registered to " + obj.name + " for " + eventObj.ToString());
-#endif
 				return;
 			}
 
@@ -325,7 +294,7 @@ namespace Stratus
 			}
 
 			// Invoke the method for every delegate
-			DelegateTypeList delegateMap = StratusEvents.instance.dispatchMap[obj][key];
+			DelegateTypeList delegateMap = StratusEventSystem.instance.dispatchMap[obj][key];
 			DelegateTypeList delegatesToRemove = null;
 			foreach (Delegate deleg in delegateMap)
 			{
@@ -362,6 +331,9 @@ namespace Stratus
 
 		}
 
+		/// <summary>
+		/// Checks for null, with support for <see cref="UnityEngine.Object"/>
+		/// </summary>
 		public static bool IsNull(object obj)
 		{
 			if (obj == null || (obj is UnityEngine.Object & obj.Equals(null)))
@@ -440,8 +412,8 @@ namespace Stratus
 		/// <returns>True if it has the delegate, false otherwise.</returns>
 		private static bool HasDelegate(GameObject obj, string key)
 		{
-			if (StratusEvents.instance.dispatchMap[obj] != null
-				&& StratusEvents.instance.dispatchMap[obj].ContainsKey(key))
+			if (StratusEventSystem.instance.dispatchMap[obj] != null
+				&& StratusEventSystem.instance.dispatchMap[obj].ContainsKey(key))
 			{
 				return true;
 			}
@@ -470,9 +442,9 @@ namespace Stratus
 		private static void CheckRegistration(GameObject gameObj)
 		{
 			// If the GameObject hasn't registered yet, add its key
-			if (!StratusEvents.instance.dispatchMap.ContainsKey(gameObj))
+			if (!StratusEventSystem.instance.dispatchMap.ContainsKey(gameObj))
 			{
-				StratusEvents.Connect(gameObj);
+				StratusEventSystem.Connect(gameObj);
 			}
 		}
 
@@ -512,7 +484,7 @@ namespace Stratus
       //  Trace.Script(gameObject.name + " has been registered to the event system");
 #endif
 
-			StratusEvents.instance.dispatchMap.Add(gameObject, new DelegateMap());
+			StratusEventSystem.instance.dispatchMap.Add(gameObject, new DelegateMap());
 			gameObject.AddComponent<StratusEventsRegistration>();
 		}
 
@@ -523,7 +495,7 @@ namespace Stratus
 		/// <returns></returns>
 		public static bool IsConnected(GameObject gameObject)
 		{
-			return StratusEvents.instance.dispatchMap.ContainsKey(gameObject);
+			return StratusEventSystem.instance.dispatchMap.ContainsKey(gameObject);
 		}
 
 		/// <summary>
@@ -533,20 +505,20 @@ namespace Stratus
 		public static void Disconnect(GameObject obj)
 		{
 			// Is this truly necessary, though?
-			if (isQuitting || StratusEvents.instance.dispatchMap == null)
+			if (isQuitting || StratusEventSystem.instance.dispatchMap == null)
 			{
 				return;
 			}
 
 			// Remove this GameObject from the event dispatch map
-			if (StratusEvents.instance.dispatchMap.ContainsKey(obj))
+			if (StratusEventSystem.instance.dispatchMap.ContainsKey(obj))
 			{
 				if (logging.register)
 				{
 					StratusDebug.Log(obj.name + " has been disconnected from the event system");
 				}
 
-				StratusEvents.instance.dispatchMap.Remove(obj);
+				StratusEventSystem.instance.dispatchMap.Remove(obj);
 			}
 		}
 
@@ -584,7 +556,7 @@ namespace Stratus
       //  Trace.Script("Adding delegate for event: " + key);
 #endif
 
-			StratusEvents.instance.dispatchMap[gameObj][key].Add(memFunc);
+			StratusEventSystem.instance.dispatchMap[gameObj][key].Add(memFunc);
 		}
 
 		public static IEnumerator WaitForFrames(int frameCount)

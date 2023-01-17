@@ -49,14 +49,14 @@ namespace Stratus
 
 			switch (scope)
 			{
-				case StratusEvent.Scope.GameObject:
+				case StratusEvent.Scope.Target:
 					foreach (var target in targets)
 					{
 						if (target)
 							target.Dispatch(eventInstance, type.Type);
 					}
 					break;
-				case StratusEvent.Scope.Scene:
+				case StratusEvent.Scope.All:
 					StratusScene.Dispatch(eventInstance, type.Type);
 					break;
 			}

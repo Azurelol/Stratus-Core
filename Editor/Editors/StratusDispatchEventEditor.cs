@@ -18,7 +18,7 @@ namespace Stratus.Editor
 
 		protected override void OnTriggerableEditorEnable()
 		{
-			AddConstraint(() => triggerable.eventScope == StratusEvent.Scope.GameObject, nameof(StratusDispatchEventTriggerable.targets));
+			AddConstraint(() => triggerable.eventScope == StratusEvent.Scope.Target, nameof(StratusDispatchEventTriggerable.targets));
 			eventDataProperty = serializedObject.FindProperty("eventData");
 			drawGroupRequests.Add(new DrawGroupRequest(SetMembers, () => triggerable.hasType && serializedEvent != null && serializedEvent.drawer.isDrawable));
 			propertyChangeCallbacks.Add(propertyMap[nameof(StratusDispatchEventTriggerable.type)], OnEventChanged);

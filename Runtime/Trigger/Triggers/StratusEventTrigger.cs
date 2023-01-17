@@ -16,7 +16,7 @@ namespace Stratus
     [Header("Event")]
     [Tooltip("The scope of the event")]
     public StratusEvent.Scope eventScope;
-    [DrawIf(nameof(StratusEventTrigger.eventScope), StratusEvent.Scope.GameObject, ComparisonType.Equals)]
+    [DrawIf(nameof(StratusEventTrigger.eventScope), StratusEvent.Scope.Target, ComparisonType.Equals)]
     [Tooltip("The source GameObject which we want to listen the event on")]
     public GameObject source;
     [ClassExtends(typeof(Stratus.StratusEvent), Grouping = ClassGrouping.ByNamespace)]

@@ -282,7 +282,7 @@ namespace Stratus
 		public static void Connect<T>(Action<T> func)
 		{
 			instance.Poke();
-			Stratus.StratusEvents.Connect(instance.gameObject, func);
+			Stratus.StratusEventSystem.Connect(instance.gameObject, func);
 		}
 
 		/// <summary>
@@ -293,7 +293,7 @@ namespace Stratus
 		public static void Connect(Action<Stratus.StratusEvent> func, Type type)
 		{
 			instance.Poke();
-			Stratus.StratusEvents.Connect(instance.gameObject, func, type);
+			Stratus.StratusEventSystem.Connect(instance.gameObject, func, type);
 		}
 
 		/// <summary>
@@ -304,7 +304,7 @@ namespace Stratus
 		public static void Dispatch<T>(T eventObj) where T : Stratus.StratusEvent
 		{
 			instance.Poke();
-			Stratus.StratusEvents.Dispatch<T>(instance.gameObject, eventObj);
+			Stratus.StratusEventSystem.Dispatch<T>(instance.gameObject, eventObj);
 		}
 
 		/// <summary>
@@ -317,7 +317,7 @@ namespace Stratus
 		public static void Dispatch(Stratus.StratusEvent eventObj, System.Type type, bool nextFrame = false)
 		{
 			instance.Poke();
-			Stratus.StratusEvents.Dispatch(instance.gameObject, eventObj, type, nextFrame);
+			Stratus.StratusEventSystem.Dispatch(instance.gameObject, eventObj, type, nextFrame);
 		}
 
 		/// <summary>
@@ -497,8 +497,10 @@ namespace Stratus
 			onFinished?.Invoke();
 			onAllScenesLoadedCallback?.Invoke();
 		}
+	}
 
-
-
+	public static class UnityStratusEventExtensions
+	{
+		public static void DispatchToScene(this StratusEvent e) => StratusScene.Dispatch(e, e.GetType());
 	}
 }
