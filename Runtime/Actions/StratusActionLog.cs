@@ -22,7 +22,9 @@ namespace Stratus
 			this.isFinished = true;
 
 			if (StratusActions.debug)
-				Debug.Log("#" + this.id + ": Finished!");
+			{
+				StratusLog.Info("#" + this.id + ": Finished!");
+			}
 
 			return 0.0f;
 		}

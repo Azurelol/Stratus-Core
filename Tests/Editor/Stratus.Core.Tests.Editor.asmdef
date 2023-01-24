@@ -6,7 +6,8 @@
         "Stratus.Core.Editor",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Stratus.NET"
+        "Stratus.NET",
+        "Stratus.NET.Tests"
     ],
     "includePlatforms": [
         "Editor"

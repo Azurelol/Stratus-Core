@@ -2,15 +2,6 @@
 
 namespace Stratus
 {
-	/// <summary>
-	/// What time measure is being used
-	/// </summary>
-	public enum StratusTimeScale
-	{
-		Delta,
-		FixedDelta,
-	}
-
 	public static class StratusTime
 	{
 		public static int minutesSinceStartup => Mathf.RoundToInt(Time.realtimeSinceStartup / 60f);
@@ -54,7 +45,4 @@ namespace Stratus
 			throw new System.Exception("Unsupported scale given");
 		}
 	}
-
-
-
 }

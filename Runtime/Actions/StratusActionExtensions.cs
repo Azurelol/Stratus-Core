@@ -10,9 +10,5 @@ namespace Stratus
 			// Subscribe this GameObject to the ActionSpace
 			return StratusActionSpace.Subscribe(go);
 		}
-
 	} 
 }
-
-
-

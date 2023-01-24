@@ -26,11 +26,6 @@ namespace Stratus
 		}
 
 		/// <summary>
-		/// The types supported by this interpolator
-		/// </summary>
-		public static System.Type[] supportedTypes { get; } = new System.Type[7] { typeof(float), typeof(int), typeof(bool), typeof(Vector2), typeof(Vector3), typeof(Color), typeof(Vector4) };
-
-		/// <summary>
 		/// Deduces if the given type is one of the supported ones
 		/// </summary>
 		/// <param name="type"></param>

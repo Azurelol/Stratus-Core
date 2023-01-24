@@ -1,8 +1,11 @@
-﻿using System.Collections;
+﻿using Stratus.IO;
+
 using System.Collections.Generic;
-using UnityEngine;
+
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
+
+using UnityEngine;
 
 namespace Stratus.Editor
 {
@@ -30,9 +33,16 @@ namespace Stratus.Editor
 		{
 			StratusSerializedTree<StratusDefaultTreeElement> tree = new StratusSerializedTree<StratusDefaultTreeElement>();
 			tree.AddElement(new StratusDefaultTreeElement(nameof(StratusSaveSystem.rootSaveDirectoryPath), StratusSaveSystem.rootSaveDirectoryPath,
-				StratusLabeledAction.RevealPath(StratusSaveSystem.rootSaveDirectoryPath)), 0);
-			return tree.elements;
-			
+				RevealPath(StratusSaveSystem.rootSaveDirectoryPath)), 0);
+			return tree.elements;			
+		}
+
+		/// <summary>
+		/// Constructs an action that will reveal the given file/directory path
+		/// </summary>
+		public static StratusLabeledAction RevealPath(string path)
+		{
+			return new StratusLabeledAction("Reveal", () => StratusIO.Open(path));
 		}
 	}
 }
