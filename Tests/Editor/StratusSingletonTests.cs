@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor.TestTools;
 using NUnit.Framework;
+using Stratus.Utilities;
 
 namespace Stratus.Tests
 {

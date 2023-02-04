@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using Stratus.Utilities;
 
 #if UNITY_EDITOR
 using UnityEditor.SceneManagement;

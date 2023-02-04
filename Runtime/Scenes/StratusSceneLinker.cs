@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Stratus.Utilities;
+
+using UnityEngine;
 
 namespace Stratus
 {

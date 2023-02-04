@@ -2,6 +2,7 @@
 using System;
 using UnityEngine;
 using Stratus.Collections;
+using Stratus.Utilities;
 
 namespace Stratus
 {

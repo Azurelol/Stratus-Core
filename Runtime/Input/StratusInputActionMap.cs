@@ -5,6 +5,7 @@ using System;
 using UnityEngine.InputSystem;
 using System.Linq;
 using Stratus.Extensions;
+using Stratus.Reflection;
 
 namespace Stratus
 {
@@ -160,7 +161,7 @@ namespace Stratus
 
 		protected void TryBindActions()
 		{
-			var members = Utilities.StratusReflection.GetAllFieldsOrProperties(this)
+			var members = StratusReflection.GetAllFieldsOrProperties(this)
 				.Where(m => typeof(Delegate).IsAssignableFrom(m.type)).ToArray();
 
 			if (members.IsNullOrEmpty())

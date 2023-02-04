@@ -2,6 +2,8 @@
 using System.Reflection;
 
 using Stratus.Extensions;
+using Stratus.Reflection;
+using Stratus.Utilities;
 
 using UnityEngine;
 
@@ -23,7 +25,7 @@ namespace Stratus
 
 		public static StratusObjectValidation NullReference(Behaviour behaviour, string description = null)
 		{
-			FieldInfo[] nullFields = Stratus.Utilities.StratusReflection.GetFieldsWithNullReferences(behaviour);
+			FieldInfo[] nullFields = UnityStratusReflection.GetFieldsWithNullReferences(behaviour);
 			if (nullFields.IsNullOrEmpty())
 				return null;
 

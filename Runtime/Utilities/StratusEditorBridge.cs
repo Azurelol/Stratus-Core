@@ -14,6 +14,7 @@ namespace Stratus
 #if UNITY_EDITOR
 	[InitializeOnLoad]
 #endif
+	#region Properties
 	public static class StratusEditorBridge
 	{
 		/// <summary>
@@ -29,8 +30,10 @@ namespace Stratus
 #endif
 				return false;
 			}
-		}
+		} 
+		#endregion
 
+		#region Methods
 		public static float Field(string label, float value)
 		{
 #if UNITY_EDITOR
@@ -123,5 +126,13 @@ namespace Stratus
 			EditorGUILayout.EndHorizontal();
 #endif
 		}
+		#endregion
+
+		#region Initialization
+		static StratusEditorBridge()
+		{
+			StratusEngineBridge.isPlaying = () => EditorApplication.isPlaying;
+		}
+		#endregion
 	}
 }

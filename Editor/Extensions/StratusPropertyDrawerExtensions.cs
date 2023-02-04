@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEditor;
-using Stratus.Utilities;
+using Stratus.Reflection;
 
 namespace Stratus
 {
