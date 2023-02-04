@@ -1,3 +1,5 @@
+using Stratus.Models;
+
 using UnityEngine;
 
 namespace Stratus
@@ -214,7 +216,21 @@ namespace Stratus
 			return result;
 		}
 
+		public static Vector3Int ToUnity(this StratusVector3Int value)
+			=> new Vector3Int(value.x, value.y, value.z);
+
+		public static StratusVector3Int FromUnity(this Vector3Int value)
+			=> new StratusVector3Int(value.x, value.y, value.z);
+		
+		public static CellLayout FromUnity(this GridLayout.CellLayout value)
+		{
+			return value switch
+			{
+				GridLayout.CellLayout.Rectangle => CellLayout.Rectangle,
+				GridLayout.CellLayout.Hexagon => CellLayout.Hexagon,
+				GridLayout.CellLayout.Isometric => throw new System.NotImplementedException(),
+				GridLayout.CellLayout.IsometricZAsY => throw new System.NotImplementedException(),
+			};
+		}
 	}
-
-
 }

@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
+﻿using Stratus.Extensions;
 using Stratus.Utilities;
-using Stratus.Extensions;
+
+using System;
 
 namespace Stratus
 {
-	public abstract class StratusSingleton<T> : IStratusLogger
+	public abstract class StratusSingleton<T> : IStratusLogger 
 		where T : class
 	{
 		/// <summary>

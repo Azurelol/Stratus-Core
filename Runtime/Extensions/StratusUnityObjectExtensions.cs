@@ -1,11 +1,10 @@
-﻿using System.Reflection;
-using Stratus.OdinSerializer;
+﻿using System.Collections.Generic;
+
 using UnityEngine;
-using System.Collections.Generic;
 
 namespace Stratus
 {
-	public static partial class StratusExtensions
+	public static class StratusUnityObjectExtensions
 	{
 		/// <summary>
 		/// Checks whether the object is null (exhaustively)
