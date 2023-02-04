@@ -1,9 +1,6 @@
-using UnityEngine;
-using Stratus;
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
+
+using UnityEngine;
 
 namespace Stratus
 {
@@ -21,7 +18,6 @@ namespace Stratus
 		public StratusSymbol(string key, float value) : base(key, value) { }
 		public StratusSymbol(string key, bool value) : base(key, value) { }
 		public StratusSymbol(string key, string value) : base(key, value) { }
-		public StratusSymbol(string key, Vector3 value) : base(key, value) { }
 		public StratusSymbol(string key, StratusVariant value) : base(key, value) { }
 		public StratusSymbol(StratusSymbol other) : base(other) { }
 
@@ -73,21 +69,5 @@ namespace Stratus
 				this.type = type;
 			}
 		}
-
-
-
-		/// <summary>
-		/// A reference of a symbol
-		/// </summary>
-		[Serializable]
-		public class Vector3Reference
-		{
-			public string key;
-			public StratusVariant.VariantType type { get; } = StratusVariant.VariantType.Vector3;
-		}
-
-
 	}
-
-
 }

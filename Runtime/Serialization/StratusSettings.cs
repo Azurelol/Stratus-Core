@@ -183,7 +183,7 @@ namespace Stratus
 	/// </summary>
 	/// <typeparam name="DataType"></typeparam>
 	public class StratusEditorPrefs<DataType> : StratusUserSettings<DataType>
-where DataType : class, new()
+		where DataType : class, new()
 	{
 		public StratusEditorPrefs(string key, bool appendDataPath = false) : base(key, appendDataPath)
 		{

@@ -1,8 +1,8 @@
-using UnityEngine;
 using System;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
+
+using UnityEngine;
 
 namespace Stratus
 {
@@ -19,33 +19,31 @@ namespace Stratus
 		//--------------------------------------------------------------------/
 		public enum VariantType
 		{
-			Integer, Boolean, Float, String, Vector3
+			Integer,
+			Boolean,
+			Float,
+			String,
+			Vector3
 		}
 
 		//--------------------------------------------------------------------/
 		// Fields
 		//--------------------------------------------------------------------/
-		//[FieldOffset(0), SerializeField]
 		[SerializeField]
 		private VariantType type;
 
-		//[FieldOffset(4), SerializeField]
 		[SerializeField]
 		private int integerValue;
 
-		//[FieldOffset(4), SerializeField]
 		[SerializeField]
 		private float floatValue;
 
-		//[FieldOffset(4), SerializeField]
 		[SerializeField]
 		private bool booleanValue;
 
-		//[FieldOffset(4), SerializeField]
 		[SerializeField]
 		private Vector3 vector3Value;
 
-		//[FieldOffset(16), SerializeField]
 		[SerializeField]
 		private string stringValue;
 
