@@ -1,4 +1,4 @@
-using Stratus.OdinSerializer;
+//using Stratus.OdinSerializer;
 
 using System;
 using System.Reflection;
@@ -16,7 +16,7 @@ namespace Stratus.Extensions
 		/// <returns></returns>
 		public static T Clone<T>(this T source)
 		{
-			return (T)SerializationUtility.CreateCopy(source);
+			return (T)Stratus.OdinSerializer.SerializationUtility.CreateCopy(source);
 		}
 
 		/// <summary>

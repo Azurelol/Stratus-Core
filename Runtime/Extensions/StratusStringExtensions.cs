@@ -47,8 +47,6 @@ namespace Stratus.Extensions
 			return !str.IsNullOrEmpty();
 		}
 
-
-
 		/// <summary>
 		/// Formats this string, applying rich text formatting to it
 		/// </summary>

@@ -13,7 +13,7 @@ namespace Stratus.Editor.Windows
 	public class StratusSerializedAssetEditorWindow : StratusEditorWindow
 	{
 		private const string _title = "Serialized Assets";
-		[SerializeField]
+		[UnityEngine.SerializeField]
 		private string _assetFolder = "Assets";
 
 
