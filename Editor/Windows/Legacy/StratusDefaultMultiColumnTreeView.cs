@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using System;
+using Stratus.Models;
 
 namespace Stratus.Editor
 {

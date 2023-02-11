@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine.Assertions;
 using UnityEditor;
+using Stratus.Models;
 
 namespace Stratus
 {

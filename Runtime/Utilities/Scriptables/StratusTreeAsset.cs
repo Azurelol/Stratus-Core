@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using Stratus.Models;
+
 using System.Collections.Generic;
+
 using UnityEngine;
 
 namespace Stratus

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Stratus.Models;
+
+using System;
 using System.Collections.Generic;
 
 using UnityEditor;

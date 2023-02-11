@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Stratus
 {
@@ -39,6 +40,24 @@ namespace Stratus
 		/// </summary>
 		/// <param name="value"></param>
 		public static void Log(this IStratusLogger logger, StratusOperationResult result) => StratusDebug.Log(result, logger, 2);
+	}
+
+	public class UnityStratusLogger : StratusLogger
+	{
+		public override void LogError(string message)
+		{
+			Debug.LogError(message);
+		}
+
+		public override void LogInfo(string message)
+		{
+			Debug.Log(message);
+		}
+
+		public override void LogWarning(string message)
+		{
+			Debug.LogWarning(message);
+		}
 	}
 
 }

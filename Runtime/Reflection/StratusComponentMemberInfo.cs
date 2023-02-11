@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System;
 using UnityEngine;
+using Stratus.Models;
 
 namespace Stratus
 {
