@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Stratus.Data;
 
 namespace Stratus
 {

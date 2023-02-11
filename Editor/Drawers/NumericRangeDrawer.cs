@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using Stratus.Data;
 
 namespace Stratus
 {
-  [CustomPropertyDrawer(typeof(StratusFloatRange))]
+	[CustomPropertyDrawer(typeof(StratusFloatRange))]
   public class FloatRangeDrawer : DualPropertyDrawer
   {
     protected override string firstProperty { get; } = nameof(StratusFloatRange.minimum);

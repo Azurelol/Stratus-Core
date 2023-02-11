@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using Stratus.Data;
 
 namespace Stratus.Editor
 {

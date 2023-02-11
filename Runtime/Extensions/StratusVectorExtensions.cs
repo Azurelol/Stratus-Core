@@ -1,4 +1,5 @@
 using Stratus.Models;
+using Stratus.Models.Maps;
 
 using UnityEngine;
 

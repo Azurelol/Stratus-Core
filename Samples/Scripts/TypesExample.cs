@@ -1,15 +1,18 @@
-﻿using System.Collections;
+﻿using Stratus.Data;
+
+using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 namespace Stratus
 {
-  namespace Examples
-  {
-    /// <summary>
-    /// A simple component showcasing the most useful types provided by the Stratus library
-    /// </summary>
-    public class TypesExample : StratusBehaviour
+	namespace Examples
+	{
+		/// <summary>
+		/// A simple component showcasing the most useful types provided by the Stratus library
+		/// </summary>
+		public class TypesExample : StratusBehaviour
     {
       [Header("Stratus Field Types")]
       public StratusInputBinding inputField = new StratusInputBinding();

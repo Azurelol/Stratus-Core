@@ -1,3 +1,5 @@
+using Stratus.Data;
+
 using UnityEngine;
 
 namespace Stratus.Samples
