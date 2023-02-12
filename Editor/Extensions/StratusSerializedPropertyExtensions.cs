@@ -362,12 +362,12 @@ namespace Stratus
 
 		public static int GetHashCodeForPropertyPathWithoutArrayIndex(this SerializedProperty prop)
 		{
-			return StratusReflection.GetProperty<int>("hashCodeForPropertyPathWithoutArrayIndex", typeof(SerializedProperty), prop);
+			return ReflectionUtility.GetProperty<int>("hashCodeForPropertyPathWithoutArrayIndex", typeof(SerializedProperty), prop);
 		}
 
 		public static int GetInspectorMode(this SerializedObject prop)
 		{
-			return StratusReflection.GetProperty<int>("inspectorMode", typeof(SerializedObject), prop);
+			return ReflectionUtility.GetProperty<int>("inspectorMode", typeof(SerializedObject), prop);
 		}
 
 		/// <summary>

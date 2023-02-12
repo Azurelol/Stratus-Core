@@ -161,7 +161,7 @@ namespace Stratus
 
 		protected void TryBindActions()
 		{
-			var members = StratusReflection.GetAllFieldsOrProperties(this)
+			var members = ReflectionUtility.GetAllFieldsOrProperties(this)
 				.Where(m => typeof(Delegate).IsAssignableFrom(m.type)).ToArray();
 
 			if (members.IsNullOrEmpty())

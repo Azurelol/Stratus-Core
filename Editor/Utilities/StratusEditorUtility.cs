@@ -35,8 +35,8 @@ namespace Stratus.Editor
 		private static Dictionary<int, float> abstractListHeights { get; set; } = new Dictionary<int, float>();
 		public static Rect lastEditorGUILayoutRect
 		{
-			get => StratusReflection.GetField<Rect>("s_LastRect", typeof(UnityEditor.EditorGUILayout));
-			set => StratusReflection.SetField<Rect>("s_LastRect", typeof(UnityEditor.EditorGUILayout), value);
+			get => ReflectionUtility.GetField<Rect>("s_LastRect", typeof(UnityEditor.EditorGUILayout));
+			set => ReflectionUtility.SetField<Rect>("s_LastRect", typeof(UnityEditor.EditorGUILayout), value);
 		}
 
 		private static Assembly _unityEditorAssembly;
@@ -322,22 +322,22 @@ namespace Stratus.Editor
 
 		public static float GetSinglePropertyHeight(SerializedProperty property, GUIContent label)
 		{
-			return (float)StratusReflection.GetReflectedMethod("GetSinglePropertyHeight", typeof(UnityEditor.EditorGUI)).Invoke(null, new object[] { property, label });
+			return (float)ReflectionUtility.GetReflectedMethod("GetSinglePropertyHeight", typeof(UnityEditor.EditorGUI)).Invoke(null, new object[] { property, label });
 		}
 
 		internal static bool HasVisibleChildFields(SerializedProperty property)
 		{
-			return (bool)StratusReflection.GetReflectedMethod("HasVisibleChildFields", typeof(UnityEditor.EditorGUI)).Invoke(null, new object[] { property });
+			return (bool)ReflectionUtility.GetReflectedMethod("HasVisibleChildFields", typeof(UnityEditor.EditorGUI)).Invoke(null, new object[] { property });
 		}
 
 		internal static bool DefaultPropertyField(Rect position, SerializedProperty property, GUIContent label)
 		{
-			return (bool)StratusReflection.GetReflectedMethod("DefaultPropertyField", typeof(UnityEditor.EditorGUI)).Invoke(null, new object[] { position, property, label });
+			return (bool)ReflectionUtility.GetReflectedMethod("DefaultPropertyField", typeof(UnityEditor.EditorGUI)).Invoke(null, new object[] { position, property, label });
 		}
 
 		internal static Rect GetToggleRect(bool hasLabel, params GUILayoutOption[] options)
 		{
-			return (Rect)StratusReflection.GetReflectedMethod("GetToggleRect", typeof(UnityEditor.EditorGUILayout)).Invoke(null, new object[] { hasLabel, options });
+			return (Rect)ReflectionUtility.GetReflectedMethod("GetToggleRect", typeof(UnityEditor.EditorGUILayout)).Invoke(null, new object[] { hasLabel, options });
 		}
 
 		internal static GUIContent TempContent(string t)

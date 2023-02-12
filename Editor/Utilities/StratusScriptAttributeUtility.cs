@@ -300,7 +300,7 @@ namespace Stratus.Editor
 		internal static IEnumerable<Type> SubclassesOf(Type parent)
 		{
 			Type hiddenType = StratusTypeUtility.GetPrivateType("UnityEditor.EditorAssemblies", typeof(CustomEditor));
-			return (IEnumerable<Type>)StratusReflection.GetReflectedMethod("SubclassesOf", hiddenType).Invoke(null, new object[] { parent });
+			return (IEnumerable<Type>)ReflectionUtility.GetReflectedMethod("SubclassesOf", hiddenType).Invoke(null, new object[] { parent });
 		}
 	}
 
