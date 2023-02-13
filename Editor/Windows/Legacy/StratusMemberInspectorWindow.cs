@@ -10,6 +10,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEditor.AnimatedValues;
 using UnityEditor.Callbacks;
 using Stratus.Extensions;
+using Stratus.Reflection;
 
 namespace Stratus.Editor
 {
@@ -63,7 +64,7 @@ namespace Stratus.Editor
 		[SerializeReference]
 		private StratusGameObjectInformation _currentTargetInformation;
 		/// <summary>
-		/// How quickly <see cref="StratusMemberReference"/> values are updated
+		/// How quickly <see cref="MemberReference"/> values are updated
 		/// </summary>
 		[SerializeField]
 		private float updateSpeed = defaultUpdateSpeed;

@@ -1,4 +1,4 @@
-﻿using Stratus.Models;
+﻿using Stratus.Models.Graph;
 
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace Stratus.Editor
 {
 	#region Inspector
 	[Serializable]
-	public class StratusMemberInspectorTreeElement : StratusTreeElement<StratusComponentMemberInfo>
+	public class StratusMemberInspectorTreeElement : TreeElement<StratusComponentMemberInfo>
 	{
 		public static IList<StratusMemberInspectorTreeElement> Generate(StratusGameObjectInformation target)
 		{
@@ -202,7 +202,7 @@ namespace Stratus.Editor
 
 	#region Watch
 	[Serializable]
-	public class StratusComponentMemberWatchTreeElement : StratusTreeElement<StratusComponentMemberWatchInfo>
+	public class StratusComponentMemberWatchTreeElement : TreeElement<StratusComponentMemberWatchInfo>
 	{
 		public static IList<StratusComponentMemberWatchTreeElement> Generate(StratusComponentMemberWatchList target)
 		{

@@ -1,9 +1,12 @@
+using Stratus.Interpolation;
+
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
+
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Unity.Interpolation
 {
 	/// <summary>
 	/// Interface class that the client will be using for constructing action sets
@@ -15,11 +18,17 @@ namespace Stratus
 		/// </summary>
 		public static bool debug = false;
 
+		public static ActionContainer Actions(this GameObject go)
+		{
+			// Subscribe this GameObject to the ActionSpace
+			return ActionSpace.instance.scheduler.Connect(go);
+		}
+
 		/// <summary>
 		/// Cancels all active actions of the ActionsOwner.
 		/// </summary>
 		/// <param name="owner">A reference to the owner of this action sequence.</param>
-		public static void Cancel(StratusActionDriver owner)
+		public static void Cancel(ActionContainer owner)
 		{
 			owner.Clear();
 		}
@@ -30,7 +39,7 @@ namespace Stratus
 		/// <param name="component"></param>
 		public static void Cancel(MonoBehaviour component)
 		{
-			StratusActionSpace.Clear(component);
+			ActionSpace.instance.scheduler.Disconnect(component.gameObject);
 		}
 
 		/// <summary>
@@ -38,10 +47,10 @@ namespace Stratus
 		/// </summary>
 		/// <param name="owner">A reference to the owner of this action sequence.</param>
 		/// <returns>An ActionSet object, used for Action constructors.</returns>
-		public static StratusActionSet Sequence(StratusActionDriver owner)
+		public static ActionSet Sequence(ActionContainer owner)
 		{
 			// Construct the sequence
-			StratusActionSet sequence = new StratusActionSequence();
+			ActionSet sequence = new ActionSequence();
 			// Add it to the owner
 			owner.Add(sequence);
 			// Return it
@@ -53,10 +62,10 @@ namespace Stratus
 		/// </summary>
 		/// <param name="owner">The component which is creating the action.</param>
 		/// <returns>An ActionSet object, used for Action constructors.</returns>
-		public static StratusActionSet Sequence(MonoBehaviour component)
+		public static ActionSet Sequence(MonoBehaviour component)
 		{
 			// Construct the sequence
-			StratusActionSet sequence = new StratusActionSequence();
+			ActionSet sequence = new ActionSequence();
 			// Add it to the owner
 			component.gameObject.Actions().Add(sequence);
 			// Return it
@@ -68,10 +77,10 @@ namespace Stratus
 		/// </summary>
 		/// <param name="owner">A reference to the owner of this action sequence.</param>
 		/// <returns></returns>
-		public static StratusActionSet Group(StratusActionDriver owner)
+		public static ActionSet Group(ActionContainer owner)
 		{
 			// Construct the sequence
-			StratusActionSet sequence = new StratusActionGroup();
+			ActionSet sequence = new ActionGroup();
 			// Add it to the owner
 			owner.Add(sequence);
 			// Return it
@@ -83,10 +92,10 @@ namespace Stratus
 		/// </summary>
 		/// <param name="owner">A reference to the owner of this action sequence.</param>
 		/// <returns></returns>
-		public static StratusActionSet Group(MonoBehaviour component)
+		public static ActionSet Group(MonoBehaviour component)
 		{
 			// Construct the sequence
-			StratusActionSet group = new StratusActionGroup();
+			ActionSet group = new ActionGroup();
 			// Add it to the owner
 			component.gameObject.Actions().Add(group);
 			// Return it
@@ -98,9 +107,9 @@ namespace Stratus
 		/// </summary>
 		/// <param name="set">A reference to the ActionSet that this action belongs to.</param>
 		/// <param name="duration"> duration How long should the delay run for.</param>
-		public static StratusAction Delay(StratusActionSet set, float duration)
+		public static ActionBase Delay(ActionSet set, float duration)
 		{
-			StratusAction delay = new StratusActionDelay(duration);
+			ActionBase delay = new ActionDelay(duration);
 			set.Add(delay);
 			return delay;
 		}
@@ -111,9 +120,9 @@ namespace Stratus
 		/// </summary>
 		/// <param name="set">A reference to the action set.</param>
 		/// <param name="func">The function to which to call.</param>
-		public static StratusAction Call(StratusActionSet set, StratusActionCall.Delegate func, float delay = 0.0f)
+		public static ActionBase Call(ActionSet set, ActionCall.Delegate func, float delay = 0.0f)
 		{
-			StratusAction call = new StratusActionCall(func);
+			ActionBase call = new ActionCall(func);
 
 			// Optionally, add a delay
 			if (delay != 0.0f)
@@ -130,9 +139,9 @@ namespace Stratus
 		/// </summary>
 		/// <param name="set">A reference to the set.</param>
 		/// <param name="message">The message which to print.</param>
-		public static StratusAction Trace(StratusActionSet set, object message)
+		public static ActionBase Trace(ActionSet set, object message)
 		{
-			StratusAction trace = new StratusActionLog(message);
+			ActionBase trace = new StratusActionLog(message);
 			set.Add(trace);
 			return trace;
 		}
@@ -143,9 +152,9 @@ namespace Stratus
 		/// <param name="set"></param>
 		/// <param name="obj"></param>
 		/// <param name="delay"></param>
-		public static void Destroy(StratusActionSet set, UnityEngine.Object obj, float delay = 0.0f)
+		public static void Destroy(ActionSet set, UnityEngine.Object obj, float delay = 0.0f)
 		{
-			Call(set, () => GameObject.Destroy(obj, delay));
+			Call(set, () => UnityEngine.Object.Destroy(obj, delay));
 		}
 
 		/// <summary>
@@ -157,7 +166,7 @@ namespace Stratus
 		/// <param name="value">The new value for the property</param>
 		/// <param name="duration">Over how long should the property be changed</param>
 		/// <param name="ease">What interpolation algorithm to use</param>
-		public static void Property<T>(StratusActionSet set, Expression<Func<T>> varExpr, T value, float duration, StratusEase ease)
+		public static void Property<T>(ActionSet set, Expression<Func<T>> varExpr, T value, float duration, StratusEase ease)
 		{
 			MemberExpression memberExpr = varExpr.Body as MemberExpression;
 			Expression inst = memberExpr.Expression;
@@ -166,7 +175,7 @@ namespace Stratus
 
 			// Construct an action then branch depending on whether the member to be
 			// interpolated is a property or a field
-			StratusAction action = null;
+			ActionBase action = null;
 
 			// Property
 			PropertyInfo property = targetObj.GetType().GetProperty(variableName, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
@@ -176,39 +185,39 @@ namespace Stratus
 
 				if (propertyType == typeof(float))
 				{
-					action = new StratusActionPropertyFloat(targetObj, property, Convert.ToSingle(value), duration, ease);
+					action = new ActionPropertyFloat(targetObj, property, Convert.ToSingle(value), duration, ease);
 				}
 				else if (propertyType == typeof(int))
 				{
-					action = new StratusActionPropertyInt(targetObj, property, Convert.ToInt32(value), duration, ease);
+					action = new ActionPropertyInteger(targetObj, property, Convert.ToInt32(value), duration, ease);
 				}
 				else if (propertyType == typeof(bool))
 				{
-					action = new StratusActionPropertyBool(targetObj, property, Convert.ToBoolean(value), duration, ease);
+					action = new ActionPropertyBoolean(targetObj, property, Convert.ToBoolean(value), duration, ease);
 				}
 				else if (propertyType == typeof(Vector2))
 				{
-					action = new StratusActionPropertyVector2(targetObj, property, (Vector2)Convert.ChangeType(value, typeof(Vector2)), duration, ease);
+					action = new ActionPropertyVector2(targetObj, property, (System.Numerics.Vector2)Convert.ChangeType(value, typeof(Vector2)), duration, ease);
 				}
 				else if (propertyType == typeof(Vector3))
 				{
-					action = new StratusActionPropertyVector3(targetObj, property, (Vector3)Convert.ChangeType(value, typeof(Vector3)), duration, ease);
+					action = new ActionPropertyVector3(targetObj, property, (System.Numerics.Vector3)Convert.ChangeType(value, typeof(Vector3)), duration, ease);
 				}
 				else if (propertyType == typeof(Vector4))
 				{
-					action = new StratusActionPropertyVector4(targetObj, property, (Vector4)Convert.ChangeType(value, typeof(Vector4)), duration, ease);
+					action = new ActionPropertyVector4(targetObj, property, (System.Numerics.Vector4)Convert.ChangeType(value, typeof(Vector4)), duration, ease);
 				}
 				else if (propertyType == typeof(Color))
 				{
-					action = new StratusActionPropertyColor(targetObj, property, (Color)Convert.ChangeType(value, typeof(Color)), duration, ease);
+					action = new ActionPropertyColor(targetObj, property, (Color)Convert.ChangeType(value, typeof(Color)), duration, ease);
 				}
 				else if (propertyType == typeof(Quaternion))
 				{
-					action = new StratusActionPropertyQuaternion(targetObj, property, (Quaternion)Convert.ChangeType(value, typeof(Quaternion)), duration, ease);
+					action = new ActionPropertyQuaternion(targetObj, property, (Quaternion)Convert.ChangeType(value, typeof(Quaternion)), duration, ease);
 				}
 				else
 				{
-					Stratus.StratusDebug.Log("Couldn't find the property!");
+					StratusDebug.Log("Couldn't find the property!");
 				}
 			}
 			// Field
@@ -219,39 +228,39 @@ namespace Stratus
 
 				if (fieldType == typeof(float))
 				{
-					action = new StratusActionPropertyFloat(targetObj, field, Convert.ToSingle(value), duration, ease);
+					action = new ActionPropertyFloat(targetObj, field, Convert.ToSingle(value), duration, ease);
 				}
 				else if (fieldType == typeof(int))
 				{
-					action = new StratusActionPropertyInt(targetObj, field, Convert.ToInt32(value), duration, ease);
+					action = new ActionPropertyInteger(targetObj, field, Convert.ToInt32(value), duration, ease);
 				}
 				else if (fieldType == typeof(bool))
 				{
-					action = new StratusActionPropertyBool(targetObj, field, Convert.ToBoolean(value), duration, ease);
+					action = new ActionPropertyBoolean(targetObj, field, Convert.ToBoolean(value), duration, ease);
 				}
 				else if (fieldType == typeof(Vector2))
 				{
-					action = new StratusActionPropertyVector2(targetObj, field, (Vector2)Convert.ChangeType(value, typeof(Vector2)), duration, ease);
+					action = new ActionPropertyVector2(targetObj, field, (System.Numerics.Vector2)Convert.ChangeType(value, typeof(Vector2)), duration, ease);
 				}
 				else if (fieldType == typeof(Vector3))
 				{
-					action = new StratusActionPropertyVector3(targetObj, field, (Vector3)Convert.ChangeType(value, typeof(Vector3)), duration, ease);
+					action = new ActionPropertyVector3(targetObj, field, (System.Numerics.Vector3)Convert.ChangeType(value, typeof(Vector3)), duration, ease);
 				}
 				else if (fieldType == typeof(Vector4))
 				{
-					action = new StratusActionPropertyVector4(targetObj, field, (Vector4)Convert.ChangeType(value, typeof(Vector4)), duration, ease);
+					action = new ActionPropertyVector4(targetObj, field, (System.Numerics.Vector4)Convert.ChangeType(value, typeof(Vector4)), duration, ease);
 				}
 				else if (fieldType == typeof(Color))
 				{
-					action = new StratusActionPropertyColor(targetObj, field, (Color)Convert.ChangeType(value, typeof(Color)), duration, ease);
+					action = new ActionPropertyColor(targetObj, field, (Color)Convert.ChangeType(value, typeof(Color)), duration, ease);
 				}
 				else if (fieldType == typeof(Quaternion))
 				{
-					action = new StratusActionPropertyQuaternion(targetObj, field, (Quaternion)Convert.ChangeType(value, typeof(Quaternion)), duration, ease);
+					action = new ActionPropertyQuaternion(targetObj, field, (Quaternion)Convert.ChangeType(value, typeof(Quaternion)), duration, ease);
 				}
 				else
 				{
-					Stratus.StratusDebug.Log("Couldn't find the field!");
+					StratusDebug.Log("Couldn't find the field!");
 				}
 			}
 			// Now add it!

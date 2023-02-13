@@ -1,4 +1,4 @@
-﻿using Stratus.Models;
+﻿using Stratus.Models.Graph;
 
 using System.Collections.Generic;
 
@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Stratus
 {
-	public abstract class StratusTreeAsset<T> : ScriptableObject where T : StratusTreeElement
+	public abstract class StratusTreeAsset<T> : ScriptableObject where T : TreeElement
 	{
 		//------------------------------------------------------------------------/
 		// Static Fields

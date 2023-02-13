@@ -1,10 +1,11 @@
 using Stratus.Models;
+using Stratus.Models.Graph;
 
 using UnityEngine;
 
 namespace Stratus.Unity.Models
 {
-	public class UnityTreeElement<TData> : StratusTreeElement<TData>, ISerializationCallbackReceiver
+	public class UnityTreeElement<TData> : TreeElement<TData>, ISerializationCallbackReceiver
 		where TData : class, IStratusNamed
 	{
 		#region Messages

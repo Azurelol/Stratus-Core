@@ -1,4 +1,4 @@
-﻿using Stratus.Models;
+﻿using Stratus.Models.Graph;
 
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Stratus
 {
-	public class StratusTreeViewItem<T> : TreeViewItem where T : StratusTreeElement
+	public class StratusTreeViewItem<T> : TreeViewItem where T : TreeElement
 	{
 		public T element { get; set; }
 
@@ -23,7 +23,7 @@ namespace Stratus
 	}
 
 	public abstract class StratusTreeViewWithTreeModel<TreeElementType> : TreeView
-	  where TreeElementType : StratusTreeElement
+	  where TreeElementType : TreeElement
 	{
 		//------------------------------------------------------------------------/
 		// Declaration
@@ -37,7 +37,7 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		// Fields
 		//------------------------------------------------------------------------/ 
-		protected StratusTreeModel<TreeElementType> treeModel;
+		protected TreeModel<TreeElementType> treeModel;
 		protected readonly List<TreeViewItem> rows = new List<TreeViewItem>(100);
 		private const int hiddenRootDepth = -1;
 		private const string genericDragId = "GenericDragColumnDragging";
@@ -61,19 +61,19 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		// CTOR
 		//------------------------------------------------------------------------/ 
-		public StratusTreeViewWithTreeModel(TreeViewState state, StratusTreeModel<TreeElementType> model)
+		public StratusTreeViewWithTreeModel(TreeViewState state, TreeModel<TreeElementType> model)
 		  : base(state)
 		{
 			this.InitializeTreeViewWithModel(model);
 		}
 
-		public StratusTreeViewWithTreeModel(TreeViewState state, MultiColumnHeader multiColumnHeader, StratusTreeModel<TreeElementType> model)
+		public StratusTreeViewWithTreeModel(TreeViewState state, MultiColumnHeader multiColumnHeader, TreeModel<TreeElementType> model)
 		  : base(state, multiColumnHeader)
 		{
 			this.InitializeTreeViewWithModel(model);
 		}
 
-		protected void InitializeTreeViewWithModel(StratusTreeModel<TreeElementType> model)
+		protected void InitializeTreeViewWithModel(TreeModel<TreeElementType> model)
 		{
 			this.treeModel = model;
 			this.treeModel.onModelChanged += this.OnModelChanged;
@@ -276,7 +276,7 @@ namespace Stratus
 			Stack<TreeElementType> stack = new Stack<TreeElementType>();
 			if (sourceElement.hasChildren)
 			{
-				foreach (StratusTreeElement element in sourceElement.children)
+				foreach (TreeElement element in sourceElement.children)
 				{
 					stack.Push((TreeElementType)element);
 				}
@@ -294,7 +294,7 @@ namespace Stratus
 
 				if (current.hasChildren)
 				{
-					foreach (StratusTreeElement element in current.children)
+					foreach (TreeElement element in current.children)
 					{
 						stack.Push((TreeElementType)element);
 					}
@@ -413,7 +413,7 @@ namespace Stratus
 			//if (this.onBeforeDroppingDraggedItems != null)
 			//  beforeDroppingDraggedItems(draggedRows);
 
-			List<StratusTreeElement> draggedElements = new List<StratusTreeElement>();
+			List<TreeElement> draggedElements = new List<TreeElement>();
 			foreach (TreeViewItem x in draggedRows)
 			{
 				draggedElements.Add(((StratusTreeViewItem<TreeElementType>)x).element);

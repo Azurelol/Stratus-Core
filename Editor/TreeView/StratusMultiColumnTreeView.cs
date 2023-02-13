@@ -1,5 +1,5 @@
 ﻿using Stratus.Extensions;
-using Stratus.Models;
+using Stratus.Models.Graph;
 
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace Stratus.Editor
 {
 	public abstract class StratusMultiColumnTreeView<TreeElementType, ColumnType> 
 		: StratusTreeViewWithTreeModel<TreeElementType>
-		where TreeElementType : StratusTreeElement
+		where TreeElementType : TreeElement
 		where ColumnType : Enum
 	{
 		#region Declarations
@@ -72,7 +72,7 @@ namespace Stratus.Editor
 		// CTOR
 		//------------------------------------------------------------------------/
 		public StratusMultiColumnTreeView(TreeViewState state, StratusProvider<IList<TreeElementType>> data)
-			: base(state, new StratusTreeModel<TreeElementType>(data))
+			: base(state, new TreeModel<TreeElementType>(data))
 		{
 			this.columns = this.BuildColumns();
 			MultiColumnHeaderState headerState = BuildMultiColumnHeaderState(this.columns);
@@ -85,7 +85,7 @@ namespace Stratus.Editor
 		{
 		}
 
-		public StratusMultiColumnTreeView(TreeViewState state, StratusTreeModel<TreeElementType> model)
+		public StratusMultiColumnTreeView(TreeViewState state, TreeModel<TreeElementType> model)
 		: base(state, model)
 		{
 			this.columns = this.BuildColumns();

@@ -67,20 +67,20 @@ namespace Stratus.Editor
 			}
 		}
 
-		private static StratusTypeInfo _scriptAttributeReflection;
-		public static StratusTypeInfo scriptAttributeReflection
+		private static TypeInformation _scriptAttributeReflection;
+		public static TypeInformation scriptAttributeReflection
 		{
 			get
 			{
 				if (_scriptAttributeReflection == null)
 				{
-					_scriptAttributeReflection = new StratusTypeInfo(scriptAttributeUtility);
+					_scriptAttributeReflection = new TypeInformation(scriptAttributeUtility);
 				}
 				return _scriptAttributeReflection;
 			}
 		}
 
-		private static StratusTypeInfo editorGUIReflection { get; } = new StratusTypeInfo(typeof(EditorGUI));
+		private static TypeInformation editorGUIReflection { get; } = new TypeInformation(typeof(EditorGUI));
 
 		private static Stack<PropertyDrawer> _propertyDrawerStack;
 		public static Stack<PropertyDrawer> propertyDrawerStack

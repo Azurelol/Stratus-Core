@@ -109,7 +109,7 @@ namespace Stratus
 		/// <example>Overlay.Watch(()=> foo, this);</example>
 		public static void Watch<T>(Expression<Func<T>> varExpr, string description = null, MonoBehaviour behaviour = null)
 		{
-			StratusMemberReference variableRef = ReflectionUtility.GetReference(varExpr);
+			MemberReference variableRef = ReflectionUtility.GetReference(varExpr);
 			Watcher watcher = new Watcher(variableRef, description, behaviour);
 			instance.Windows.Watch.Add(watcher);
 		}

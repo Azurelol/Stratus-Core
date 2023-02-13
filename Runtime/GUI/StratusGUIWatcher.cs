@@ -8,10 +8,11 @@
 /******************************************************************************/
 using UnityEngine;
 using Stratus.Utilities;
+using Stratus.Reflection;
 
 namespace Stratus
 {
-  public partial class StratusGUI
+	public partial class StratusGUI
   {
     //protected override bool isPersistent { get { return true; } }
 
@@ -23,7 +24,7 @@ namespace Stratus
       /// <summary>
       /// A reference to the given variable
       /// </summary>
-      private StratusMemberReference Variable;
+      private MemberReference Variable;
 
       /// <summary>
       /// The owner of this variable
@@ -40,7 +41,7 @@ namespace Stratus
       /// </summary>
       /// <param name="prefix">A given prefix for this variable</param>
       /// <param name="variable">The variable being watched</param>
-      public Watcher(StratusMemberReference variable, string description, MonoBehaviour behaviour) : base(variable.name)
+      public Watcher(MemberReference variable, string description, MonoBehaviour behaviour) : base(variable.name)
       {
         Behaviour = behaviour;
         Variable = variable;

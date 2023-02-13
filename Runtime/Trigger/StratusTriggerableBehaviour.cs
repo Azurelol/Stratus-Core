@@ -1,3 +1,5 @@
+using Stratus.Unity.Interpolation;
+
 using UnityEngine;
 using UnityEngine.Events;
 

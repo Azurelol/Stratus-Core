@@ -1,6 +1,8 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using Stratus.Interpolation;
+using Stratus.Unity.Interpolation;
 
 namespace Stratus
 {
@@ -66,7 +68,7 @@ namespace Stratus
 		// Properties
 		//--------------------------------------------------------------------------------------------/
 		public Vector3 previousValue { get; private set; }
-		private StratusActionSet currentAction { get; set; }
+		private ActionSet currentAction { get; set; }
 		private IEnumerator currentCoroutine { get; set; }
 		private bool isMirror => valueType == ValueType.Mirror;
 		private TransformationType transformationType;

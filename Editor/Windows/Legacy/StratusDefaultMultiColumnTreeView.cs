@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using System;
-using Stratus.Models;
+using Stratus.Models.Graph;
 
 namespace Stratus.Editor
 {
@@ -85,7 +85,7 @@ namespace Stratus.Editor
 		}
 	}
 
-	public class StratusDefaultTreeElement : StratusTreeElement
+	public class StratusDefaultTreeElement : TreeElement
 	{
 		public string value;
 		public StratusLabeledAction[] actions;

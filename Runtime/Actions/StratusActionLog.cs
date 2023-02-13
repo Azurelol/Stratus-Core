@@ -1,11 +1,13 @@
+using Stratus.Interpolation;
+
 using UnityEngine;
 
-namespace Stratus
+namespace Stratus.Unity.Interpolation
 {
 	/// <summary>
 	/// An action that logs to the console
 	/// </summary>
-	public class StratusActionLog : StratusAction
+	public class StratusActionLog : ActionBase
 	{
 		MonoBehaviour target;
 		object message;

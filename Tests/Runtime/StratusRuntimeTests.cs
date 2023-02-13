@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections;
+
 using NUnit.Framework;
+
 using Stratus.Examples;
+using Stratus.Interpolation;
+using Stratus.Unity.Interpolation;
+
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -47,7 +52,7 @@ namespace Stratus.Tests
 			// Sequence
 			{
 				// Property
-				StratusActionSet seq = StratusActions.Sequence(sample);
+				ActionSet seq = StratusActions.Sequence(sample);
 				int targetValue = 14;
 				StratusActions.Property(seq, () => sample.integerValue, targetValue, sample.duration, StratusEase.Linear);
 				yield return new WaitForSeconds(sample.duration);
@@ -57,7 +62,7 @@ namespace Stratus.Tests
 				float initialValue = sample.floatValue;
 				float finalValue = 3.5f;
 				float duration = 1.75f;
-				StratusActionSet seq2 = StratusActions.Sequence(sample);
+				ActionSet seq2 = StratusActions.Sequence(sample);
 				StratusActions.Delay(seq2, duration);
 				StratusActions.Call(seq2, () => sample.floatValue = finalValue);
 				Assert.AreEqual(initialValue, sample.floatValue);

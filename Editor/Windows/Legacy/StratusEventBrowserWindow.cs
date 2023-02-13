@@ -4,6 +4,7 @@ using System.Reflection;
 
 using Stratus.Extensions;
 using Stratus.Models;
+using Stratus.Models.Graph;
 using Stratus.Utilities;
 
 using UnityEditor;
@@ -47,7 +48,7 @@ namespace Stratus.Editor
 
 		}
 
-		public class EventTreeElement : StratusTreeElement<EventInformation>
+		public class EventTreeElement : TreeElement<EventInformation>
 		{
 		}
 

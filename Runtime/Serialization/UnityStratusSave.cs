@@ -3,6 +3,7 @@ using UnityEngine;
 using System;
 using Stratus.Serialization;
 using Stratus.IO;
+using Stratus.Models.Saves;
 
 namespace Stratus
 {

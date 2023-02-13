@@ -5,23 +5,23 @@ using System.Linq;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine.Assertions;
 using UnityEditor;
-using Stratus.Models;
+using Stratus.Models.Graph;
 
 namespace Stratus
 {
 	public abstract class StratusHierarchicalTreeView<TreeElementType> : StratusTreeViewWithTreeModel<TreeElementType>
-	  where TreeElementType : StratusTreeElement
+	  where TreeElementType : TreeElement
 	{
 		//------------------------------------------------------------------------/
 		// CTOR
 		//------------------------------------------------------------------------/
-		public StratusHierarchicalTreeView(TreeViewState state, StratusTreeModel<TreeElementType> model) : base(state, model)
+		public StratusHierarchicalTreeView(TreeViewState state, TreeModel<TreeElementType> model) : base(state, model)
 		{
 			this.InitializeHierarchicalTreeView();
 		}
 
 		public StratusHierarchicalTreeView(TreeViewState state, StratusProvider<IList<TreeElementType>> data)
-			: base(state, new StratusTreeModel<TreeElementType>(data))
+			: base(state, new TreeModel<TreeElementType>(data))
 		{
 			this.InitializeHierarchicalTreeView();
 		}

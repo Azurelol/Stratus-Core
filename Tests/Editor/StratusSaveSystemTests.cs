@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 
 using Stratus.IO;
+using Stratus.Models.Saves;
 using Stratus.Serialization;
 
 using UnityEngine;

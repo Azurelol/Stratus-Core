@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq.Expressions;
 using System.Linq;
 using System;
+using Stratus.Models.Validation;
 
 namespace Stratus.Interfaces
 {
