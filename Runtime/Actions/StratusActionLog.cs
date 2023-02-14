@@ -23,7 +23,7 @@ namespace Stratus.Unity.Interpolation
 			StratusDebug.Log(message, this.target);
 			this.isFinished = true;
 
-			if (StratusActions.debug)
+			if (ActionSpace.debug)
 			{
 				StratusLog.Info("#" + this.id + ": Finished!");
 			}

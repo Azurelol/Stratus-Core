@@ -36,22 +36,22 @@ namespace Stratus
 				float delay = 2.0f;
 				int finalValue = 16;
 
-				var seq = StratusActions.Sequence(this);
-				StratusActions.Trace(seq, $"Waiting {delay} seconds");
-				StratusActions.Delay(seq, delay);
-				StratusActions.Trace(seq, $"Now interpolating the initial value of {nameof(integerValue)} " +
+				var seq = ActionSpace.Sequence(this);
+				ActionSpace.Trace(seq, $"Waiting {delay} seconds");
+				ActionSpace.Delay(seq, delay);
+				ActionSpace.Trace(seq, $"Now interpolating the initial value of {nameof(integerValue)} " +
 				  $"from {integerValue} to {finalValue} over {duration} seconds");
-				StratusActions.Property(seq, () => this.integerValue, finalValue, duration, StratusEase.Linear);
-				StratusActions.Trace(seq, $"The final value of {nameof(integerValue)} is:");
-				StratusActions.Call(seq, () => this.PrintValue(this.integerValue));
+				ActionSpace.Property(seq, () => this.integerValue, finalValue, duration, StratusEase.Linear);
+				ActionSpace.Trace(seq, $"The final value of {nameof(integerValue)} is:");
+				ActionSpace.Call(seq, () => this.PrintValue(this.integerValue));
 			}
 
 			void TestActionGroup()
 			{
 				StratusDebug.Log($"Action Group Test: Interpolating the color of {imageGroup.Length} images at the same time", this);
-				var group = StratusActions.Group(this);
+				var group = ActionSpace.Group(this);
 				foreach (var image in imageGroup)
-					StratusActions.Property(group, () => image.color, colorValue, duration, ease);
+					ActionSpace.Property(group, () => image.color, colorValue, duration, ease);
 			}
 
 			void TestActionCall()
@@ -61,20 +61,20 @@ namespace Stratus
 				string first = null;
 				string second = null;
 
-				var seq = StratusActions.Sequence(this);
+				var seq = ActionSpace.Sequence(this);
 				// First, boop
-				StratusActions.Call(seq, () => Boop(boops));
+				ActionSpace.Call(seq, () => Boop(boops));
 				// Second, wait
-				StratusActions.Trace(seq, $"Waiting {delay} seconds");
-				StratusActions.Delay(seq, delay);
+				ActionSpace.Trace(seq, $"Waiting {delay} seconds");
+				ActionSpace.Delay(seq, delay);
 				// Third, set the values to be used
-				StratusActions.Call(seq, () =>
+				ActionSpace.Call(seq, () =>
 				{
 					delay = 5f;
 					first = "Hello";
 					second = "Mundo";
 				});
-				StratusActions.Call(seq, () => Beep(first, second, this.gameObject));
+				ActionSpace.Call(seq, () => Beep(first, second, this.gameObject));
 			}
 
 			void Boop(float boopValue)

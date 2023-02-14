@@ -22,7 +22,7 @@ namespace Stratus.Unity.Interpolation
 			if (Application.isPlaying)
 			{
 				this.owner = this.gameObject;
-				ActionSpace.instance.scheduler.Connect(this.owner);
+				ActionSpace.instance.system.Connect(this.owner);
 			}
 		}
 
@@ -30,7 +30,7 @@ namespace Stratus.Unity.Interpolation
 		{
 			if (Application.isPlaying)
 			{
-				ActionSpace.instance.scheduler.Disconnect(this.owner);
+				ActionSpace.instance.system.Disconnect(this.owner);
 			}
 		}
 

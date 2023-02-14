@@ -77,10 +77,10 @@ namespace Stratus
 		#region Procedures
 		protected void RunTriggerSequence(object data)
 		{
-			var seq = StratusActions.Sequence(this.gameObject.Actions());
-			StratusActions.Delay(seq, this.delay);
-			StratusActions.Call(seq, () => this.OnTrigger(data));
-			StratusActions.Call(seq, () => onTriggered(this));
+			var seq = ActionSpace.Sequence(this);
+			ActionSpace.Delay(seq, this.delay);
+			ActionSpace.Call(seq, () => this.OnTrigger(data));
+			ActionSpace.Call(seq, () => onTriggered(this));
 		} 
 		#endregion
 	}

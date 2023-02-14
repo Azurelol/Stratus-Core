@@ -52,9 +52,9 @@ namespace Stratus.Tests
 			// Sequence
 			{
 				// Property
-				ActionSet seq = StratusActions.Sequence(sample);
+				ActionSet seq = ActionSpace.Sequence(sample);
 				int targetValue = 14;
-				StratusActions.Property(seq, () => sample.integerValue, targetValue, sample.duration, StratusEase.Linear);
+				ActionSpace.Property(seq, () => sample.integerValue, targetValue, sample.duration, StratusEase.Linear);
 				yield return new WaitForSeconds(sample.duration);
 				Assert.AreEqual(sample.integerValue, targetValue);
 
@@ -62,9 +62,9 @@ namespace Stratus.Tests
 				float initialValue = sample.floatValue;
 				float finalValue = 3.5f;
 				float duration = 1.75f;
-				ActionSet seq2 = StratusActions.Sequence(sample);
-				StratusActions.Delay(seq2, duration);
-				StratusActions.Call(seq2, () => sample.floatValue = finalValue);
+				ActionSet seq2 = ActionSpace.Sequence(sample);
+				ActionSpace.Delay(seq2, duration);
+				ActionSpace.Call(seq2, () => sample.floatValue = finalValue);
 				Assert.AreEqual(initialValue, sample.floatValue);
 
 				yield return new WaitForSeconds(duration + 0.05f);

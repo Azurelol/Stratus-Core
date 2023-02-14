@@ -112,7 +112,7 @@ namespace Stratus
 		/// </summary>
 		public void Apply(Vector3 value, bool applyOffset)
 		{
-			currentAction = StratusActions.Sequence(this);
+			currentAction = ActionSpace.Sequence(this);
 
 			switch (eventType)
 			{
@@ -166,13 +166,13 @@ namespace Stratus
 					break;
 
 				case EventType.Parent:
-					StratusActions.Delay(currentAction, duration);
-					StratusActions.Call(currentAction, () => { target.SetParent(source); });
+					ActionSpace.Delay(currentAction, duration);
+					ActionSpace.Call(currentAction, () => { target.SetParent(source); });
 					break;
 
 				case EventType.Reset:
-					StratusActions.Delay(currentAction, duration);
-					StratusActions.Call(currentAction, () => { target.Reset(); });
+					ActionSpace.Delay(currentAction, duration);
+					ActionSpace.Call(currentAction, () => { target.Reset(); });
 					break;
 			}
 		}
