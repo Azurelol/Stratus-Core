@@ -1,6 +1,7 @@
-﻿using Stratus.Utilities;
+﻿using Stratus.Types;
 
 using System;
+
 using UnityEditor;
 
 namespace Stratus.Editor

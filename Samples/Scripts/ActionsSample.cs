@@ -1,3 +1,4 @@
+using Stratus.Interpolation;
 using Stratus.Unity.Interpolation;
 
 using UnityEngine;
@@ -11,7 +12,7 @@ namespace Stratus
 		{
 			[Header("Common Settings")]
 			public float duration = 1.5f;
-			public StratusEase ease = StratusEase.Linear;
+			public Ease ease = Ease.Linear;
 
 			[Header("Values")]
 			public Color colorValue = Color.red;
@@ -41,7 +42,7 @@ namespace Stratus
 				ActionSpace.Delay(seq, delay);
 				ActionSpace.Trace(seq, $"Now interpolating the initial value of {nameof(integerValue)} " +
 				  $"from {integerValue} to {finalValue} over {duration} seconds");
-				ActionSpace.Property(seq, () => this.integerValue, finalValue, duration, StratusEase.Linear);
+				ActionSpace.Property(seq, () => this.integerValue, finalValue, duration, Ease.Linear);
 				ActionSpace.Trace(seq, $"The final value of {nameof(integerValue)} is:");
 				ActionSpace.Call(seq, () => this.PrintValue(this.integerValue));
 			}

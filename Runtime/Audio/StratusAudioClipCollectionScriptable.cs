@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Stratus.Interpolation;
 
 namespace Stratus
 {
@@ -19,9 +20,9 @@ namespace Stratus
 		public float pitch = 1f;
 		public bool loop = false;
 
-		public StratusEase fadeIn = StratusEase.Linear;
+		public Ease fadeIn = Ease.Linear;
 		public float fadeInDuration = 0f;
-		public StratusEase fadeOut = StratusEase.Linear;
+		public Ease fadeOut = Ease.Linear;
 		public float fadeOutDuration = 0f;
 	}
 

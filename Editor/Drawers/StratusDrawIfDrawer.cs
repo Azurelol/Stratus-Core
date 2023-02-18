@@ -3,7 +3,7 @@ using System.Reflection;
 
 using Stratus.Extensions;
 using Stratus.Reflection;
-using Stratus.Utilities;
+using Stratus.Types;
 
 using UnityEditor;
 
@@ -55,16 +55,16 @@ namespace Stratus.Editor
 				// Get the value of the compared field
 				object comparedFieldValue = target.GetFieldOrPropertyValue<object>(this.drawIf.comparedMemberName); // ( targetType.Getpro this.comparedMember.GetValue<object>();
 																													// References to the values as numeric types
-				StratusNumeric numericComparedFieldValue = null;
-				StratusNumeric numericComparedValue = null;
+				Numeric numericComparedFieldValue = null;
+				Numeric numericComparedValue = null;
 
 				// Try to set the numeric types
 				try
 				{
-					numericComparedFieldValue = new StratusNumeric(comparedFieldValue);
-					numericComparedValue = new StratusNumeric(this.drawIf.comparedValue);
+					numericComparedFieldValue = new Numeric(comparedFieldValue);
+					numericComparedValue = new Numeric(this.drawIf.comparedValue);
 				}
-				catch (StratusNumericTypeExpectedException)
+				catch (NumericTypeExpectedException)
 				{
 					if (this.drawIf.comparison != ComparisonType.Equals && this.drawIf.comparison != ComparisonType.NotEqual)
 					{

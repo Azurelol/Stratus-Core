@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System;
+using Stratus.Utilities;
 
 namespace Stratus.Editor
 {
@@ -41,13 +42,13 @@ namespace Stratus.Editor
 
 			// Enum Drawer
 			Type enumType = selected.GetType();
-			string[] displayedOptions = StratusEnum.Names(enumType);
+			string[] displayedOptions = EnumUtility.Names(enumType);
 			GUIContent enumValueContent = new GUIContent(selected.ToString());
 			if (StratusSearchablePopup.DropdownButton(id, position, enumValueContent))
 			{
 				Action<int> onSelectIndex = i =>
 				{
-					Enum value = StratusEnum.Value(enumType, i);
+					Enum value = EnumUtility.Value(enumType, i);
 					StratusDebug.Log($"Selected {value}");
 					onSelected(value);
 				};
@@ -71,13 +72,13 @@ namespace Stratus.Editor
 			position = EditorGUI.PrefixLabel(position, id, labelContent);
 
 			// Enum Drawer
-			string[] displayedOptions = StratusEnum.Names(enumType);
+			string[] displayedOptions = EnumUtility.Names(enumType);
 			GUIContent enumValueContent = new GUIContent(displayedOptions[selectedIndex]);
 			if (StratusSearchablePopup.DropdownButton(id, position, enumValueContent))
 			{
 				Action<int> onSelect = i =>
 				{
-					Enum value = StratusEnum.Value(enumType, i);
+					Enum value = EnumUtility.Value(enumType, i);
 					StratusDebug.Log($"Selected {value}");
 					onSelected(value);
 				};

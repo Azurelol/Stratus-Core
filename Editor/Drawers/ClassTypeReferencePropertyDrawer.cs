@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
-using Stratus.Utilities;
+using Stratus.Types;
 
 namespace Stratus.Dependencies.TypeReferences
 {
@@ -65,7 +65,7 @@ namespace Stratus.Dependencies.TypeReferences
 			ICollection<Type> excludedTypes = (ExcludedTypeCollectionGetter != null ? ExcludedTypeCollectionGetter() : null);
 
 			//Assembly assembly = Assembly.GetExecutingAssembly();
-			foreach(var assembly in StratusTypeUtility.allAssemblies)
+			foreach(var assembly in TypeUtility.allAssemblies)
 			{
 				FilterTypes(assembly, filter, excludedTypes, types);
 			}
@@ -193,7 +193,7 @@ namespace Stratus.Dependencies.TypeReferences
 					{
 						s_TempContent.text = "(None)";
 					}
-					else if (StratusTypeUtility.ResolveType(classRef) == null)
+					else if (TypeUtility.ResolveType(classRef) == null)
 					{
 						s_TempContent.text += " {Missing}";
 					}
@@ -208,7 +208,7 @@ namespace Stratus.Dependencies.TypeReferences
 				s_SelectedClassRef = classRef;
 
 				List<Type> filteredTypes = GetFilteredTypes(filter);
-				DisplayDropDown(position, filteredTypes, StratusTypeUtility.ResolveType(classRef), filter.Grouping);
+				DisplayDropDown(position, filteredTypes, TypeUtility.ResolveType(classRef), filter.Grouping);
 			}
 
 			return classRef;

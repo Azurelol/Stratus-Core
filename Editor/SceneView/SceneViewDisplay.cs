@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 using Stratus.Extensions;
-using Stratus.Utilities;
+using Stratus.Types;
 
 using UnityEditor;
 
@@ -110,7 +110,7 @@ namespace Stratus
 		private static void ConstructAllDisplays()
 		{
 			// Get a list of all display classes, then construct them
-			Type[] displayClasses = StratusTypeUtility.SubclassesOf<SceneViewDisplay>();
+			Type[] displayClasses = TypeUtility.SubclassesOf<SceneViewDisplay>();
 			foreach (Type displayType in displayClasses)
 			{
 				SceneViewDisplay display = Activator.CreateInstance(displayType) as SceneViewDisplay;

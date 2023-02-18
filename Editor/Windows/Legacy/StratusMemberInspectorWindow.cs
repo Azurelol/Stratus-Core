@@ -88,7 +88,7 @@ namespace Stratus.Editor
 
 		private StratusCountdown pollTimer;
 		private const string displayName = "Watcher";
-		private string[] toolbarOptions = StratusEnum.Names<Mode>();
+		private string[] toolbarOptions = EnumUtility.Names<Mode>();
 
 		#region Properties
 		public InformationMode informationMode { get; private set; }

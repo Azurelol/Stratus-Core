@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System;
-using Stratus.Utilities;
 using Stratus.Extensions;
+using Stratus.Types;
 
 namespace Stratus.Editor
 {
@@ -229,7 +229,7 @@ namespace Stratus.Editor
 			List<Type> matchingTypes = new List<Type>();
 
 			// 1. Get all extensible types who have marked support for this extensible
-			var allExtensionTypes = StratusTypeUtility.InterfaceImplementations(typeof(MonoBehaviour), extensionType);
+			var allExtensionTypes = TypeUtility.InterfaceImplementations(typeof(MonoBehaviour), extensionType);
 			foreach (var type in allExtensionTypes)
 			{
 				var attributeMap = type.MapAttributes();

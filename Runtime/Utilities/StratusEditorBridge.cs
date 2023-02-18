@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Stratus;
+using Stratus.Utilities;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -131,7 +131,7 @@ namespace Stratus
 		#region Initialization
 		static StratusEditorBridge()
 		{
-			StratusEngineBridge.isPlaying = () => EditorApplication.isPlaying;
+			EngineBridge.isPlaying = () => EditorApplication.isPlaying;
 		}
 		#endregion
 	}

@@ -5,7 +5,7 @@ using System.Reflection;
 using Stratus.Extensions;
 using Stratus.Models;
 using Stratus.Models.Graph;
-using Stratus.Utilities;
+using Stratus.Types;
 
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
@@ -203,7 +203,7 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		private IList<EventTreeElement> BuildEventTree()
 		{
-			this.events = StratusTypeUtility.SubclassesOf<StratusEvent>();
+			this.events = TypeUtility.SubclassesOf<StratusEvent>();
 			EventInformation[] eventsInformation = new EventInformation[this.events.Length];
 			for (int i = 0; i < this.events.Length; ++i)
 			{

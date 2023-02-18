@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 
 using Stratus.Reflection;
-using Stratus.Utilities;
+using Stratus.Types;
 
 using UnityEditor;
 

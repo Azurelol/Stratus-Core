@@ -1,4 +1,5 @@
 ﻿using Stratus.Extensions;
+using Stratus.Interpolation;
 
 using System.Collections;
 using System.Collections.Generic;
@@ -110,7 +111,7 @@ namespace Stratus
 			return true;
 		}
 
-		IEnumerator FadeOutRoutine(float duration, StratusEase ease, bool block = true)
+		IEnumerator FadeOutRoutine(float duration, Ease ease, bool block = true)
 		{
 			yield return StratusRoutines.FadeVolume(audioSource, 0f, duration, ease);
 			if (block)

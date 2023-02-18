@@ -5,7 +5,7 @@ using System.Reflection;
 
 using Stratus.Extensions;
 using Stratus.Reflection;
-using Stratus.Utilities;
+using Stratus.Types;
 
 using UnityEditor;
 
@@ -93,7 +93,7 @@ namespace Stratus.Editor
 		private static void BuildDrawerTypeForTypeDictionary()
 		{
 			s_DrawerTypeForType = new Dictionary<Type, DrawerKeySet>();
-			Type[] source = StratusTypeUtility.GetAllTypes();
+			Type[] source = TypeUtility.GetAllTypes();
 			foreach (Type item in SubclassesOf(typeof(GUIDrawer)))
 			{
 				object[] customAttributes = item.GetCustomAttributes(typeof(CustomPropertyDrawer), true);
@@ -299,7 +299,7 @@ namespace Stratus.Editor
 
 		internal static IEnumerable<Type> SubclassesOf(Type parent)
 		{
-			Type hiddenType = StratusTypeUtility.GetPrivateType("UnityEditor.EditorAssemblies", typeof(CustomEditor));
+			Type hiddenType = TypeUtility.GetPrivateType("UnityEditor.EditorAssemblies", typeof(CustomEditor));
 			return (IEnumerable<Type>)ReflectionUtility.GetReflectedMethod("SubclassesOf", hiddenType).Invoke(null, new object[] { parent });
 		}
 	}

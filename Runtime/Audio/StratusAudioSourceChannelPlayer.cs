@@ -23,7 +23,7 @@ namespace Stratus
 		private void Reset()
 		{
 			_channels = new List<StratusAudioChannel>();
-			foreach (var channel in StratusEnum.Values<StratusDefaultAudioChannel>())
+			foreach (var channel in EnumUtility.Values<StratusDefaultAudioChannel>())
 			{
 				_channels.Add(new StratusAudioChannel(channel.ToString()));
 			}

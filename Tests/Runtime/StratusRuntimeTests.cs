@@ -54,7 +54,7 @@ namespace Stratus.Tests
 				// Property
 				ActionSet seq = ActionSpace.Sequence(sample);
 				int targetValue = 14;
-				ActionSpace.Property(seq, () => sample.integerValue, targetValue, sample.duration, StratusEase.Linear);
+				ActionSpace.Property(seq, () => sample.integerValue, targetValue, sample.duration, Ease.Linear);
 				yield return new WaitForSeconds(sample.duration);
 				Assert.AreEqual(sample.integerValue, targetValue);
 

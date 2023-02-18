@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 
 using Stratus.Extensions;
-using Stratus.Utilities;
+using Stratus.Types;
 
 using UnityEditor;
 
@@ -91,7 +91,7 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		private static Dictionary<Type, ObjectDrawer> objectDrawers { get; set; } = new Dictionary<Type, ObjectDrawer>();
 		private static Dictionary<FieldInfo, FieldDrawer> fieldDrawers { get; set; } = new Dictionary<FieldInfo, FieldDrawer>();
-		private static Type[] customObjectDrawers { get; set; } = StratusTypeUtility.SubclassesOf<CustomObjectDrawer>(false);
+		private static Type[] customObjectDrawers { get; set; } = TypeUtility.SubclassesOf<CustomObjectDrawer>(false);
 
 		//------------------------------------------------------------------------/
 		// Methods: Static

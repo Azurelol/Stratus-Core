@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using System.Linq;
 using Stratus.Extensions;
 using Stratus.Reflection;
+using Stratus.Utilities;
 
 namespace Stratus
 {
@@ -145,7 +146,7 @@ namespace Stratus
 	public abstract class StratusInputActionMap<T> : StratusInputActionMap
 		where T : Enum
 	{
-		private static Lazy<T[]> enumeratedValues = new Lazy<T[]>(() => StratusEnum.Values<T>());
+		private static Lazy<T[]> enumeratedValues = new Lazy<T[]>(() => EnumUtility.Values<T>());
 		private static Lazy<Dictionary<string, T>> enumeratedValuesByName =>
 			new Lazy<Dictionary<string, T>>(() => enumeratedValues.Value.ToDictionary(v => v.ToString().ToLowerInvariant()));
 

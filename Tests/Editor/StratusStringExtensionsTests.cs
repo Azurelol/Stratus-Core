@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 
 using Stratus.Extensions;
+using Stratus.Utilities;
 
 using UnityEngine;
 
@@ -54,7 +55,7 @@ namespace Stratus.Editor.Tests
 				Assert.AreEqual(output, input);
 			}
 
-			foreach (var style in StratusEnum.Values<FontStyle>())
+			foreach (var style in EnumUtility.Values<FontStyle>())
 			{
 				output = input.ToRichText(style);
 				compareCleanText();

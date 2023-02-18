@@ -39,7 +39,7 @@ namespace Stratus
 		[Tooltip("The duration of the event")]
 		public float duration = 1.0f;
 		[Tooltip("The interpolation algorithm to use")]
-		public StratusEase ease;
+		public Ease ease;
 
 		// Values
 		[Tooltip("How the value to use is decided")]

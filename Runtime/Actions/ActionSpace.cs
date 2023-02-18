@@ -195,7 +195,7 @@ namespace Stratus.Unity.Interpolation
 		/// <param name="value">The new value for the property</param>
 		/// <param name="duration">Over how long should the property be changed</param>
 		/// <param name="ease">What interpolation algorithm to use</param>
-		public static void Property<T>(ActionSet set, Expression<Func<T>> varExpr, T value, float duration, StratusEase ease)
+		public static void Property<T>(ActionSet set, Expression<Func<T>> varExpr, T value, float duration, Ease ease)
 		{
 			MemberExpression memberExpr = varExpr.Body as MemberExpression;
 			Expression inst = memberExpr.Expression;

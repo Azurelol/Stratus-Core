@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor.AnimatedValues;
 using Stratus.Collections;
+using Stratus.Utilities;
 
 namespace Stratus.Editor
 {
@@ -188,7 +189,7 @@ namespace Stratus.Editor
 
 		public static void EnumToolbar<T>(ref T enumValue) where T : Enum
 		{
-			string[] options = StratusEnum.Names<T>();
+			string[] options = EnumUtility.Names<T>();
 			enumValue = (T)(object)GUILayout.Toolbar(Convert.ToInt32(enumValue), options, GUILayout.ExpandWidth(false));
 		}
 

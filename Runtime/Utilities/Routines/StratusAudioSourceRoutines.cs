@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Stratus.Interpolation;
+
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -7,7 +9,7 @@ namespace Stratus
 {
 	public static partial class StratusRoutines
 	{
-		public static IEnumerator FadeVolume(AudioSource audioSource, float volume, float duration, StratusEase ease, StratusTimeScale timeScale = StratusTimeScale.Delta)
+		public static IEnumerator FadeVolume(AudioSource audioSource, float volume, float duration, Ease ease, StratusTimeScale timeScale = StratusTimeScale.Delta)
 		{
 			if (duration <= 0f)
 			{

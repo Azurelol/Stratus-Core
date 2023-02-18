@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 
 using Stratus.Collections;
-using Stratus.Utilities;
+using Stratus.Types;
 
 namespace Stratus
 {
@@ -32,7 +32,7 @@ namespace Stratus
 		public StratusTypeSelector(Type baseType, bool includeAbstract, bool sortAlphabetically = false)
 		{
 			this.baseType = baseType;
-			this.subTypes = new StratusDropdownList<Type>(StratusTypeUtility.SubclassesOf(baseType), Name);
+			this.subTypes = new StratusDropdownList<Type>(TypeUtility.SubclassesOf(baseType), Name);
 			if (sortAlphabetically)
 			{
 				this.subTypes.Sort();
@@ -52,7 +52,7 @@ namespace Stratus
 		public StratusTypeSelector(Type baseType, Type interfaceType, bool sortAlphabetically = false)
 		{
 			this.baseType = baseType;
-			this.subTypes = new StratusDropdownList<Type>(StratusTypeUtility.InterfaceImplementations(baseType, interfaceType), (Type type) => type.Name);
+			this.subTypes = new StratusDropdownList<Type>(TypeUtility.InterfaceImplementations(baseType, interfaceType), (Type type) => type.Name);
 
 			if (sortAlphabetically)
 			{
@@ -61,13 +61,13 @@ namespace Stratus
 		}
 
 		public StratusTypeSelector(Type baseType, Predicate<Type> predicate, bool includeAbstract, bool sortAlphabetically = true)
-			: this(StratusTypeUtility.SubclassesOf(baseType).Where(x => predicate(x)).ToArray(), includeAbstract, sortAlphabetically)
+			: this(TypeUtility.SubclassesOf(baseType).Where(x => predicate(x)).ToArray(), includeAbstract, sortAlphabetically)
 		{
 		}
 
 		public static StratusTypeSelector FilteredSelector(Type baseType, Type excludedType, bool includeAbstract, bool sortAlphabetically = true)
 		{
-			Type[] types = StratusTypeUtility.SubclassesOf(baseType).Where(x => !x.IsSubclassOf(excludedType)).ToArray();
+			Type[] types = TypeUtility.SubclassesOf(baseType).Where(x => !x.IsSubclassOf(excludedType)).ToArray();
 			return new StratusTypeSelector(types, includeAbstract, sortAlphabetically);
 		}
 
