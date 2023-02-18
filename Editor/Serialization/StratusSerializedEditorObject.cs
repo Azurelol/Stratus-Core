@@ -34,7 +34,7 @@ namespace Stratus.Editor
 		{
 			foreach (Type drawerType in customObjectDrawers)
 			{
-				ObjectDrawer drawer = (ObjectDrawer)StratusObjectUtility.Instantiate(drawerType);
+				ObjectDrawer drawer = (ObjectDrawer)ObjectUtility.Instantiate(drawerType);
 				Type objectType = drawer.type;
 				objectDrawers.Add(objectType, drawer);
 			}

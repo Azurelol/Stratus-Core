@@ -46,7 +46,7 @@ namespace Stratus.Editor
 			if (!triggerable.hasType)
 				return;
 
-			eventObject = (StratusEvent)StratusObjectUtility.Instantiate(type);
+			eventObject = (StratusEvent)ObjectUtility.Instantiate(type);
 			serializedEvent = new StratusSerializedEditorObject(eventObject);
 			serializedEvent.Deserialize(eventDataProperty);
 		}

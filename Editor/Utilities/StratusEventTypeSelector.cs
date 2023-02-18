@@ -40,7 +40,7 @@ namespace Stratus.Editor
 		protected override void OnSelectionChanged()
 		{
 			base.OnSelectionChanged();
-			eventObject = (StratusEvent)StratusObjectUtility.Instantiate(selectedClass);
+			eventObject = (StratusEvent)ObjectUtility.Instantiate(selectedClass);
 			serializedEvent = new StratusSerializedEditorObject(eventObject);
 		}
 
