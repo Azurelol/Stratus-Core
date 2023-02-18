@@ -1,4 +1,5 @@
 ﻿using Stratus.Collections;
+using Stratus.Systems;
 
 using UnityEngine;
 
@@ -6,12 +7,12 @@ using static Codice.CM.Common.CmCallContext;
 
 namespace Stratus
 {
-	public class StratusUnityConsoleCommands : IStratusConsoleCommandProvider
+	public class StratusUnityConsoleCommands : IConsoleCommandProvider
 	{
-		[StratusConsoleCommand("time")]
+		[ConsoleCommand("time")]
 		public static float time => Time.realtimeSinceStartup;
 
-		[StratusConsoleCommand("quit")]
+		[ConsoleCommand("quit")]
 		public static void Quit()
 		{
 			Application.Quit();
