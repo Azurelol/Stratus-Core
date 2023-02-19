@@ -2,8 +2,8 @@ using System;
 using System.Reflection;
 
 using Stratus.Extensions;
+using Stratus.Numerics;
 using Stratus.Reflection;
-using Stratus.Types;
 
 using UnityEditor;
 

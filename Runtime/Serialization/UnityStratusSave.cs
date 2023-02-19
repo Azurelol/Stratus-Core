@@ -7,7 +7,7 @@ using Stratus.Models.Saves;
 
 namespace Stratus
 {
-	public interface IUnityStratusSave : IStratusSave
+	public interface IUnityStratusSave : ISave
 	{
 		Texture2D snapshot { get; }
 		bool LoadSnapshot();
@@ -20,17 +20,12 @@ namespace Stratus
 	/// When this is deserialized, the data is NOT loaded by default.
 	/// This is due to the save itself being a manifest of sorts for the much larger data file.
 	/// </summary>
-	/// <typeparam name="DataType"></typeparam>
+	/// <typeparam name="TData"></typeparam>
 	[Serializable]
-	public class UnityStratusSave<DataType> : StratusSave, ISerializationCallbackReceiver
-		where DataType : class, new()
+	public class UnityStratusSave<TData> : Save<TData>, ISerializationCallbackReceiver
+		where TData : class, new()
 	{
 		#region Properties
-		/// <summary>
-		/// The data for this save
-		/// </summary>
-		public DataType data { get; private set; }
-
 		/// <summary>
 		/// A saved snapshot
 		/// </summary>
@@ -45,27 +40,6 @@ namespace Stratus
 		/// Whether a snapshot of this save has been loaded
 		/// </summary>
 		public bool snapshotLoaded => snapshot != null;
-
-		/// <summary>
-		/// The data serializer
-		/// </summary>
-		public static readonly StratusJSONSerializer<DataType> dataSerializer = new StratusJSONSerializer<DataType>();
-
-		/// <summary>
-		/// The file path for where the encapsulated data is saved to
-		/// </summary>
-		public string dataFilePath
-		{
-			get
-			{
-				if (_dataFilePath == null)
-				{
-					_dataFilePath = FileUtility.ChangeExtension(file.path, dataExtension);
-				}
-				return _dataFilePath;
-			}
-		}
-		private string _dataFilePath;
 
 		/// <summary>
 		/// The path for the snapshot image file taken for this save
@@ -87,29 +61,11 @@ namespace Stratus
 		/// Whether an associated snapshot file is found for this save
 		/// </summary>
 		public bool snapshotExists => FileUtility.FileExists(snapshotFilePath);
-
-		/// <summary>
-		/// Whether a data file exists for this save
-		/// </summary>
-		public bool dataFileExists => FileUtility.FileExists(dataFilePath);
-
-		/// <summary>
-		/// The extension used for save data
-		/// </summary>
-		public virtual string dataExtension => ".savedata";
-
-		/// <summary>
-		/// Whether the data for the save is loaded
-		/// </summary>
-		public bool dataLoaded => data != null;
-
-		public override bool loaded => dataLoaded;
 		#endregion
 
 		#region Constructors
-		public UnityStratusSave(DataType data)
+		public UnityStratusSave(TData data) : base(data)
 		{
-			this.data = data;
 		}
 
 		public UnityStratusSave()
@@ -128,23 +84,22 @@ namespace Stratus
 			SaveData();
 		}
 
-		protected override void OnDelete()
+		public override StratusOperationResult LoadDataAsync(Action onLoad)
 		{
-			if (dataFileExists)
+			if (!Application.isPlaying)
 			{
-				FileUtility.DeleteFile(dataFilePath);
-				_dataFilePath = null;
+				return new StratusOperationResult(false, "Cannot load data asynchronously outside of playmode...");
 			}
-		}
 
-		public override StratusOperationResult Load()
-		{
-			return LoadData();
-		}
+			IEnumerator routine()
+			{
+				yield return new WaitForEndOfFrame();
+				LoadData();
+				onLoad?.Invoke();
+			}
 
-		public override StratusOperationResult LoadAsync(Action onLoad)
-		{
-			return LoadDataAsync(onLoad);
+			StratusCoroutineRunner.Run(routine());
+			return new StratusOperationResult(true, "Now loading data asynchronously...");
 		}
 
 		public override void Unload()
@@ -177,87 +132,6 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		// Methods
 		//------------------------------------------------------------------------/
-		public void ResetData()
-		{
-			SetData(new DataType());
-		}
-
-		public void SetData(DataType data)
-		{
-			this.data = data;
-		}
-
-		public StratusOperationResult LoadData()
-		{
-			if (dataLoaded)
-			{
-				return new StratusOperationResult(true, "Data already loaded");
-			}
-
-			if (!serialized)
-			{
-				return new StratusOperationResult(false, "Cannot load data before the save has been serialized");
-			}
-
-			try
-			{
-				data = dataSerializer.Deserialize(dataFilePath);
-			}
-			catch (Exception e)
-			{
-				return new StratusOperationResult(false, e.ToString());
-			}
-
-			if (data == null)
-			{
-				return new StratusOperationResult(false, $"Failed to deserialize data from {dataFilePath}");
-			}
-
-			return new StratusOperationResult(true, $"Loaded data file from {dataFilePath}");
-		}
-
-		public StratusOperationResult LoadDataAsync(Action onLoad)
-		{
-			if (!Application.isPlaying)
-			{
-				return new StratusOperationResult(false, "Cannot load data asynchronously outside of playmode...");
-			}
-
-			IEnumerator routine()
-			{
-				yield return new WaitForEndOfFrame();
-				LoadData();
-				onLoad?.Invoke();
-			}
-
-			StratusCoroutineRunner.Run(routine());
-			return new StratusOperationResult(true, "Now loading data asynchronously...");
-		}
-
-		public void UnloadData()
-		{
-			data = null;
-		}
-
-		public bool SaveData()
-		{
-			if (!serialized)
-			{
-				this.LogError("Cannot load data before the save has been serialized");
-				return false;
-			}
-
-			if (data == null)
-			{
-				this.LogError("No data to serialize! This could mean that this save was created yet no data previously assigned to it");
-				return false;
-			}
-
-			this.Log($"Saving data to {dataFilePath}");
-			dataSerializer.Serialize(data, dataFilePath);
-			return true;
-		}
-
 		/// <summary>
 		/// Loads the snapshot associated with this save, if present
 		/// </summary>
@@ -329,7 +203,7 @@ namespace Stratus
 		/// <param name="filePath"></param>
 		public override void OnAnySerialization(string filePath)
 		{
-			this.file = new StratusSaveFileInfo(filePath);
+			base.OnAnySerialization(filePath);
 
 			if (Application.isPlaying)
 			{

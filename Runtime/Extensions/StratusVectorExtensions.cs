@@ -1,5 +1,5 @@
-using Stratus.Models;
 using Stratus.Models.Maps;
+using Stratus.Numerics;
 
 using UnityEngine;
 
@@ -217,11 +217,11 @@ namespace Stratus
 			return result;
 		}
 
-		public static Vector3Int ToUnity(this StratusVector3Int value)
-			=> new Vector3Int(value.x, value.y, value.z);
+		public static UnityEngine.Vector3Int ToUnity(this Numerics.Vector3Int value)
+			=> new UnityEngine.Vector3Int(value.x, value.y, value.z);
 
-		public static StratusVector3Int FromUnity(this Vector3Int value)
-			=> new StratusVector3Int(value.x, value.y, value.z);
+		public static Numerics.Vector3Int FromUnity(this UnityEngine.Vector3Int value)
+			=> new Numerics.Vector3Int(value.x, value.y, value.z);
 		
 		public static CellLayout FromUnity(this GridLayout.CellLayout value)
 		{

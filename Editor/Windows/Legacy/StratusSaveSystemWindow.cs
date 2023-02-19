@@ -33,8 +33,8 @@ namespace Stratus.Editor
 		private IEnumerable<StratusDefaultTreeElement> BuildTree()
 		{
 			StratusSerializedTree<StratusDefaultTreeElement> tree = new StratusSerializedTree<StratusDefaultTreeElement>();
-			tree.AddElement(new StratusDefaultTreeElement(nameof(StratusSaveSystem.rootSaveDirectoryPath), StratusSaveSystem.rootSaveDirectoryPath,
-				RevealPath(StratusSaveSystem.rootSaveDirectoryPath)), 0);
+			//tree.AddElement(new StratusDefaultTreeElement(nameof(StratusSaveSystem.rootSaveDirectoryPath), StratusSaveSystem.rootSaveDirectoryPath,
+			//	RevealPath(StratusSaveSystem.rootSaveDirectoryPath)), 0);
 			return tree.elements;			
 		}
 
