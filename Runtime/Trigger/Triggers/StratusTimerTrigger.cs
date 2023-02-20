@@ -1,7 +1,7 @@
 using UnityEngine;
-using Stratus;
 using System;
 using Stratus.Utilities;
+using Stratus.Timers;
 
 namespace Stratus
 {
@@ -26,15 +26,15 @@ namespace Stratus
 		public float duration;
 		[Tooltip("Reset the current timer if the trigger is disabled")]
 		public bool resetOnDisabled = true;
-		private StratusCountdown timer;
+		private Countdown timer;
 
 		//------------------------------------------------------------------------/
 		// Messages
 		//------------------------------------------------------------------------/
 		protected override void OnAwake()
 		{
-			timer = new StratusCountdown(duration);
-			timer.SetCallback(OnTimerFinished);
+			timer = new Countdown(duration);
+			timer.WhenFinished(OnTimerFinished);
 			timer.resetOnFinished = resetOnDisabled;
 		}
 

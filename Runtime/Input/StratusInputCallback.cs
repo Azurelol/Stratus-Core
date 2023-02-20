@@ -1,3 +1,5 @@
+using Stratus.Timers;
+
 using UnityEngine;
 
 namespace Stratus
@@ -35,11 +37,11 @@ namespace Stratus
 	/// </summary>
 	public abstract class StratusTimedInputCallback : StratusInputCallback
 	{
-		protected StratusStopwatch Timer;
+		protected Stopwatch Timer;
 		public float CooldownLeft => this.Timer.current;
 		public StratusTimedInputCallback(string name, float cooldown) : base(name)
 		{
-			this.Timer = new StratusStopwatch(cooldown);
+			this.Timer = new Stopwatch(cooldown);
 		}
 
 		public override void Update(float dt)

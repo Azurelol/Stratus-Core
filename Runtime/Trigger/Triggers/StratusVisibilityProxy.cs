@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Stratus.Utilities;
+using Stratus.Timers;
 
 namespace Stratus
 {
-  /// <summary>
-  /// Observes whether a GameObject with a mesh renderer is visible to the camera currently
-  /// </summary>
-  [RequireComponent(typeof(MeshRenderer))]
+	/// <summary>
+	/// Observes whether a GameObject with a mesh renderer is visible to the camera currently
+	/// </summary>
+	[RequireComponent(typeof(MeshRenderer))]
   public class StratusVisibilityProxy : StratusProxy
   {
     public delegate void OnVisible(bool visible);
@@ -25,7 +26,7 @@ namespace Stratus
     public float resetDelay = 0.5f;
 
     // Private fields
-    private StratusCountdown visibilityTimer;
+    private Countdown visibilityTimer;
     [HideInInspector]
     public bool isVisible;
 
@@ -49,7 +50,7 @@ namespace Stratus
     //------------------------------------------------------------------------/
     private void Start()
     {
-      visibilityTimer = new StratusCountdown(duration);
+      visibilityTimer = new Countdown(duration);
       //Overlay.Watch(() => visibilityTimer.current, "Visibility Timer");
       //Overlay.Watch(() => isVisible, "Visible");
     }

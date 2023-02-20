@@ -11,6 +11,7 @@ using UnityEditor.AnimatedValues;
 using UnityEditor.Callbacks;
 using Stratus.Extensions;
 using Stratus.Reflection;
+using Stratus.Timers;
 
 namespace Stratus.Editor
 {
@@ -86,7 +87,7 @@ namespace Stratus.Editor
 		};
 		#endregion
 
-		private StratusCountdown pollTimer;
+		private Countdown pollTimer;
 		private const string displayName = "Watcher";
 		private string[] toolbarOptions = EnumUtility.Names<Mode>();
 
@@ -136,7 +137,7 @@ namespace Stratus.Editor
 
 		private void ResetUpdateTimer()
 		{
-			this.pollTimer = new StratusCountdown(this.updateSpeed);
+			this.pollTimer = new Countdown(this.updateSpeed);
 		}
 
 		protected override void OnWindowGUI()

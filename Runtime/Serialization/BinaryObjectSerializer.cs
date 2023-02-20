@@ -10,16 +10,17 @@ namespace Stratus.Serialization
 	/// <typeparam name="T"></typeparam>
 	public class BinaryObjectSerializer : ObjectSerializer
 	{
-		protected override T OnDeserialize<T>(string filePath)
+		protected override Result<T> OnDeserialize<T>(string filePath)
 		{
 			byte[] serialization = File.ReadAllBytes(filePath);
 			return SerializationUtility.DeserializeValue<T>(serialization, DataFormat.Binary);
 		}
 
-		protected override void OnSerialize<T>(T value, string filePath)
+		protected override Result OnSerialize<T>(T value, string filePath)
 		{
 			byte[] serialization = SerializationUtility.SerializeValue(value, DataFormat.Binary);
 			File.WriteAllBytes(filePath, serialization);
+			return true;
 		}
 	}
 }

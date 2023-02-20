@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Stratus.Utilities;
+using Stratus.Timers;
 
 namespace Stratus
 {
@@ -17,7 +18,7 @@ namespace Stratus
 			/// <summary>
 			/// How often to update these methods
 			/// </summary>
-			private StratusCountdown timer;
+			private Countdown timer;
 			/// <summary>
 			/// The behaviours which to be updated
 			/// </summary>
@@ -34,8 +35,8 @@ namespace Stratus
 			public FrequencyUpdateBatch(float frequency)
 			{
 				behaviours = new Dictionary<MonoBehaviour, List<System.Action>>();
-				timer = new StratusCountdown(frequency);
-				timer.SetCallback(Invoke);
+				timer = new Countdown(frequency);
+				timer.WhenFinished(Invoke);
 				timer.resetOnFinished = true;
 			}
 
@@ -89,7 +90,7 @@ namespace Stratus
 		/// <summary>
 		/// A list of timers being updated
 		/// </summary>
-		private List<StratusTimer> timers = new List<StratusTimer>();
+		private List<Timer> timers = new List<Timer>();
 
 		//------------------------------------------------------------------------/
 		// Messages
@@ -142,7 +143,7 @@ namespace Stratus
 		/// <param name="action"></param>
 		/// <param name="behaviour"></param>
 		/// <param name="timeScale"></param>
-		public static void Add(StratusTimer timer)
+		public static void Add(Timer timer)
 		{
 			instance.timers.Add(timer);
 		}
