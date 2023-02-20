@@ -70,8 +70,7 @@ namespace Stratus.Editor.Windows
 		private void CreateAsset(Type type, string path)
 		{
 			StratusDebug.Log($"Creating {type.Name} at {path}");
-			//var absPath = FileUtil.Path(_assetFolder);
-			StratusSerializedAsset.Create(type, path, new StratusJSONSerializer());
+			StratusSerializedAsset.Create(type, path, new JsonObjectSerializer());
 		}
 	}
 }

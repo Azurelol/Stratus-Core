@@ -140,12 +140,12 @@ namespace Stratus
 
 		protected virtual string Serialize(DataType data)
 		{
-			return StratusJSONSerializerUtility.Serialize(data);
+			return JsonSerializationUtility.Serialize(data);
 		}
 
 		protected virtual DataType Deserialize(string serialization)
 		{
-			return StratusJSONSerializerUtility.Deserialize<DataType>(serialization);
+			return JsonSerializationUtility.Deserialize<DataType>(serialization);
 		}
 
 		protected abstract string GetPrefs(string key);

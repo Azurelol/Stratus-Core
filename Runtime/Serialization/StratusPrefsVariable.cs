@@ -120,16 +120,16 @@ namespace Stratus.Serialization
 		public abstract void SetString(string value);
 		public abstract string GetString();
 
-		private static StratusJSONSerializer serializer = new StratusJSONSerializer();
+		private static JsonObjectSerializer serializer = new JsonObjectSerializer();
 
 		public void SetObject(object value)
 		{
-			SetString(StratusJSONSerializerUtility.Serialize(value));
+			SetString(JsonSerializationUtility.Serialize(value));
 		}
 
 		public T GetObject<T>()
 		{
-			return StratusJSONSerializerUtility.Deserialize<T>(GetString());
+			return JsonSerializationUtility.Deserialize<T>(GetString());
 		}
 
 		public static VariableType DeduceType(Type type)
