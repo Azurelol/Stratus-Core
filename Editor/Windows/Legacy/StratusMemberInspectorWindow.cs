@@ -260,7 +260,7 @@ namespace Stratus.Editor
 			}
 		}
 
-		private void OnGameObjectInformationChanged(StratusGameObjectInformation information, StratusOperationResult<StratusGameObjectInformation.Change> change)
+		private void OnGameObjectInformationChanged(StratusGameObjectInformation information, Result<StratusGameObjectInformation.Change> change)
 		{
 			this.Log($"Information changed for {information.gameObject.name}, change = {change.result}:\n{change.message}");
 			this.SetTreeView();

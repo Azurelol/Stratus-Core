@@ -84,11 +84,11 @@ namespace Stratus
 			SaveData();
 		}
 
-		public override StratusOperationResult LoadDataAsync(Action onLoad)
+		public override Result LoadDataAsync(Action onLoad)
 		{
 			if (!Application.isPlaying)
 			{
-				return new StratusOperationResult(false, "Cannot load data asynchronously outside of playmode...");
+				return new Result(false, "Cannot load data asynchronously outside of playmode...");
 			}
 
 			IEnumerator routine()
@@ -99,7 +99,7 @@ namespace Stratus
 			}
 
 			StratusCoroutineRunner.Run(routine());
-			return new StratusOperationResult(true, "Now loading data asynchronously...");
+			return new Result(true, "Now loading data asynchronously...");
 		}
 
 		public override void Unload()

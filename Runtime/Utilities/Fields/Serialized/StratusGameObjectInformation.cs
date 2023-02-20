@@ -82,8 +82,8 @@ namespace Stratus
 		public StratusComponentMemberInfo[] visibleMembers { get; private set; }
 		public int memberCount => fieldCount + propertyCount;
 		public bool isValid => gameObject != null && this.numberofComponents > 0;
-		public static UnityAction<StratusGameObjectInformation, StratusOperationResult<Change>> onChanged { get; set; } =
-			new UnityAction<StratusGameObjectInformation, StratusOperationResult<Change>>((StratusGameObjectInformation information, StratusOperationResult<Change> change) => { });
+		public static UnityAction<StratusGameObjectInformation, Result<Change>> onChanged { get; set; } =
+			new UnityAction<StratusGameObjectInformation, Result<Change>>((StratusGameObjectInformation information, Result<Change> change) => { });
 		#endregion
 
 		#region Constants
@@ -299,7 +299,7 @@ namespace Stratus
 		/// <summary>
 		/// Verifies that the component references for this GameObject are still valid
 		/// </summary>
-		private StratusOperationResult<Change> Validate()
+		private Result<Change> Validate()
 		{
 			bool watchlistChanged = false;
 			bool changed = false;
@@ -376,7 +376,7 @@ namespace Stratus
 			}
 			change = Change.None;
 
-			return new StratusOperationResult<Change>(change == Change.None, change, message.ToString());
+			return new Result<Change>(change == Change.None, change, message.ToString());
 		}
 		#endregion
 

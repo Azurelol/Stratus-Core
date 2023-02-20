@@ -7,12 +7,12 @@ namespace Stratus
 	{
 		StratusAudioParameters defaultParameters { get; }
 
-		StratusOperationResult Play(string name);
-		StratusOperationResult Pause(bool pause);
-		StratusOperationResult Pause();
-		StratusOperationResult Resume();
-		StratusOperationResult Stop();
-		StratusOperationResult Mute(bool mute);
+		Result Play(string name);
+		Result Pause(bool pause);
+		Result Pause();
+		Result Resume();
+		Result Stop();
+		Result Mute(bool mute);
 	}
 
 	public abstract class StratusAudioPlayer : StratusBehaviour, IStratusAudioPlayer, IStratusDebuggable
@@ -30,12 +30,12 @@ namespace Stratus
 		}
 
 		protected abstract void SetParameters(StratusAudioParameters parameters);
-		public abstract StratusOperationResult Play(string name);
-		public abstract StratusOperationResult Pause(bool pause);
-		public StratusOperationResult Pause() => Pause(true);
-		public StratusOperationResult Resume() => Pause(false);
-		public abstract StratusOperationResult Stop();
-		public abstract StratusOperationResult Mute(bool mute);
+		public abstract Result Play(string name);
+		public abstract Result Pause(bool pause);
+		public Result Pause() => Pause(true);
+		public Result Resume() => Pause(false);
+		public abstract Result Stop();
+		public abstract Result Mute(bool mute);
 
 
 		private void Awake()

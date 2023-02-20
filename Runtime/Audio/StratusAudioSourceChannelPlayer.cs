@@ -35,12 +35,12 @@ namespace Stratus
 			channelsByName.AddRange(_channels);
 		}
 
-		public StratusOperationResult Play(string channel, string name)
+		public Result Play(string channel, string name)
 		{
 			return InvokeAudioChannel(channel, (player) => player.Play(name));
 		}
 
-		public StratusOperationResult Stop(string channel)
+		public Result Stop(string channel)
 		{
 			return InvokeAudioChannel(channel, (player) => player.Stop());
 		}
@@ -56,25 +56,25 @@ namespace Stratus
 			}
 		}
 
-		public StratusOperationResult Pause(string channel, bool pause)
+		public Result Pause(string channel, bool pause)
 		{
 			return InvokeAudioChannel(channel, (player) => player.Pause(pause));
 		}
 
-		public StratusOperationResult Pause(string channel) => InvokeAudioChannel(channel, (player) => player.Pause());
-		public StratusOperationResult Resume(string channel) => InvokeAudioChannel(channel, (player) => player.Resume());
+		public Result Pause(string channel) => InvokeAudioChannel(channel, (player) => player.Pause());
+		public Result Resume(string channel) => InvokeAudioChannel(channel, (player) => player.Resume());
 
-		public StratusOperationResult Mute(string channel, bool mute)
+		public Result Mute(string channel, bool mute)
 		{
 			return InvokeAudioChannel(channel, (player) => player.Mute(mute));
 		}
 
-		private StratusOperationResult InvokeAudioChannel(string channel, Func<StratusAudioPlayer, StratusOperationResult> onChannel)
+		private Result InvokeAudioChannel(string channel, Func<StratusAudioPlayer, Result> onChannel)
 		{
-			StratusOperationResult result;
+			Result result;
 			if (!channelsByName.ContainsKey(channel))
 			{
-				result = new StratusOperationResult(false, $"The audio channel {channel} was not found!");
+				result = new Result(false, $"The audio channel {channel} was not found!");
 			}
 			else
 			{

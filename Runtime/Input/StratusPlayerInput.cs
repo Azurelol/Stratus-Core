@@ -95,7 +95,7 @@ namespace Stratus
 		#region Event Handlers
 		private void OnPushLayerEvent(StratusInputLayer.PushEvent e)
 		{
-			StratusOperationResult result = inputLayers.Push(e.layer);
+			Result result = inputLayers.Push(e.layer);
 			if (debug)
 			{
 				this.Log($"Pushed input layer: {e.layer.name}. Result ? {result}");

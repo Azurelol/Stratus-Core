@@ -22,16 +22,16 @@ namespace Stratus
 			audioSource.loop = parameters.loop;
 		}
 
-		protected abstract StratusOperationResult OnPlay(string name);
-		protected abstract StratusOperationResult OnStop();
+		protected abstract Result OnPlay(string name);
+		protected abstract Result OnStop();
 
-		public override StratusOperationResult Play(string name)
+		public override Result Play(string name)
 		{
 			currentAudioName = name;
 			return OnPlay(name);
 		}
 
-		public override StratusOperationResult Stop()
+		public override Result Stop()
 		{
 			if (audioSource.isPlaying)
 			{
@@ -40,7 +40,7 @@ namespace Stratus
 			return false;
 		}
 
-		public override StratusOperationResult Pause(bool pause)
+		public override Result Pause(bool pause)
 		{
 			if (audioSource.isPlaying && pause)
 			{
@@ -57,7 +57,7 @@ namespace Stratus
 			return false;
 		}
 
-		public override StratusOperationResult Mute(bool mute)
+		public override Result Mute(bool mute)
 		{
 			if (audioSource.isPlaying)
 			{
@@ -74,7 +74,7 @@ namespace Stratus
 		private Coroutine playRoutine;
 		private const string coroutineName = nameof(StratusAudioSourcePlayer);
 
-		protected override StratusOperationResult OnPlay(string name)
+		protected override Result OnPlay(string name)
 		{
 			IEnumerator routine(StratusAudioClip audioClip, StratusAudioParameters parameters)
 			{
@@ -92,13 +92,13 @@ namespace Stratus
 			{
 				StratusAudioClip audioClip = assets.GetAsset(name).asset;
 				this.StartCoroutine(routine(audioClip, defaultParameters), coroutineName);
-				return new StratusOperationResult(true, $"Now playing {name}");
+				return new Result(true, $"Now playing {name}");
 			}
 
-			return new StratusOperationResult(false, $"Could not find the audio asset {name.Enclose(StratusStringEnclosure.AngleBracket)}");
+			return new Result(false, $"Could not find the audio asset {name.Enclose(StratusStringEnclosure.AngleBracket)}");
 		}
 
-		protected override StratusOperationResult OnStop()
+		protected override Result OnStop()
 		{
 			IEnumerator routine()
 			{
