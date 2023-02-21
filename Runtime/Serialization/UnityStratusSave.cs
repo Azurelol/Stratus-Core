@@ -4,6 +4,7 @@ using System;
 using Stratus.Serialization;
 using Stratus.IO;
 using Stratus.Models.Saves;
+using Stratus.Logging;
 
 namespace Stratus
 {

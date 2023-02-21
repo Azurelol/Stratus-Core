@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Stratus.Logging;
+
+using System;
 
 using UnityEngine.InputSystem;
 

@@ -3,6 +3,7 @@ using Stratus.OdinSerializer;
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using Stratus.Logging;
 
 namespace Stratus
 {

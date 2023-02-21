@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using Stratus.Collections;
 using Stratus.Utilities;
+using Stratus.Logging;
 
 namespace Stratus
 {

@@ -5,6 +5,7 @@ using Stratus.OdinSerializer;
 using Stratus.IO;
 using Stratus.Extensions;
 using Stratus.Reflection;
+using Stratus.Logging;
 
 namespace Stratus
 {

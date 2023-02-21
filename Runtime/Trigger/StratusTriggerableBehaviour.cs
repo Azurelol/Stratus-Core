@@ -1,3 +1,4 @@
+using Stratus.Logging;
 using Stratus.Unity.Interpolation;
 
 using UnityEngine;

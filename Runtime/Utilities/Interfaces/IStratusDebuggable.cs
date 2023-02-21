@@ -1,3 +1,5 @@
+using Stratus.Logging;
+
 namespace Stratus
 {
 	/// <summary>

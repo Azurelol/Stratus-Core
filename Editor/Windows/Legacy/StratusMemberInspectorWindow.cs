@@ -12,6 +12,7 @@ using UnityEditor.Callbacks;
 using Stratus.Extensions;
 using Stratus.Reflection;
 using Stratus.Timers;
+using Stratus.Logging;
 
 namespace Stratus.Editor
 {

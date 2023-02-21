@@ -9,6 +9,7 @@ using UnityEngine.Events;
 using System.Text;
 using System.Linq;
 using Stratus.Extensions;
+using Stratus.Logging;
 
 namespace Stratus
 {

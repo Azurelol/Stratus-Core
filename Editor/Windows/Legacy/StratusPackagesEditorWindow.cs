@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Stratus.Extensions;
+using Stratus.Logging;
 
 namespace Stratus.Editor
 {
