@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using Stratus.Utilities;
+using Stratus.Events;
 
 #if UNITY_EDITOR
 using UnityEditor.SceneManagement;
@@ -21,7 +22,7 @@ namespace Stratus
 		//----------------------------------------------------------------------------------/
 		// Declarations
 		//----------------------------------------------------------------------------------/
-		public abstract class StatusEvent : Stratus.StratusEvent { public string name; }
+		public abstract class StatusEvent : Events.Event { public string name; }
 
 		public static void Connect<T>()
 		{
@@ -31,7 +32,7 @@ namespace Stratus
 		public class ChangedEvent : StatusEvent { }
 		public class LoadedEvent : StatusEvent { }
 		public class UnloadedEvent : StatusEvent { }
-		public class ReloadEvent : Stratus.StratusEvent { }
+		public class ReloadEvent : Events.Event { }
 
 		/// <summary>
 		/// Callback for scene events
@@ -280,7 +281,7 @@ namespace Stratus
 		/// </summary>
 		/// <typeparam name="TEvent"></typeparam>
 		/// <param name="func"></param>
-		public static void Connect<TEvent>(Action<TEvent> func) where TEvent : StratusEvent
+		public static void Connect<TEvent>(Action<TEvent> func) where TEvent : Events.Event
 		{
 			instance.Poke();
 			UnityStratusEventSystem.Connect(instance.gameObject, func);
@@ -291,7 +292,7 @@ namespace Stratus
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="func"></param>
-		public static void Connect(Action<Stratus.StratusEvent> func, Type type)
+		public static void Connect(Action<Events.Event> func, Type type)
 		{
 			instance.Poke();
 			UnityStratusEventSystem.Connect(instance.gameObject, type, func);
@@ -302,7 +303,7 @@ namespace Stratus
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="eventObj"></param>
-		public static void Dispatch<T>(T eventObj) where T : Stratus.StratusEvent
+		public static void Dispatch<T>(T eventObj) where T : Events.Event
 		{
 			instance.Poke();
 			UnityStratusEventSystem.Dispatch<T>(instance.gameObject, eventObj);
@@ -315,7 +316,7 @@ namespace Stratus
 		/// <param name="gameObj">The GameObject to which to connect to.</param>
 		/// <param name="eventObj">The event object. </param>
 		/// <param name="nextFrame">Whether the event should be sent next frame.</param>
-		public static void Dispatch(StratusEvent eventObj, Type type)
+		public static void Dispatch(Events.Event eventObj, Type type)
 		{
 			instance.Poke();
 			UnityStratusEventSystem.Dispatch(instance.gameObject, eventObj);
@@ -502,6 +503,6 @@ namespace Stratus
 
 	public static class UnityStratusEventExtensions
 	{
-		public static void DispatchToScene(this StratusEvent e) => StratusScene.Dispatch(e, e.GetType());
+		public static void DispatchToScene(this Events.Event e) => StratusScene.Dispatch(e, e.GetType());
 	}
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
+using Stratus.Events;
 using Stratus.Extensions;
 using Stratus.Models;
 using Stratus.Models.Graph;
@@ -203,7 +204,7 @@ namespace Stratus.Editor
 		//------------------------------------------------------------------------/
 		private IList<EventTreeElement> BuildEventTree()
 		{
-			this.events = TypeUtility.SubclassesOf<StratusEvent>();
+			this.events = TypeUtility.SubclassesOf<Events.Event>();
 			EventInformation[] eventsInformation = new EventInformation[this.events.Length];
 			for (int i = 0; i < this.events.Length; ++i)
 			{

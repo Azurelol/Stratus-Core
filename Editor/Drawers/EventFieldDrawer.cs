@@ -1,4 +1,7 @@
+using Stratus.Events;
+
 using UnityEditor;
+
 using UnityEngine;
 
 namespace Stratus
@@ -44,14 +47,14 @@ namespace Stratus
 		{
 			SerializedProperty typeProp = property.FindPropertyRelative(nameof(StratusEventField.type));
 			SerializedProperty scopeProperty = property.FindPropertyRelative(nameof(StratusEventField.scope));
-			StratusEvent.Scope scope = GetEnumValue<StratusEvent.Scope>(scopeProperty);
+			Events.Event.Scope scope = GetEnumValue<Events.Event.Scope>(scopeProperty);
 
 			//SerializedProperty typeProp = property.FindPropertyRelative("Type");
 			//Type eventType = typeProp.objectReferenceValue as Type;
 			this.DrawPropertiesVertical(ref position, typeProp, scopeProperty);
 
 			// Scope
-			if (scope == StratusEvent.Scope.Target)
+			if (scope == Events.Event.Scope.Target)
 			{
 				DrawProperty(ref position, property.FindPropertyRelative(nameof(StratusEventField.targets)));
 			}

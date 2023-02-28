@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using Stratus.Events;
 
 namespace Stratus
 {
-	public class UnityStratusEventSystem : StratusEventSystem<GameObject>
+	public class UnityStratusEventSystem : EventSystem<GameObject>
 	{
 		protected override void OnConnect(GameObject obj)
 		{
@@ -28,7 +29,7 @@ namespace Stratus
 		/// <typeparam name="T">The event class. </typeparam>
 		/// <param name="gameObj">The GameObject to which to dispatch to.</param>
 		/// <param name="eventObj">The event object. </param>
-		public static void DispatchDown<T>(GameObject gameObj, T eventObj) where T : StratusEvent
+		public static void DispatchDown<T>(GameObject gameObj, T eventObj) where T : Events.Event
 		{
 			foreach (GameObject child in gameObj.Children())
 			{
@@ -42,7 +43,7 @@ namespace Stratus
 		/// <typeparam name="T">The event class. </typeparam>
 		/// <param name="gameObj">The GameObject to which to dispatch to.</param>
 		/// <param name="eventObj">The event object. </param>
-		public static void DispatchUp<T>(GameObject gameObj, T eventObj) where T : StratusEvent
+		public static void DispatchUp<T>(GameObject gameObj, T eventObj) where T : Events.Event
 		{
 			Transform[] parents = gameObj.transform.GetComponentsInParent<Transform>();
 			foreach (Transform parent in parents)
@@ -58,7 +59,7 @@ namespace Stratus
 		/// <param name="obj">The object to which to dispatch to.</param>
 		/// <param name="eventObj">The event object we are sending.</param>
 		/// <returns></returns>
-		public static IEnumerator DispatchNextFrame<T>(GameObject obj, T eventObj) where T : StratusEvent
+		public static IEnumerator DispatchNextFrame<T>(GameObject obj, T eventObj) where T : Events.Event
 		{
 			// Wait 1 frame
 			yield return 0;
@@ -73,7 +74,7 @@ namespace Stratus
 		/// <param name="obj">The object to which to dispatch to.</param>
 		/// <param name="eventObj">The event object we are sending.</param>
 		/// <returns></returns>
-		public static IEnumerator DispatchNextFrame(GameObject obj, StratusEvent eventObj, Type type)
+		public static IEnumerator DispatchNextFrame(GameObject obj, Events.Event eventObj, Type type)
 		{
 			// Wait 1 frame
 			yield return 0;

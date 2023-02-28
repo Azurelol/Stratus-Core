@@ -1,18 +1,20 @@
-﻿using System;
+﻿using Stratus.Events;
+
+using System;
 
 namespace Stratus
 {
 	/// <summary>
 	/// Pauses the simulation
 	/// </summary>
-	public class StratusPauseEvent : StratusEvent
+	public class StratusPauseEvent : Event
 	{
 	}
 
 	/// <summary>
 	/// Resumes the simulation
 	/// </summary>
-	public class StratusResumeEvent : StratusEvent
+	public class StratusResumeEvent : Event
 	{
 	}
 

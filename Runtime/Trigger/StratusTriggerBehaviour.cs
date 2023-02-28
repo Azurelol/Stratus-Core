@@ -1,7 +1,7 @@
 using UnityEngine;
-using Stratus;
 using UnityEngine.Events;
 using System.Collections.Generic;
+using Stratus.Events;
 
 namespace Stratus
 {
@@ -16,7 +16,7 @@ namespace Stratus
 		/// <summary>
 		/// When received by a triggerable component, it will activate it
 		/// </summary>
-		public class TriggerEvent : StratusEvent
+		public class TriggerEvent : Events.Event
 		{
 			public object data { get; private set; }
 

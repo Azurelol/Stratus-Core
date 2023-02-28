@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using Stratus.Dependencies.TypeReferences;
 using System.Collections.Generic;
+using Stratus.Events;
 
 namespace Stratus
 {
@@ -17,10 +18,10 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		[Header("Event")]
 		[Tooltip("The scope of the event")]
-		public StratusEvent.Scope scope;
+		public Events.Event.Scope scope;
 		[Tooltip("The GameObjects which we want to dispatch the event to")]
 		public List<GameObject> targets = new List<GameObject>();
-		[ClassExtends(typeof(Stratus.StratusEvent), Grouping = ClassGrouping.ByNamespace)]
+		[ClassExtends(typeof(Events.Event), Grouping = ClassGrouping.ByNamespace)]
 		[Tooltip("What type of event this trigger will activate on")]
 		public ClassTypeReference type = new ClassTypeReference();
 		[SerializeField]
@@ -30,7 +31,7 @@ namespace Stratus
 		// Properties
 		//------------------------------------------------------------------------/
 		public bool hasType => type.Type != null;
-		private Stratus.StratusEvent eventInstance { get; set; }
+		private Events.Event eventInstance { get; set; }
 
 		//------------------------------------------------------------------------/
 		// Methods
@@ -45,18 +46,18 @@ namespace Stratus
 				return false;
 
 			if (eventInstance == null)
-				eventInstance = StratusEvent.Instantiate(type, eventData);
+				eventInstance = Events.Event.Instantiate(type, eventData);
 
 			switch (scope)
 			{
-				case StratusEvent.Scope.Target:
+				case Events.Event.Scope.Target:
 					foreach (var target in targets)
 					{
 						if (target)
 							target.Dispatch(eventInstance, type.Type);
 					}
 					break;
-				case StratusEvent.Scope.All:
+				case Events.Event.Scope.All:
 					StratusScene.Dispatch(eventInstance, type.Type);
 					break;
 			}

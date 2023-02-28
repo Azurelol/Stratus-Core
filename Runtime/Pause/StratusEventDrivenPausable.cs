@@ -1,5 +1,8 @@
+using Stratus.Events;
+
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 namespace Stratus
@@ -11,8 +14,8 @@ namespace Stratus
 	/// <typeparam name="ResumeEvent"></typeparam>
 	public abstract class StratusEventDrivenPausable<PauseEvent, ResumeEvent> 
 		: StratusPausableBehaviour
-	  where PauseEvent : StratusEvent
-	  where ResumeEvent : StratusEvent
+	  where PauseEvent : Events.Event
+	  where ResumeEvent : Events.Event
 	{
 		protected override void SetPauseMechanism()
 		{

@@ -1,4 +1,5 @@
-﻿using Stratus.Types;
+﻿using Stratus.Events;
+using Stratus.Types;
 
 using System;
 
@@ -15,13 +16,13 @@ namespace Stratus.Editor
 		// Fields
 		//------------------------------------------------------------------------/
 		private SerializedProperty eventDataProperty;
-		private StratusEvent eventObject;
+		private Event eventObject;
 		private StratusSerializedEditorObject serializedEvent;
 
 		//------------------------------------------------------------------------/
 		// CTOR
 		//------------------------------------------------------------------------/
-		public StratusEventTypeSelector() : base(typeof(StratusEvent), false, true)
+		public StratusEventTypeSelector() : base(typeof(Event), false, true)
 		{
 		}
 
@@ -29,7 +30,7 @@ namespace Stratus.Editor
 		{
 		}
 
-		public StratusEventTypeSelector Construct<T>() where T : StratusEvent
+		public StratusEventTypeSelector Construct<T>() where T : Event
 		{
 			Type type = typeof(T);
 			return new StratusEventTypeSelector(type);
@@ -41,7 +42,7 @@ namespace Stratus.Editor
 		protected override void OnSelectionChanged()
 		{
 			base.OnSelectionChanged();
-			eventObject = (StratusEvent)ObjectUtility.Instantiate(selectedClass);
+			eventObject = (Event)ObjectUtility.Instantiate(selectedClass);
 			serializedEvent = new StratusSerializedEditorObject(eventObject);
 		}
 

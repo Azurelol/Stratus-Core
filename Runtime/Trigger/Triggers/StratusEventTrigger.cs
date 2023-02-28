@@ -1,25 +1,28 @@
 
 using System;
+
 using Stratus.Dependencies.TypeReferences;
+using Stratus.Events;
+
 using UnityEngine;
 
 namespace Stratus
 {
-  /// <summary>
-  /// A trigger that is activated when a specified stratus event is received.
-  /// </summary>
-  public class StratusEventTrigger : StratusTriggerBehaviour
+	/// <summary>
+	/// A trigger that is activated when a specified stratus event is received.
+	/// </summary>
+	public class StratusEventTrigger : StratusTriggerBehaviour
   {
     //------------------------------------------------------------------------/
     // Fields
     //------------------------------------------------------------------------/
     [Header("Event")]
     [Tooltip("The scope of the event")]
-    public StratusEvent.Scope eventScope;
-    [DrawIf(nameof(StratusEventTrigger.eventScope), StratusEvent.Scope.Target, ComparisonType.Equals)]
+    public Events.Event.Scope eventScope;
+    [DrawIf(nameof(StratusEventTrigger.eventScope), Events.Event.Scope.Target, ComparisonType.Equals)]
     [Tooltip("The source GameObject which we want to listen the event on")]
     public GameObject source;
-    [ClassExtends(typeof(Stratus.StratusEvent), Grouping = ClassGrouping.ByNamespace)]
+    [ClassExtends(typeof(Events.Event), Grouping = ClassGrouping.ByNamespace)]
     [Tooltip("What type of event this trigger will activate on")]
     public ClassTypeReference type;
 
@@ -57,8 +60,8 @@ namespace Stratus
 
     }
 
-    void OnEvent<T>(T e) where T : Stratus.StratusEvent
-    {
+    void OnEvent<T>(T e) where T : Events.Event
+		{
       Activate();
       //Trace.Script($"Triggered on {e.GetType()}");
     }

@@ -1,4 +1,5 @@
-﻿using Stratus.Logging;
+﻿using Stratus.Events;
+using Stratus.Logging;
 
 using System;
 
@@ -16,7 +17,7 @@ namespace Stratus
 		//------------------------------------------------------------------------/
 		// Events
 		//------------------------------------------------------------------------/
-		public class PushEvent : StratusEvent
+		public class PushEvent : Event
 		{
 			public StratusInputLayer layer;
 
@@ -26,7 +27,7 @@ namespace Stratus
 			}
 		}
 
-		public class PopEvent : StratusEvent
+		public class PopEvent : Event
 		{
 		}
 
