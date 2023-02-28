@@ -18,7 +18,7 @@ namespace Stratus
       public StratusInputBinding inputField = new StratusInputBinding();
       public StratusSceneField scene = new StratusSceneField();
       public StratusTagField tagField = new StratusTagField();
-      public StratusFloatRange floatRange = new StratusFloatRange();
+      public FloatRange floatRange = new FloatRange();
       public StratusIntegerRange intRange = new StratusIntegerRange();
       public StratusValue variable = new StratusValue();
       public KeyCode enumDrawer;

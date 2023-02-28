@@ -79,12 +79,12 @@ namespace Stratus.Samples
 		//--------------------------------------------------------------------/
 		// Callbacks
 		//--------------------------------------------------------------------/
-		private void OnLocalSymbolChanged(object gameObject, StratusSymbol symbol)
+		private void OnLocalSymbolChanged(object gameObject, Symbol symbol)
 		{
 			StratusDebug.Log($"The value on local symbol {symbol.key} on the GameObject {gameObject} was changed to {symbol.value}", this);
 		}
 
-		private void OnGlobalSymbolChanged(StratusSymbol symbol)
+		private void OnGlobalSymbolChanged(Symbol symbol)
 		{
 			StratusDebug.Log($"The value on global symbol {symbol} was changed to {symbol.value}", this);
 		}

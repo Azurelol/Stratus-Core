@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Stratus.Editor
 {
-	[CustomPropertyDrawer(typeof(StratusSymbolTable), true)]
+	[CustomPropertyDrawer(typeof(SymbolTable), true)]
 	public class StratusSymbolTableDrawer : PropertyDrawer
 	{
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

@@ -4,7 +4,7 @@ using Stratus.Data;
 
 namespace Stratus.Editor
 {
-	[CustomPropertyDrawer(typeof(StratusVariant))]
+	[CustomPropertyDrawer(typeof(Variant))]
 	public class StratusVariantDrawer : PropertyDrawer
 	{
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -15,7 +15,7 @@ namespace Stratus.Editor
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
 			var typeProperty = property.FindPropertyRelative("type");
-			var type = (StratusVariant.VariantType)typeProperty.enumValueIndex;
+			var type = (VariantType)typeProperty.enumValueIndex;
 
 			label = EditorGUI.BeginProperty(position, label, property);
 			Rect contentPosition = EditorGUI.PrefixLabel(position, label);
@@ -32,19 +32,19 @@ namespace Stratus.Editor
 			string valueName = string.Empty;
 			switch (type)
 			{
-				case StratusVariant.VariantType.Integer:
+				case VariantType.Integer:
 					valueName = "integerValue";
 					break;
-				case StratusVariant.VariantType.Boolean:
+				case VariantType.Boolean:
 					valueName = "booleanValue";
 					break;
-				case StratusVariant.VariantType.Float:
+				case VariantType.Float:
 					valueName = "floatValue";
 					break;
-				case StratusVariant.VariantType.String:
+				case VariantType.String:
 					valueName = "stringValue";
 					break;
-				case StratusVariant.VariantType.Vector3:
+				case VariantType.Vector3:
 					valueName = "vector3Value";
 					break;
 				default:

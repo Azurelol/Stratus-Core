@@ -47,7 +47,7 @@ namespace Stratus
 			// and using a reference to the shared one
 			var blackboard = ScriptableObject.CreateInstance<BlackboardScriptable>();
 			blackboard.blackboard.globals = instances[id].blackboard.globals;
-			blackboard.blackboard.locals = new StratusSymbolTable(this.blackboard.locals);
+			blackboard.blackboard.locals = new SymbolTable(this.blackboard.locals);
 			return blackboard;
 		}
 	}

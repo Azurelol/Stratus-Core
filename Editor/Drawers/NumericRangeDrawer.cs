@@ -6,11 +6,11 @@ using Stratus.Data;
 
 namespace Stratus
 {
-	[CustomPropertyDrawer(typeof(StratusFloatRange))]
+	[CustomPropertyDrawer(typeof(FloatRange))]
   public class FloatRangeDrawer : DualPropertyDrawer
   {
-    protected override string firstProperty { get; } = nameof(StratusFloatRange.minimum);
-    protected override string secondProperty { get; } = nameof(StratusFloatRange.maximum);
+    protected override string firstProperty { get; } = nameof(FloatRange.minimum);
+    protected override string secondProperty { get; } = nameof(FloatRange.maximum);
   }
 
   [CustomPropertyDrawer(typeof(StratusIntegerRange))]

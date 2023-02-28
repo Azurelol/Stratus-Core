@@ -4,13 +4,13 @@ using Stratus.Data;
 
 namespace Stratus.Editor
 {
-	[CustomPropertyDrawer(typeof(StratusSymbol.Reference))]
+	[CustomPropertyDrawer(typeof(Symbol.Reference))]
 	public class StratusSymbolReferenceDrawer : PropertyDrawer
 	{
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
-			var keyProperty = property.FindPropertyRelative(nameof(StratusSymbol.Reference.key));
-			var typeProperty = property.FindPropertyRelative(nameof(StratusSymbol.Reference.type));
+			var keyProperty = property.FindPropertyRelative(nameof(Symbol.Reference.key));
+			var typeProperty = property.FindPropertyRelative(nameof(Symbol.Reference.type));
 
 			label = EditorGUI.BeginProperty(position, label, property);
 			{
