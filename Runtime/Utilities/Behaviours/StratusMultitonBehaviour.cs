@@ -165,9 +165,9 @@ namespace Stratus
 		/// Returns a navigator, which allows easy navigation between instances of this class
 		/// </summary>
 		/// <returns></returns>
-		public static StratusArrayNavigator<T> GetNavigator(bool loop = true)
+		public static ArrayNavigator<T> GetNavigator(bool loop = true)
 		{
-			var navigator = new StratusArrayNavigator<T>(instances, loop);
+			var navigator = new ArrayNavigator<T>(instances, loop);
 			return navigator;
 		}
 

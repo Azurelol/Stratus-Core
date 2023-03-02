@@ -27,7 +27,7 @@ namespace Stratus
 		/// </summary>
 		/// <param name="dir"></param>
 		/// <returns></returns>
-		public static T Navigate<T>(this StratusArrayNavigator<T> navigator, Vector2 dir)
+		public static T Navigate<T>(this ArrayNavigator<T> navigator, Vector2 dir)
 		{
 			bool up = dir.y > 0;
 			bool down = dir.y < 0;

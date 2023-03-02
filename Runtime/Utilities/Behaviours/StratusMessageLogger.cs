@@ -23,7 +23,7 @@ namespace Stratus
 
 		[SerializeField]
 		private int capacity = 500;
-		private StratusCircularBuffer<T> _messages;		
+		private CircularBuffer<T> _messages;		
 		[SerializeField]
 		private EventType _onMessageAdded;
 
@@ -39,7 +39,7 @@ namespace Stratus
 
 		public void ResetMessages()
 		{
-			_messages = new StratusCircularBuffer<T>(capacity);
+			_messages = new CircularBuffer<T>(capacity);
 		}
 
 		public void DeserializeAndLoad(string json, bool additive = false)

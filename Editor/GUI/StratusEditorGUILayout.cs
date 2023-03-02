@@ -76,12 +76,12 @@ namespace Stratus.Editor
 			StratusSearchablePopup.Popup(label, selectedindex, displayedOptions, onSelected);
 		}
 
-		public static void Popup(string label, StratusDropdownList dropdownList)
+		public static void Popup(string label, DropdownList dropdownList)
 		{
 			StratusSearchablePopup.Popup(label, dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
 		}
 
-		public static void Popup(StratusDropdownList dropdownList)
+		public static void Popup(DropdownList dropdownList)
 		{
 			StratusSearchablePopup.Popup(dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
 		}

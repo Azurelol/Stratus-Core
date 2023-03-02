@@ -21,12 +21,12 @@ namespace Stratus.Editor
 		#endregion
 
 		#region Methods
-		public static void Popup(Rect position, string label, StratusDropdownList dropdownList)
+		public static void Popup(Rect position, string label, DropdownList dropdownList)
 		{
 			StratusSearchablePopup.Popup(position, label, dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
 		}
 
-		public static void Popup(Rect position, StratusDropdownList dropdownList)
+		public static void Popup(Rect position, DropdownList dropdownList)
 		{
 			StratusSearchablePopup.Popup(position, dropdownList.selectedIndex, dropdownList.displayedOptions, (int index) => dropdownList.selectedIndex = index);
 		}

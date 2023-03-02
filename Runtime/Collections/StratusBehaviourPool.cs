@@ -267,7 +267,7 @@ namespace Stratus
 			where BehaviourType : MonoBehaviour
 			where DataType : class
 	{
-		private StratusDictionary<KeyType, DataType> keytoData;
+		private AutoDictionary<KeyType, DataType> keytoData;
 
 		public StratusBehaviourPool(Transform parent,
 			BehaviourType prefab,
@@ -275,7 +275,7 @@ namespace Stratus
 			 Func<DataType, KeyType> keySelector)
 			: base(parent, prefab, instantiateFunction)
 		{
-			this.keytoData = new StratusDictionary<KeyType, DataType>(keySelector);
+			this.keytoData = new AutoDictionary<KeyType, DataType>(keySelector);
 		}
 
 		protected override void OnInstanceAdded(DataType data, BehaviourType instance)

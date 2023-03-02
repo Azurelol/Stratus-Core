@@ -14,7 +14,7 @@ namespace Stratus
 		private bool debug = false;
 		[SerializeField]
 		private List<StratusAudioChannel> _channels = new List<StratusAudioChannel>();
-		public StratusSortedList<string, StratusAudioChannel> channelsByName { get; private set; }
+		public AutoSortedList<string, StratusAudioChannel> channelsByName { get; private set; }
 
 		protected override void OnAwake()
 		{
@@ -32,7 +32,7 @@ namespace Stratus
 
 		private void RegisterChannels()
 		{
-			channelsByName = new StratusSortedList<string, StratusAudioChannel>(x => x.name, _channels.Count, StringComparer.InvariantCultureIgnoreCase);
+			channelsByName = new AutoSortedList<string, StratusAudioChannel>(x => x.name, _channels.Count, StringComparer.InvariantCultureIgnoreCase);
 			channelsByName.AddRange(_channels);
 		}
 

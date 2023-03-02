@@ -15,7 +15,7 @@ namespace Stratus
 		// Properties
 		//------------------------------------------------------------------------/
 		public Type baseType { get; private set; }
-		public StratusDropdownList<Type> subTypes { get; private set; }
+		public DropdownList<Type> subTypes { get; private set; }
 		public Type selectedClass => this.subTypes.selected;
 		private string selectedClassName => this.selectedClass.Name;
 		public int selectedIndex => this.subTypes.selectedIndex;
@@ -32,7 +32,7 @@ namespace Stratus
 		public StratusTypeSelector(Type baseType, bool includeAbstract, bool sortAlphabetically = false)
 		{
 			this.baseType = baseType;
-			this.subTypes = new StratusDropdownList<Type>(TypeUtility.SubclassesOf(baseType), Name);
+			this.subTypes = new DropdownList<Type>(TypeUtility.SubclassesOf(baseType), Name);
 			if (sortAlphabetically)
 			{
 				this.subTypes.Sort();
@@ -42,7 +42,7 @@ namespace Stratus
 		public StratusTypeSelector(Type[] types, bool includeAbstract, bool sortAlphabetically = false)
 		{
 			this.baseType = this.baseType;
-			this.subTypes = new StratusDropdownList<Type>(types, Name);
+			this.subTypes = new DropdownList<Type>(types, Name);
 			if (sortAlphabetically)
 			{
 				this.subTypes.Sort();
@@ -52,7 +52,7 @@ namespace Stratus
 		public StratusTypeSelector(Type baseType, Type interfaceType, bool sortAlphabetically = false)
 		{
 			this.baseType = baseType;
-			this.subTypes = new StratusDropdownList<Type>(TypeUtility.InterfaceImplementations(baseType, interfaceType), (Type type) => type.Name);
+			this.subTypes = new DropdownList<Type>(TypeUtility.InterfaceImplementations(baseType, interfaceType), (Type type) => type.Name);
 
 			if (sortAlphabetically)
 			{

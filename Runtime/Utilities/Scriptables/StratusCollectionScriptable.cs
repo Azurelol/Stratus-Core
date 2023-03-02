@@ -11,19 +11,19 @@ namespace Stratus
 		IStratusAssetSource<T>, IStratusAssetResolver<T>
 		where T : class
 	{
-		public StratusSortedList<string, T> assetsByName
+		public AutoSortedList<string, T> assetsByName
 		{
 			get
 			{
 				if (_assetsByName == null)
 				{
-					_assetsByName = new StratusSortedList<string, T>(GetKey, data.Count, StringComparer.InvariantCultureIgnoreCase);
+					_assetsByName = new AutoSortedList<string, T>(GetKey, data.Count, StringComparer.InvariantCultureIgnoreCase);
 					_assetsByName.AddRange(data);
 				}
 				return _assetsByName;
 			}
 		}
-		private StratusSortedList<string, T> _assetsByName;
+		private AutoSortedList<string, T> _assetsByName;
 
 		public StratusAssetToken<T> this[string key]
 		{
