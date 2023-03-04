@@ -20,7 +20,7 @@ namespace Stratus
       public StratusTagField tagField = new StratusTagField();
       public FloatRange floatRange = new FloatRange();
       public StratusIntegerRange intRange = new StratusIntegerRange();
-      public StratusValue variable = new StratusValue();
+      public BoundedFloat variable = new BoundedFloat();
       public KeyCode enumDrawer;
 
       public StratusLayerField layer = new StratusLayerField(); 
