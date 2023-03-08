@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using Stratus.Inputs;
+
+using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 

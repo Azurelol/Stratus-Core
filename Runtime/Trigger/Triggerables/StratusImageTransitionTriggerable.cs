@@ -23,7 +23,6 @@ namespace Stratus
 
 		[Header("Control")]
 		public float duration = 1.5f;
-		public StratusInputBinding skipInput = new StratusInputBinding();
 		[Tooltip("Whether this is the total duration or for each slide")]
 		public DurationType type = DurationType.Total;
 

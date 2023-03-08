@@ -8,7 +8,7 @@ using Stratus.Extensions;
 using Stratus.Reflection;
 using Stratus.Utilities;
 
-namespace Stratus
+namespace Stratus.Inputs
 {
 	public interface IStratusInputActionMap
 	{
@@ -22,7 +22,10 @@ namespace Stratus
 		/// <param name="context"></param>
 		bool HandleInput(InputAction.CallbackContext context);
 	}
+}
 
+namespace Stratus.Inputs
+{
 	/// <summary>
 	/// Base class for input action maps
 	/// </summary>
@@ -127,7 +130,7 @@ namespace Stratus
 		/// </summary>
 		/// <param name="phase"></param>
 		/// <returns></returns>
-		public StratusInputActionPhase Convert(InputActionPhase phase) => StratusInputUtility.Convert(phase);
+		public StratusInputActionPhase Convert(InputActionPhase phase) => phase.Convert();
 
 	}
 
@@ -162,7 +165,7 @@ namespace Stratus
 
 		protected void TryBindActions()
 		{
-			var members = ReflectionUtility.GetAllFieldsOrProperties(this)
+			var members = this.GetAllFieldsOrProperties()
 				.Where(m => typeof(Delegate).IsAssignableFrom(m.type)).ToArray();
 
 			if (members.IsNullOrEmpty())

@@ -1,17 +1,21 @@
-﻿using Stratus.Events;
+﻿using Stratus;
+using Stratus.Events;
 using Stratus.Logging;
 
 using System;
 
 using UnityEngine.InputSystem;
 
-namespace Stratus
+namespace Stratus.Inputs
 {
 	public interface IStratusInputLayerProvider
 	{
 		bool pushInputLayer { get; }
 	}
+}
 
+namespace Stratus.Inputs
+{
 	public abstract class StratusInputLayer : IStratusLogger
 	{
 		//------------------------------------------------------------------------/
@@ -119,7 +123,7 @@ namespace Stratus
 			pushed = true;
 			onPushed?.Invoke(true);
 			PushEvent e = new PushEvent(this);
-			StratusScene.Dispatch<PushEvent>(e);
+			StratusScene.Dispatch(e);
 		}
 
 		/// <summary>
@@ -138,7 +142,7 @@ namespace Stratus
 			pushed = false;
 			onPushed?.Invoke(false);
 			PopEvent e = new PopEvent();
-			StratusScene.Dispatch<PopEvent>(e);
+			StratusScene.Dispatch(e);
 		}
 
 		/// <summary>
@@ -158,7 +162,10 @@ namespace Stratus
 		}
 
 	}
+}
 
+namespace Stratus.Inputs
+{
 	public class StratusInputLayer<ActionMap> : StratusInputLayer
 		where ActionMap : IStratusInputActionMap, new()
 	{
@@ -187,7 +194,10 @@ namespace Stratus
 		{
 		}
 	}
+}
 
+namespace Stratus.Inputs
+{
 	public class StratusDefaultInputLayer : StratusInputLayer
 	{
 		public IStratusInputActionMap actions { get; }

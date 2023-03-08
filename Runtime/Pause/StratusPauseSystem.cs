@@ -5,6 +5,7 @@ using System;
 using UnityEngine.InputSystem;
 using Stratus.Utilities;
 using Stratus.Logging;
+using Stratus.Inputs;
 
 namespace Stratus
 {
@@ -13,8 +14,7 @@ namespace Stratus
 	/// the instance will be constructed on the scene as a singleton behaviour.
 	/// </summary>
 	[StratusSingleton(instantiate = true, isPlayerOnly = true)]
-	public class StratusPauseSystem : StratusSingletonBehaviour<StratusPauseSystem>,
-		IStratusInputProvider
+	public class StratusPauseSystem : StratusSingletonBehaviour<StratusPauseSystem>
 	{
 		//------------------------------------------------------------------------/
 		// Fields
@@ -25,13 +25,6 @@ namespace Stratus
 		// Properties
 		//------------------------------------------------------------------------/
 		public static bool paused { get; private set; }
-
-		public StratusInputAction[] inputs =>
-			new StratusInputAction[]
-			{
-				new StratusInputAction("Pause", Pause),
-				new StratusInputAction("Resume", Resume)
-			};
 
 		//------------------------------------------------------------------------/
 		// Events

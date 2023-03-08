@@ -1,5 +1,7 @@
 using NUnit.Framework;
 
+using Stratus.Inputs;
+
 using System;
 
 using UnityEngine;
