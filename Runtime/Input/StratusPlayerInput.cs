@@ -22,13 +22,13 @@ namespace Stratus
 		public bool debug = false;
 		public bool logInputCallback = false;
 
-		private StratusInputStack<StratusInputLayer> inputLayers = new StratusInputStack<StratusInputLayer>();
+		private InputStack<InputLayer> inputLayers = new InputStack<InputLayer>();
 		private Dictionary<string, StratusInputScheme> inputSchemes = new Dictionary<string, StratusInputScheme>();
 		#endregion
 
 		#region Properties
 		public InputActionMap currentActionMap => playerInput.currentActionMap;
-		public StratusInputLayer currentInputLayer => inputLayers.activeLayer;
+		public InputLayer currentInputLayer => inputLayers.activeLayer;
 		public string currentActionMapName => playerInput.currentActionMap.name;
 		public bool hasInputLayer => inputLayers.layerCount > 0;
 		public bool inputEnabled
@@ -61,8 +61,8 @@ namespace Stratus
 		#region Messages
 		protected override void OnAwake()
 		{
-			StratusScene.Connect<StratusInputLayer.PushEvent>(OnPushLayerEvent);
-			StratusScene.Connect<StratusInputLayer.PopEvent>(OnPopLayerEvent);
+			StratusScene.Connect<InputLayer.PushEvent>(OnPushLayerEvent);
+			StratusScene.Connect<InputLayer.PopEvent>(OnPopLayerEvent);
 			playerInput.onActionTriggered += OnInputActionTriggered;
 			playerInput.onControlsChanged += this.OnControlsChanged;
 			inputLayers.onInputLayerChanged += this.OnInputLayerChanged;
@@ -95,7 +95,7 @@ namespace Stratus
 		#endregion
 
 		#region Event Handlers
-		private void OnPushLayerEvent(StratusInputLayer.PushEvent e)
+		private void OnPushLayerEvent(InputLayer.PushEvent e)
 		{
 			Result result = inputLayers.Push(e.layer);
 			if (debug)
@@ -104,12 +104,12 @@ namespace Stratus
 			}
 		}
 
-		private void OnPopLayerEvent(StratusInputLayer.PopEvent e)
+		private void OnPopLayerEvent(InputLayer.PopEvent e)
 		{
 			// Pop layers that have been marked as inactive
 			while (inputLayers.canPop)
 			{
-				StratusInputLayer layer = inputLayers.Pop();
+				InputLayer layer = inputLayers.Pop();
 				if (debug)
 				{
 					if (layer != null)
@@ -124,7 +124,7 @@ namespace Stratus
 			}
 		}
 
-		private void OnInputLayerChanged(StratusInputLayer layer)
+		private void OnInputLayerChanged(InputLayer layer)
 		{
 			bool switched = false;
 
@@ -202,16 +202,16 @@ namespace Stratus
 		#endregion
 
 		#region Static Methods
-		public static void DispatchPushLayerEvent(StratusInputLayer layer)
+		public static void DispatchPushLayerEvent(UnityInputLayer layer)
 		{
 			layer.pushed = true;
-			StratusScene.Dispatch<StratusInputLayer.PushEvent>(new StratusInputLayer.PushEvent(layer));
+			StratusScene.Dispatch<UnityInputLayer.PushEvent>(new UnityInputLayer.PushEvent(layer));
 		}
 
-		public static void DispatchPopLayerEvent(StratusInputLayer layer)
+		public static void DispatchPopLayerEvent(UnityInputLayer layer)
 		{
 			layer.pushed = false;
-			StratusScene.Dispatch<StratusInputLayer.PopEvent>(new StratusInputLayer.PopEvent());
+			StratusScene.Dispatch<UnityInputLayer.PopEvent>(new UnityInputLayer.PopEvent());
 		}
 
 		public static StratusInputScheme TryParse(string deviceName)
@@ -299,7 +299,7 @@ namespace Stratus
 			{
 				this.Log($"Last device used now {latestInputSchemeUsed}");
 			}
-		} 
+		}
 		#endregion
 	}
 
